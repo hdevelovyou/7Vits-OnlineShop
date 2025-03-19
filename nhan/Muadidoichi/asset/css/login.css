@@ -13,6 +13,10 @@
     padding-right: 1rem;
     letter-spacing: 0.5rem;
 }
+
+.header-logo img{
+    width: 10rem;
+}
 .header_navbar img {
     font-size: 1rem;
 }
