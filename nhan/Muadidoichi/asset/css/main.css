@@ -1,9 +1,10 @@
 #banner{
-    background: url("/7Vits-OnlineShop/nhan/Muadidoichi/asset/img/main.png") ;
+    background: url("/nhan/Muadidoichi/asset/img/main.png") ;
     background-size: cover;
     height: 86vh;
     max-width: 100%;
     position: relative;
+    overflow: hidden;
 }
 
 #section-1{
@@ -15,18 +16,37 @@
     width: 100%;
     bottom:0;
     font-size: 2rem;
+    padding: 0 5%;
+    box-sizing: border-box;
 }
 
 #section-1 img {
     width: 80rem;
     height: auto;
+    transition: transform 0.3s ease;
+}
+
+#section-1 img:hover {
+    transform: scale(1.05);
 }
 
 #section-1 .introduce {
    line-height: 70px;
    margin-left:20rem;
-   
+   animation: fadeInLeft 1s ease;
 }
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
 #section-1 .text-introduce {
     font-weight: bold;
     text-transform: uppercase;
@@ -36,43 +56,156 @@
     width: 850px;
     height:14rem;
     line-height: 9rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 #section-1 .text-title{
     opacity: 0.5;
     font-style: italic;
+    font-size: 2.4rem;
+    margin: 1rem 0;
 }
 #section-1 .quality{
     display: flex;
     justify-content: space-between;
     width: 70%;
     line-height: 4rem;
+    margin-top: 2rem;
 }
 #section-1 a{
    background-color: rgba(221, 43, 43, 0.842);
-   padding:0 9rem;
+   padding:1rem 9rem;
    border-radius: 60px;
    color:#fff;
    font-weight: bold;
    margin: 30px 0;
    display: inline-block;
+   text-decoration: none;
+   transition: all 0.3s ease;
+   text-transform: uppercase;
+   letter-spacing: 1px;
+}
+
+#section-1 a:hover {
+    background-color: rgba(221, 43, 43, 1);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(221, 43, 43, 0.3);
 }
 
 #section-1 .quality-text{
     opacity: 0.5;
     font-size: 1.6rem;
 }
+
+.quality-item {
+    transition: transform 0.3s ease;
+}
+
+.quality-item:hover {
+    transform: translateY(-5px);
+}
+
+.quality-count {
+    font-size: 3.2rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
 .content-section .logo{
     background-color: #fff;
     height: 160px;
     width: 100%;
-  
+    padding: 2rem 0;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
 }
 .logo{
     display: flex;
     justify-content: space-around;
     align-items:center ;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 .logo img{
     height: 12rem;
+    transition: transform 0.3s ease;
+    filter: grayscale(100%);
+}
+
+.logo img:hover {
+    transform: scale(1.1);
+    filter: grayscale(0%);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1200px) {
+    #section-1 .text-introduce {
+        font-size: 6rem;
+        width: 600px;
+    }
+    
+    #section-1 img {
+        width: 60rem;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    #section-1 {
+        flex-direction: column;
+        text-align: center;
+        padding: 2rem;
+    }
+    
+    #section-1 .introduce {
+        margin-left: 0;
+        margin-bottom: 2rem;
+    }
+    
+    #section-1 .text-introduce {
+        width: 100%;
+        font-size: 4rem;
+    }
+    
+    #section-1 img {
+        width: 40rem;
+    }
+    
+    .logo {
+        flex-wrap: wrap;
+        gap: 2rem;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #section-1 .text-introduce {
+        font-size: 3rem;
+    }
+    
+    #section-1 .quality {
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+    }
+    
+    #section-1 img {
+        width: 30rem;
+    }
+    
+    .logo img {
+        height: 8rem;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    #section-1 .text-introduce {
+        font-size: 2.5rem;
+    }
+    
+    #section-1 a {
+        padding: 0.8rem 4rem;
+    }
+    
+    #section-1 img {
+        width: 25rem;
+    }
 }
 
