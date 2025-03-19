@@ -1,0 +1,259 @@
+/*header*/
+#header{
+    position: fixed;
+    font-size: 1.6rem;
+    width: 100%;
+    padding: 0 10rem;
+    z-index: 1;
+    transition: all 0.4s ease-in-out;
+}
+.logo-team{
+    color: #fff;
+    text-transform: uppercase;
+    padding-right: 1rem;
+    letter-spacing: 0.5rem;
+}
+.header_navbar img {
+    font-size: 1rem;
+}
+.fullscreen-image {
+    width: 100%; /* Giữ nguyên chiều rộng */
+    height: 100vh; /* Chiếm toàn bộ chiều cao màn hình */
+    position: relative; /* Để có thể sử dụng z-index */
+    z-index: -1;
+}
+
+.header_navbar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding:auto 13.3rem;
+    margin:0 20rem;
+}
+#header .header_right{
+    margin-right:0 ;
+    margin-top:0.8rem;
+}
+.login{
+    height: 4rem;
+    color: white;
+    display: inline-block;
+}
+
+.header_navbar-list a{
+    text-decoration: none;
+    
+}
+
+.header_navbar-item{
+    margin: 0 1.4rem;
+    font-size: 2rem;
+    text-align: center;
+    display: inline-block;
+}
+.header_navbar-item a{
+    color:#fff;
+    text-decoration: none;
+}
+.dangki{
+    text-decoration: none;
+    color: white;
+    padding: 1.2rem 0 1.5rem 1.7rem;
+}
+.dangki:hover{
+    text-decoration: underline;
+    
+}
+.dangnhap{
+    background-color: #fc0606;
+    border-radius: 8px;
+    color: white;
+    padding:12px 20px;
+    margin-left: 24px;
+    cursor: pointer;
+    border:none;
+}
+.dangnhap:hover{
+    background-color: rgb(255 255 255 / 16%);
+    border:none;
+}
+.btn{
+    background: #00000000;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    display: inline-block;
+    font-size: 20px;
+    cursor: pointer;
+}
+#form-login {
+    position: relative;
+}
+.form-box {
+    background: #0a0a0ae8; /* Nền đen mờ */
+    padding: 30px;
+    border-radius: 10px;
+    width: 400px;
+    color: white;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-height: 430px;
+    font-size: 20px;
+    border-radius: 50px;
+}
+
+#form-login .input{
+    border-radius: 15px;
+    margin: 15px 0;
+    padding: 10px 22px;
+    background-color: #181515e8;
+    border: none;
+    width: 100%;
+    color: #fff;
+}
+.check-box{
+    display: flex;
+    justify-content: space-between;
+    
+}
+input[type="checkbox"] {
+    transform: scale(1.5); /* Phóng to checkbox */
+    margin-right: 10px; /* Khoảng cách giữa checkbox và nội dung */
+}
+.forgot-password {
+    text-decoration: none;
+    color: white;
+    font-size: 15px;
+    padding: 8px;
+    font-weight: bold;
+}
+.forgot-password:hover{
+    text-decoration: underline;
+}
+.ldn{
+    background-color: #00000000;
+    font-size: 15px;
+    padding: 8px;
+}
+
+input::placeholder {
+    color: #fff; /* Thay màu tùy ý */
+    font-size: 16px;
+    opacity: 1; /* Giữ nguyên độ trong suốt */
+}
+
+.link{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 8px 0;
+}
+
+.circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    text-decoration:none;
+}
+
+.circle i {
+    font-size: 20px;
+    color: black;
+    text-decoration: none;
+}
+
+.fb i{
+    color: #1877F2;
+}
+
+.gg i{
+    color: #b8a13e;
+}
+
+.btn-login,.btn-register {
+    width: 55%;
+    border-radius: 20px;
+    margin: 4px 0;
+    padding: 10px 0;
+    background-color: #fc0606;
+    color: #fff;
+    cursor: pointer;
+    border: none;
+}
+.btn-register:hover{
+    background-color: #3a3131;
+}
+.btn-login:hover {
+    background-color: rgb(255 255 255 / 16%);
+    color: #fff;
+    border:none;
+}
+#footer{
+    background-color: #000;
+    margin-top:-3px;
+    min-height: 400px;
+    color: #fff;
+}
+#footer .footer-section{
+    display: flex;
+    justify-content: space-around;
+    padding: 40px 0;
+    font-size: 20px;
+    margin: 0 200px;
+}
+
+#footer .footer_name{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top:35px;
+}
+p.footer-nameweb {
+    margin-bottom: 31px;
+}
+p.footer_name-slogan {
+    font-size: 14px;
+    opacity: 0.5;
+    font-style: italic;
+}
+#footer .footer-contact-all{
+    flex:3;
+    background-color: #c417178a;
+    border-radius: 10px;
+    padding: 16px 48px;
+   
+}
+#footer .footer-contact{
+    display: flex;
+    justify-content: space-between;
+    margin: 10px;
+    
+}
+#footer .footer-contact p{
+    padding:5px;
+}
+#footer .contact{
+    width: 20%;
+}
+#footer h3{
+    display: block;
+}
+#footer i::before {
+    font-size: 90px;
+}
+
+.scrolled{
+    background-color: #000;
+    
+}
+

@@ -1,0 +1,23 @@
+.Hovaten, .GmailOTP , .auth{
+    display: flex;
+    justify-content: space-between;
+}
+.form-box{
+   width: 35%;
+}
+.link{
+    justify-content: start;
+}
+.foot{
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+.btn-register {
+    border-radius: 20px;
+    background-color: #fc0606;
+    color: #fff;
+    cursor: pointer;
+    border: none;
+
+}

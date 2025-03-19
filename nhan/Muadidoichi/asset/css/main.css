@@ -1,0 +1,78 @@
+#banner{
+    background: url("/asset/img/main.png") ;
+    background-size: cover;
+    height: 86vh;
+    max-width: 100%;
+    position: relative;
+}
+
+#section-1{
+    position: absolute;
+    color: #fff;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+    width: 100%;
+    bottom:0;
+    font-size: 2rem;
+}
+
+#section-1 img {
+    width: 80rem;
+    height: auto;
+}
+
+#section-1 .introduce {
+   line-height: 70px;
+   margin-left:20rem;
+   
+}
+#section-1 .text-introduce {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 8rem;
+    word-wrap: break-word; /* Tự động xuống dòng */
+    white-space: normal; 
+    width: 850px;
+    height:14rem;
+    line-height: 9rem;
+}
+#section-1 .text-title{
+    opacity: 0.5;
+    font-style: italic;
+}
+#section-1 .quality{
+    display: flex;
+    justify-content: space-between;
+    width: 70%;
+    line-height: 4rem;
+}
+#section-1 a{
+   background-color: rgba(221, 43, 43, 0.842);
+   padding:0 9rem;
+   border-radius: 60px;
+   color:#fff;
+   font-weight: bold;
+   margin: 30px 0;
+   display: inline-block;
+}
+
+#section-1 .quality-text{
+    opacity: 0.5;
+    font-size: 1.6rem;
+}
+.content-section .logo{
+    background-color: #fff;
+    height: 160px;
+    width: 100%;
+  
+}
+.logo{
+    display: flex;
+    justify-content: space-around;
+    align-items:center ;
+}
+.logo img{
+    height: 12rem;
+}
+

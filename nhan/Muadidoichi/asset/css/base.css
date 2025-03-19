@@ -1,0 +1,35 @@
+:root{
+    --white: #fff;
+    --black: #000;
+    --text-color: #333;
+}
+*{
+    box-sizing: inherit;
+    font-family: sans-serif;
+    margin:0;
+    padding: 0;
+}
+html{
+    font-size: 62.5%;
+    box-sizing: border-box;
+   
+}
+a{
+    font-weight: bold;
+    text-decoration: none;
+}
+.grid{
+    width: 1200px;
+    max-width: 100%;
+    margin:0 auto;
+}
+.grid_fullwidth{
+    width: 100%;
+}
+.grid_row{
+    display: flex;
+    flex-wrap: wrap;
+}
+::placeholder{
+    opacity: 0.1;
+}
