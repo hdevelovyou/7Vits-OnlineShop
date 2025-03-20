@@ -7,4 +7,4 @@ const configViewEngine = (app) => {
     app.use(express.static(path.join('./Code', 'public')));
 }
 
-module.exports = configViewEngine;
+module.exports = configViewEngine; 

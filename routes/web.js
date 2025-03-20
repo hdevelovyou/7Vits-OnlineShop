@@ -5,4 +5,4 @@ const router = express.Router();
 router.get('/', getHomePage);
 router.get('/ColorGalaxy', getColorGalaxy);
 
-module.exports = router;
+module.exports = router; 

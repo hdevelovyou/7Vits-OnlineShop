@@ -22,4 +22,4 @@ app.use("/api/auth", authRoutes); // Thêm route authentication
 
 app.listen(port, () => 
     console.log(`Server đang chạy tại http://localhost:${port}`
-));
+)); 

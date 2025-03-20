@@ -16,4 +16,4 @@ const getColorGalaxy = (req, res) => {
 module.exports = {
     getHomePage,
     getColorGalaxy
-}
+} 
