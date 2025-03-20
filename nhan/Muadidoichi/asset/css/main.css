@@ -109,18 +109,15 @@
 
 .content-section .logo{
     background-color: #fff;
-    height: 160px;
     padding: 2rem 0;
     box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: space-around;
     align-items:center ;
-    margin: 0 auto;
-    max-width: 1480px;
 }
 
 .logo img{
-    height: 12rem;
+    height: 9rem;
     transition: transform 0.3s ease;
     filter: grayscale(100%);
 }

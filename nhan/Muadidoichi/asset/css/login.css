@@ -12,7 +12,9 @@
     padding-right: 1rem;
     letter-spacing: 0.5rem;
 }
-
+.login {
+    width: 23rem;
+}
 .header-logo img{
     width: 10rem;
 }
@@ -35,11 +37,8 @@
 #header .header_right{
     margin-right:0 ;
     margin-top:0.8rem;
-}
-.login{
-    height: 4rem;
-    color: white;
-    display: inline-block;
+    display: flex;
+    align-items: center;
 }
 
 .header_navbar-list a{

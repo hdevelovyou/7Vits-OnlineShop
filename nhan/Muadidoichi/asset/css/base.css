@@ -30,6 +30,7 @@ a{
     display: flex;
     flex-wrap: wrap;
 }
+
 ::placeholder{
     opacity: 0.1;
 }
