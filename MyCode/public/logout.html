@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout</title>
+</head>
+
+<body>
+    <h2>Logout</h2>
+    <button id="logoutButton">Logout</button>
+
+    <script>
+        document.getElementById("logoutButton").addEventListener("click", async function () {
+            const response = await fetch("/logout", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" }
+            });
+
+            const result = await response.json();
+            alert(result.message || result.error);
+        });
+    </script>
+</body>
+
+</html>
