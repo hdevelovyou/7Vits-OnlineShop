@@ -1,9 +1,10 @@
-.Hovaten, .GmailOTP , .auth{
+.Hovaten, .GmailOTP ,.auth{
     display: flex;
     justify-content: space-between;
+    gap:3rem;
 }
 .form-box{
-   width: 35%;
+   width: 55rem;
 }
 .link{
     justify-content: start;
