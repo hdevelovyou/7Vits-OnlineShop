@@ -1,9 +1,9 @@
 import { memo } from "react";
-
+import bg from '../../../assets/images/loginbg.png';
 const LoginPage = () => {
     return (
         <div>
-            <h1>LoginPage đây</h1>
+            <img src={bg} alt="bg" style={{width: '100%', height: '100vh'}}/>
         </div>
     )
 }

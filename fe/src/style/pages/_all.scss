@@ -1,0 +1,61 @@
+@use "sass:map";
+@import "theme";
+@import "responsive";
+html,
+body {
+    margin: 0;
+    background: black;
+}
+* {
+    font-family: Arial;
+    padding: 0;
+    margin: 0;
+    color: white;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin: auto;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.col-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+}
+
+.col-3{
+    flex: 0 0 25%;
+    max-width: 25%;
+}
+
+.word{
+    color: #ffffff;
+}
+
+@include Responsive($MEDIEUM){
+    .col-lg-3 {
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+}
+
+@include Responsive($DESKTOP){
+    .col-xl-3 {
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+    .col-xl-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+
