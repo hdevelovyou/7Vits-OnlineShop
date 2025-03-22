@@ -8,7 +8,7 @@
 
 .header-top-right{
     display: grid;
-    justify-content: right;
+    justify-content: center;
     padding: 8px 0 5px;
     ul {
         display: flex;
@@ -20,7 +20,7 @@
 .header-top-left{
     color: white;
     padding: 8px 0 5px;
-    justify-items: left;
+    justify-items: center;
 }
 
 .header-top-center{
@@ -108,6 +108,7 @@
         color: white;
         padding: 10px 10px;
         border-radius: 5px;
+        box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.5);
         text-decoration: none;
         margin-right: 10px;
         &:hover{
@@ -119,6 +120,7 @@
         background: #919191;
         color: white;
         padding: 10px 10px;
+        box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.5);
         border-radius: 5px;
         text-decoration: none;
         &:hover{
