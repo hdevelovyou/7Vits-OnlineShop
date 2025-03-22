@@ -7,7 +7,7 @@ import logo from '../../../../assets/images/logo.png';
 import { useState } from "react";
 import { ROUTES } from "../../../../utils/router.js";
 const Header = () => {
-    const [menu, setMenu] = useState([
+    const [menu] = useState([
         {
             name: "Trang chủ",
             path: ROUTES.USER.HOME,
@@ -36,26 +36,22 @@ const Header = () => {
             ]
         },
         {
-            name: "Tin tức",
+            name: "Sự kiện",
             path: "/",
         },
-        {
-            name: "Hướng dẫn",
-            path: "/",
-        }
     ]);
     return (
        <>
            <div className="header-top">
                 <div className="container">
                     <div className="row">
-                        <div className="col-3 header-top-left">
+                        <div className="col-lg-3 col-xl-3 header-top-left">
                                 <p>7vits.shop@gmail.com</p>
                         </div>
-                        <div className="col-6 header-top-center">
+                        <div className="col-lg-3 col-xl-6 header-top-center">
                                 <p>Giảm giá đến 30% cho đơn hàng đầu tiên của bạn</p>
                         </div>
-                        <div className="col-3 header-top-right">
+                        <div className="col-lg-3 col-xl-3 header-top-right">
                             <ul>
                                 <li>
                                     <Link to={"https://www.facebook.com/7vits.shop"} style={{ textDecoration: 'none' }}>
@@ -89,13 +85,28 @@ const Header = () => {
                                     {menu?.map((menu, menuKey) => (
                                         <li key={menuKey}>
                                             <Link to ={menu.path}>{menu?.name}</Link>
+                                            {
+                                                menu.child && menu.child.length > 0 && (
+                                                    <ul className="header-submenu">
+                                                        {menu.child.map((child, childKey) => (
+                                                            <li key={childKey}>
+                                                                <Link to={child.path}>{child.name}</Link>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                )
+                                            }
                                         </li>
                                     ))}
                                </ul>
                          </nav>
                         </div>
-                        <div className="header-login-signup">
-                            <div className="col-lg-3 col-xl-3">LOGIN/SIGNUP</div>
+                        <div className="col-lg-3 col-xl-3">
+                            <div className="header-login-signup">
+                                
+                                <Link to="/" className="signup-btn">Đăng ký</Link>
+                                <Link to="/" className="login-btn">Đăng nhập</Link>
+                            </div>
                         </div>
                     </div>
                 </div>
