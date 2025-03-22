@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import logo from '../../../../assets/images/logo.png';
 import { useState } from "react";
 import { ROUTES } from "../../../../utils/router.js";
+import { IoSearchCircleSharp } from "react-icons/io5";
+import { FaShoppingCart } from "react-icons/fa";
 const Header = () => {
     const [menu] = useState([
         {
@@ -103,9 +105,11 @@ const Header = () => {
                         </div>
                         <div className="col-lg-3 col-xl-3">
                             <div className="header-login-signup">
-                                
-                                <Link to="/" className="signup-btn">Đăng ký</Link>
-                                <Link to="/" className="login-btn">Đăng nhập</Link>
+                                    
+                                <div className="search"><IoSearchCircleSharp /></div>
+                                <div className="cart"><FaShoppingCart /></div>
+                                <Link to="/signup" className="signup-btn">Đăng ký</Link>
+                                <Link to="/login" className="login-btn">Đăng nhập</Link>
                             </div>
                         </div>
                     </div>
