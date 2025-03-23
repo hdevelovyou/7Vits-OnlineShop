@@ -54,7 +54,9 @@ const Homepage = () => {
             {/* Products Section */}
             <div className="Products">
                 <div className="grid">
-                    <div className="grid__row">
+                <div className="product-namename">
+                        <h3>New Arrivals</h3>
+                    <div className="grid__row">                 
                         <div className="grid__column-12">
                             <div className="home-product">
                                 <div className="grid__row">
@@ -73,8 +75,11 @@ const Homepage = () => {
                             </div>
                         </div>
                     </div>
+                    </div>
 
-                    <div className="grid__row">
+                    <div className="product-namename">
+                        <h3>New Arrivals</h3>
+                    <div className="grid__row">                 
                         <div className="grid__column-12">
                             <div className="home-product">
                                 <div className="grid__row">
@@ -93,8 +98,10 @@ const Homepage = () => {
                             </div>
                         </div>
                     </div>
-
-                    <div className="grid__row">
+                    </div>
+                    <div className="product-namename">
+                        <h3>New Arrivals</h3>
+                    <div className="grid__row">                 
                         <div className="grid__column-12">
                             <div className="home-product">
                                 <div className="grid__row">
@@ -112,6 +119,7 @@ const Homepage = () => {
                                 </div>
                             </div>
                         </div>
+                    </div>
                     </div>
                 </div>
             </div>
