@@ -5,6 +5,8 @@ import RegisterPage from "./pages/user/registerPage";
 import MasterLayout from "./pages/user/theme/masterLayout";
 import { ROUTES } from "./utils/router";
 import { Routes, Route } from "react-router-dom";
+import OtpPage from "./pages/user/otpPage";
+import ForgotPage from "./pages/user/forgotPage";
 
 const renderUserRoutes = () => {
     const userRouters = [
@@ -23,6 +25,14 @@ const renderUserRoutes = () => {
         {
             path: ROUTES.USER.REGISTER   ,
             component: <RegisterPage />
+        },
+        {
+            path: ROUTES.USER.OTP   ,
+            component: <OtpPage />
+        },
+        {
+            path: ROUTES.USER.FORGOTPASSWORD,
+            component: <ForgotPage />
         },
     ]
     return (

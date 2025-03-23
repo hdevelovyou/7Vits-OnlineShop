@@ -5,5 +5,7 @@ export const ROUTES = {
         REGISTER: '/register',
         PROFILE: '/profile',
         PRODUCT: '/product',
+        OTP: '/otp',
+        FORGOTPASSWORD: '/forgot-password',
     }
 }

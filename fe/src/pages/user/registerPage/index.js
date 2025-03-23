@@ -72,7 +72,7 @@ const RegisterPage = () => {
                         </div>
     
                         <div className="sig-btn">
-                            <Link to="/"><button type="button">Đăng ký</button></Link>
+                            <Link to="/otp"><button type="button">Đăng ký</button></Link>
                         </div>
                 </div>
             </div>
