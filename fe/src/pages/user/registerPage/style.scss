@@ -9,78 +9,78 @@
 }
 
 .form-sign{
-    width: 700px;
+    width: 70rem;
     background: rgb(39, 39, 39);
-    border-radius: 40px;
-    box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.5);
-    padding-top: 30px;
+    border-radius: 4rem;
+    box-shadow: 0 0 1rem 0.5rem rgba(0, 0, 0, 0.5);
+    padding-top: 3rem;
     .title{
         color: white;
-        font-size: 14px;
+        font-size: 1.4rem;
         font-weight: bold;
         text-align: center;
-        padding: 20px 0;
+        padding: 2rem 0;
     }
     .input-group{
         position: relative;
         width: 100%; 
-        height: 50px;
-        margin: 10px 0;
-        padding: 0 20px;
+        height: 5rem;
+        margin: 1rem 0;
+        padding: 0 2rem;
         display: flex;
         justify-content: space-between;
-        gap: 10px;
+        gap: 1rem;
         input{
             background: rgb(90, 90, 90);
             width: 100%;
             height: 100%;
-            border-radius: 20px;
+            border-radius: 2rem;
             border: none;
             outline: none;
-            padding-left: 40px;
-            border: 2px solid #ffffff;
+            padding-left: 4rem;
+            border: 0.2rem solid #ffffff;
             box-sizing: border-box;
         }
         input::placeholder{
             color: white;
-            font-size: 14px;
+            font-size: 1.4rem;
         }
         .icon{
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            left: 35px;
+            left: 3.5rem;
             color: white;
         }
     }
     .input-username{
         position: relative;
         width: 100%; 
-        height: 50px;
-        margin: 10px 0;
-        padding: 0 20px;
+        height: 5rem;
+        margin: 1rem 0;
+        padding: 0 2rem;
         box-sizing: border-box;
         
         input{
             background: rgb(90, 90, 90);
             width: 100%;
             height: 100%;
-            border-radius: 20px;
+            border-radius: 2rem;
             border: none;
             outline: none;
-            padding-left: 40px;
-            border: 2px solid #ffffff;
+            padding-left: 4rem;
+            border: 0.2rem solid #ffffff;
             box-sizing: border-box;
         }
         input::placeholder{
             color: white;
-            font-size: 14px;
+            font-size: 1.4rem;
         }
         .icon{
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            left: 35px;
+            left: 3.5rem;
             color: white;
         }
     }
@@ -88,38 +88,38 @@
     .signup{
         position: relative;
         width: 100%; 
-        margin: 10px 0;
-        padding: 0 20px;
+        margin: 1rem 0;
+        padding: 0 2rem;
         display: flex;
         justify-content: space-between;
-        gap: 10px;
+        gap: 1rem;
         display: flex;  
         .otherSignUp{   
-            font-size: 25px;
+            font-size: 2.5rem;
             display: flex;
             justify-content: left;
-            gap: 10px;
+            gap: 1rem;
             align-items: center;
-            padding: 0px 20px;
+            padding: 0 2rem;
             .icon-gg{
-                font-size: 25px;
+                font-size: 2.5rem;
             }
         }
         .sig-btn{
             text-align: right;
-            padding-bottom: 40px;
-            padding-top: 40px;
+            padding-bottom: 4rem;
+            padding-top: 4rem;
         }
         .sig-btn button{
-            padding: 0 80px;
+            padding: 0 8rem;
             width: 100%;
-            height: 50px;
+            height: 5rem;
             background: #ff0000;
             color: white;
-            font-size: 14px;
+            font-size: 1.4rem;
             font-weight: bold;
             border: none;
-            border-radius: 20px;
+            border-radius: 2rem;
             cursor: pointer;
             transition: all 0.3s;
             &:hover{

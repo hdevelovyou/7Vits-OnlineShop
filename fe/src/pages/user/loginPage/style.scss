@@ -8,59 +8,60 @@
     background: url(../../../assets/images/loginbg.png) no-repeat center center/cover;  
 }
 .form-group{
-    width: 400px;
+    width: 40rem;
     background: rgb(39, 39, 39);
-    border-radius: 40px;
-    box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.5);
-    padding-top: 30px;
+    border-radius: 4rem;
+    box-shadow: 0 0 1rem 0.5rem rgba(0, 0, 0, 0.5);
+    padding-top: 3rem;
     .title{
         color: white;
-        font-size: 14px;
+        font-size: 1.4rem;
         font-weight: bold;
         text-align: center;
-        padding: 20px 0;
+        padding: 2rem 0;
     }
     .input-group{
         position: relative;
         width: 100%; 
-        height: 50px;
-        margin: 10px 0;
-        padding: 0 20px;
+        height: 5rem;
+        margin: 1rem 0;
+        padding: 0 2rem;
         box-sizing: border-box;
         
         input{
             background: rgb(90, 90, 90);
             width: 100%;
             height: 100%;
-            border-radius: 20px;
+            border-radius: 2rem;
             border: none;
             outline: none;
-            padding-left: 40px;
-            border: 2px solid #ffffff;
+            padding-left: 4rem;
+            border: 0.2rem solid #ffffff;
             box-sizing: border-box;
         }
         input::placeholder{
             color: white;
-            font-size: 14px;
+            font-size: 1.4rem;
         }
         .icon{
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            left: 35px;
+            left: 3.5rem;
             color: white;
+            font-size: 1.6rem;
         }
     }
     .remember-forgot{
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 12px;
-        margin: -15px 0 15px;
-        padding: 20px 20px;
+        font-size: 1.2rem;
+        margin: -1.5rem 0 1.5rem;
+        padding: 2rem 2rem;
         font-weight: bold;
         input{
-            margin-right: 5px;
+            margin-right: 0.5rem;
         } 
         label{
             display: flex;
@@ -79,26 +80,26 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 25px;
-        padding: 5px 150px;
+        font-size: 2.5rem;
+        padding: 0.5rem 15rem;
         .icon-gg{
-            font-size: 25px;
+            font-size: 2.5rem;
         }
     }
 
     .login-btn{
         text-align: center;
-        padding-top: 20px;
+        padding-top: 2rem;
     }
     .login-btn button{
         width: 50%;
-        height: 40px;
+        height: 4rem;
         background: #ff0000;
         color: white;
-        font-size: 14px;
+        font-size: 1.4rem;
         font-weight: bold;
         border: none;
-        border-radius: 20px;
+        border-radius: 2rem;
         cursor: pointer;
         transition: all 0.3s;
         &:hover{
@@ -108,18 +109,18 @@
 
     .sig-btn{
         text-align: center;
-        padding-top: 10px;
-        padding-bottom: 20px;
+        padding-top: 1rem;
+        padding-bottom: 2rem;
     }
     .sig-btn button{
         width: 50%;
-        height: 40px;
+        height: 4rem;
         background: gray;
         color: white;
-        font-size: 14px;
+        font-size: 1.4rem;
         font-weight: bold;
         border: none;
-        border-radius: 20px;
+        border-radius: 2rem;
         cursor: pointer;
         transition: all 0.3s;
         &:hover{

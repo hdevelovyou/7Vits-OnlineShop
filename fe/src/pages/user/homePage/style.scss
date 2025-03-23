@@ -1,12 +1,14 @@
+html {
+        font-size: 62.5%;
+}
+
 .banner {
         background: url("../../../assets/images/main.png") no-repeat center center/cover;
         height: 80vh;
         max-width: 100%;
         position: relative;
 }
-html{
-        font-size: 100%;
-}
+
 #section-1 {
         position: absolute;
         color: #fff;
@@ -14,7 +16,7 @@ html{
         justify-content: space-between;
         width: 100%;
         font-size: 2rem;
-        top: 60px;
+        top: 6rem;
         bottom: 0;
         top: 10rem;
 }
@@ -29,17 +31,16 @@ html{
 }
 
 #section-1 .introduce {
-        line-height: 70px;
+        line-height: 7rem;
         margin-left: 10rem;
-        margin-top: 100px;
+        margin-top: 10rem;
         animation: fadeInLeft 1s ease;
-       
 }
 
 @keyframes fadeInLeft {
         from {
                 opacity: 0;
-                transform: translateX(-50px);
+                transform: translateX(-5rem);
         }
         to {
                 opacity: 1;
@@ -53,7 +54,7 @@ html{
         word-wrap: break-word;
         width: 43rem;
         line-height: 6rem;
-        text-shadow: 4px 4px 8px #ccc;
+        text-shadow: 0.4rem 0.4rem 0.8rem #ccc;
 }
 
 #section-1 .text-title {
@@ -73,20 +74,20 @@ html{
 
 #section-1 .btn-shop {
         background-color: rgba(221, 43, 43, 0.842);
-        padding: 8px 32px;
-        border-radius: 60px;
+        padding: 0.8rem 3.2rem;
+        border-radius: 6rem;
         color: #fff;
         font-weight: bold;
-        margin: 30px 0;
+        margin: 3rem 0;
         text-decoration: none;
         transition: all 0.3s ease;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 0.1rem;
 }
 
 #section-1 a:hover {
         background-color: rgba(221, 43, 43, 1);
-        box-shadow: 0 5px 15px rgba(221, 43, 43, 0.3);
+        box-shadow: 0 0.5rem 1.5rem rgba(221, 43, 43, 0.3);
 }
 
 #section-1 .quality-text {
@@ -99,20 +100,20 @@ html{
 }
 
 .quality-item:hover {
-        transform: translateY(-5px);
+        transform: translateY(-0.5rem);
 }
 
 .quality-count {
         font-size: 3.2rem;
         font-weight: bold;
         color: #fff;
-        padding-right: 100px;
+        padding-right: 10rem;
 }
 
 #content .logo {
         background-color: #fff;
         padding: 2rem 0;
-        box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 -0.5rem 1.5rem rgba(0, 0, 0, 0.1);
         display: flex;
         justify-content: space-around;
         align-items: center;
@@ -133,7 +134,7 @@ html{
 @media screen and (max-width: 1200px) {
         #section-1 .text-introduce {
                 font-size: 6rem;
-                width: 600px;
+                width: 60rem;
         }
 
         #section-1 img {
@@ -208,23 +209,23 @@ html{
 }
 
 .grid {
-        width: 1200px;
+        width: 120rem;
         max-width: 100%;
-        margin: 0 auto  ;
+        margin: 0 auto;
 }
 .grid__row{
         display: flex;
         flex-wrap: wrap;
-        margin-left: -12px;
-        margin-right: -12px;
+        margin-left: -1.2rem;
+        margin-right: -1.2rem;
 }
 .grid__column-12{
-        margin-left: 12px;
-        margin-right: 12px;
+        margin-left: 1.2rem;
+        margin-right: 1.2rem;
         width: 100%;
 }
 .grid__column-3{
-        margin-left: 12px;
-        margin-right: 12px;
+        margin-left: 1.2rem;
+        margin-right: 1.2rem;
         width: 100%;
 }
