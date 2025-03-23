@@ -33,12 +33,6 @@ const RegisterPage = () => {
                             name="email"
                             placeholder="Email / SĐT"
                         />
-                        <input
-                            type="otp"
-                            id="otp"
-                            name="otp"
-                            placeholder="Mã OTP"
-                        />
                     </div>
                     <div className="input-username">
                         <FaCircleUser className="icon" />
