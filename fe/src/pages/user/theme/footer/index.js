@@ -2,7 +2,7 @@ import { memo } from "react";
 
 const Footer = () => {
     return (
-        <div>
+        <div id="footer">
             <h1>Footer đây</h1>
         </div>
     )

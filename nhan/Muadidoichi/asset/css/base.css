@@ -29,8 +29,16 @@ a{
 .grid_row{
     display: flex;
     flex-wrap: wrap;
+    margin-left: -12px;
+    margin-right: -12px;
+}
+.grid_column-12{
+    padding-left: 12px;
+    padding-right: 12px;
+    width: 100%;
 }
 
-::placeholder{
-    opacity: 0.1;
+.grid_column-3{
+    width: 25%;
 }
+

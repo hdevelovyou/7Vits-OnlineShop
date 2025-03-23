@@ -1,11 +1,13 @@
 import { memo } from "react";
-
+import "./style.scss";
 const Homepage = () => {
     return (
-        <div>
-            <h1>Homepage đây</h1>
+        <div id="content">
+            <div className="banner">
+
+            </div>
         </div>
-    )
+    );
 }
 
-export default memo (Homepage);
+export default memo(Homepage);

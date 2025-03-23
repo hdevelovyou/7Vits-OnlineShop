@@ -43,7 +43,7 @@ const Header = () => {
         },
     ]);
     return (
-       <>
+       <div className="header">
            <div className="header-top">
                 <div className="container">
                     <div className="row">
@@ -115,7 +115,7 @@ const Header = () => {
                     </div>
                 </div>
            </div>
-       </>
+       </div>
     )
 }
 
