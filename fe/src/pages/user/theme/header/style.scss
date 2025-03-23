@@ -33,18 +33,20 @@
     padding: 0.8rem 0 0.5rem;
     justify-items: center;
 }
-
 .header-logo{
-    margin: 1.5rem 0 1.5rem;
+    padding: 1rem 0;
     display: flex;
     justify-content: center;
     img{
         width: 10rem;
     }
 }
+.header-main{
+    margin: -1.8rem;
+}
 
 .header-menu{
-    padding: 5rem 0;
+    padding: 4.0rem 0;
     ul{
         display: flex;
         list-style: none;
@@ -95,7 +97,6 @@
 .header-login-signup{
     display: flex;
     justify-content: center;
-    padding: 1rem 0 1rem;
     font-size: 1.4rem;
     font-weight: bold;
     .login-btn {
