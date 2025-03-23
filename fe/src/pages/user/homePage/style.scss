@@ -4,7 +4,7 @@ html {
 
 .banner {
         background: url("../../../assets/images/main.png") no-repeat center center/cover;
-        height: 80vh;
+        height: 87vh;
         max-width: 100%;
         position: relative;
 }
@@ -331,6 +331,6 @@ html {
     /* Mobile: 1 sản phẩm trên 1 dòng */
     @media (max-width: 480px) {
         .grid__column-3 {
-            width: calc(100% - 2.4rem);
+            width: calc(50% - 2.4rem);
         }
     }
