@@ -1,0 +1,130 @@
+.signup-page {
+    position: relative;
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    height: 100vh;
+    background: url(../../../assets/images/loginbg.png) no-repeat center center/cover;  
+}
+
+.form-sign{
+    width: 700px;
+    background: rgb(39, 39, 39);
+    border-radius: 40px;
+    box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.5);
+    padding-top: 30px;
+    .title{
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+        text-align: center;
+        padding: 20px 0;
+    }
+    .input-group{
+        position: relative;
+        width: 100%; 
+        height: 50px;
+        margin: 10px 0;
+        padding: 0 20px;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        input{
+            background: rgb(90, 90, 90);
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+            padding-left: 40px;
+            border: 2px solid #ffffff;
+            box-sizing: border-box;
+        }
+        input::placeholder{
+            color: white;
+            font-size: 14px;
+        }
+        .icon{
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 35px;
+            color: white;
+        }
+    }
+    .input-username{
+        position: relative;
+        width: 100%; 
+        height: 50px;
+        margin: 10px 0;
+        padding: 0 20px;
+        box-sizing: border-box;
+        
+        input{
+            background: rgb(90, 90, 90);
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+            padding-left: 40px;
+            border: 2px solid #ffffff;
+            box-sizing: border-box;
+        }
+        input::placeholder{
+            color: white;
+            font-size: 14px;
+        }
+        .icon{
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 35px;
+            color: white;
+        }
+    }
+
+    .signup{
+        position: relative;
+        width: 100%; 
+        margin: 10px 0;
+        padding: 0 20px;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        display: flex;  
+        .otherSignUp{   
+            font-size: 25px;
+            display: flex;
+            justify-content: left;
+            gap: 10px;
+            align-items: center;
+            padding: 0px 20px;
+            .icon-gg{
+                font-size: 25px;
+            }
+        }
+        .sig-btn{
+            text-align: right;
+            padding-bottom: 40px;
+            padding-top: 40px;
+        }
+        .sig-btn button{
+            padding: 0 80px;
+            width: 100%;
+            height: 50px;
+            background: #ff0000;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            &:hover{
+                background: #810000;
+            }
+        }
+    }
+}

@@ -108,7 +108,7 @@ const Header = () => {
                                     
                                 <div className="search"><IoSearchCircleSharp /></div>
                                 <div className="cart"><FaShoppingCart /></div>
-                                <Link to="/signup" className="signup-btn">Đăng ký</Link>
+                                <Link to="/register" className="signup-btn">Đăng ký</Link>
                                 <Link to="/login" className="login-btn">Đăng nhập</Link>
                             </div>
                         </div>
