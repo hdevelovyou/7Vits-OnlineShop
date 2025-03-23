@@ -43,7 +43,7 @@ const Header = () => {
         },
     ]);
     return (
-       <div className="header">
+       <div id="header">
            <div className="header-top">
                 <div className="container">
                     <div className="row">
