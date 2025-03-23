@@ -208,13 +208,10 @@ html {
         height: 100vh;
 }
 
-.grid {
-        width: 120rem;
-        max-width: 100%;
-        margin: 0 auto;
-}
+
 .grid__row{
         display: flex;
+        margin-top:2rem;
         flex-wrap: wrap;
         margin-left: -1.2rem;
         margin-right: -1.2rem;
@@ -227,24 +224,15 @@ html {
 .grid__column-3{
         margin-left: 1.2rem;
         margin-right: 1.2rem;
-        width: 100%;
+        width: calc(20% - 2.4rem);
 }
-
-
 
 .grid {
         width: 120rem;
         max-width: 100%;
         margin: 0 auto;
-    }
+}
     
-    .grid__row {
-      
-        margin-top:2rem;
-        margin-left: -1.2rem;
-        margin-right: -1.2rem;
-        
-    }
 .product-namename{
         h3{
                 font-size: 5rem;
@@ -253,25 +241,11 @@ html {
         }
        margin: 140px 0px;
 }
-    
-    .grid__column-12 {
-        margin-left: 1.2rem;
-        margin-right: 1.2rem;
-        width: 100%;
-    }
-    
-    /* 4 sản phẩm trên 1 dòng */
-    .grid__column-3 {
-        margin-left: 1.2rem;
-        margin-right: 1.2rem;
-        width: calc(25% - 2.4rem); /* Chia 4 cột */
-    }
-    
-    /* Products Section */
 .Products {
         padding: 50px 0;
         text-align: center;
         .home-product-item {
+            margin-bottom: 20px;
             background: rgb(255 255 255 / 16%);
             border-radius: 10px;
             padding: 10px;
@@ -282,6 +256,8 @@ html {
             .mota-name{
                 font-size: 1.6rem;
                 font-weight: bold;
+                margin: 10px 0;
+              
             }
             &:hover {
                 transform: translateY(-5px);
@@ -307,6 +283,9 @@ html {
                 font-size: 0.9rem;
                 color: gray;
                 padding: 0 5px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
     
             &_price {
@@ -314,19 +293,35 @@ html {
                 font-weight: bold;
                 color: #e63946;
                 padding: 5px;
+                display: flex;
+                justify-content: space-between;
             }
     
-            &_stars {
-                color: #FFD700;
+            &_rating {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
                 padding: 5px;
+                
+                .fa-star {
+                    color: #ddd;
+                    font-size: 1.4rem;
+                    transition: color 0.2s ease;
+                    
+                    &.active {
+                        color: #FFD700;
+                    }
+                }
+                
+                .rating-number {
+                    font-size: 1.2rem;
+                    color: #666;
+                    margin-left: 0.5rem;
+                }
             }
         }
     }
-    .mota{
-        padding: 10px;
-        font-weight: bold;
-        color: black;
-    }
+   
     @media (max-width: 768px) {
         .grid__column-3 {
             width: calc(50% - 2.4rem); /* Chia 2 cột */

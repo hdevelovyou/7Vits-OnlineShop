@@ -5,13 +5,15 @@ import adobe from '../../../assets/images/adobe.png';
 import logofc from '../../../assets/images/logofc.png';
 import League_of_Legends_2019_vector from '../../../assets/images/League_of_Legends_2019_vector.png';
 import steam_logo from '../../../assets/images/steam_logo.png';
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 const products = [
     {
         id: 1,
         name: "Áo CR7",
         desc: "Áo đấu chính thức của Ronaldo.",
-        price: "499,000 VND",
+        priceOld: "499,000đ",
+        priceNew: "399,000đ",
         image: cr7,
         rating: 5,
     },
@@ -19,7 +21,8 @@ const products = [
         id: 2,
         name: "Adobe License",
         desc: "Phần mềm bản quyền Adobe chính hãng.",
-        price: "1,299,000 VND",
+        priceOld: "1,299,000đ",
+        priceNew: "800,000đ",
         image: adobe,
         rating: 4,
     },
@@ -27,7 +30,8 @@ const products = [
         id: 3,
         name: "League of Legends Skin",
         desc: "Trang phục độc quyền trong game.",
-        price: "399,000 VND",
+        priceOld: "399,000đ",
+        priceNew: "299,000đ",
         image: League_of_Legends_2019_vector,
         rating: 5,
     },
@@ -35,7 +39,26 @@ const products = [
         id: 4,
         name: "Steam Gift Card",
         desc: "Thẻ nạp Steam dành cho game thủ.",
-        price: "1,000,000 VND",
+        priceOld: "1,000,000đ",
+        priceNew: "800,000đ", 
+        image: steam_logo,
+        rating: 4,
+    },
+    {
+        id: 4,
+        name: "Steam Gift Card",
+        desc: "Thẻ nạp Steam dành cho game thủ.",
+        priceOld: "1,000,000đ",
+        priceNew: "800,000đ",
+        image: steam_logo,
+        rating: 4,
+    },
+    {
+        id: 4,
+        name: "Steam Gift Card",
+        desc: "Thẻ nạp Steam dành cho game thủ.",
+        priceOld: "1,000,000đ",
+        priceNew: "800,000đ",
         image: steam_logo,
         rating: 4,
     },
@@ -97,8 +120,19 @@ const Homepage = () => {
                                                 <div className="mota">
                                                 <p className="mota-name home-product-item_name">{product.name}</p>
                                                 <p className="mota-name home-product-item_desc">{product.desc}</p>
-                                                <p className="mota-name home-product-item_price">{product.price}</p>
-                                                <p className="mota-name home-product-item_rating">Rating: {product.rating}</p>
+                                                <p className="mota-name home-product-item_rating">
+                                                    {[...Array(5)].map((_, index) => (
+                                                        <i 
+                                                            key={index} 
+                                                            className={`fa-solid fa-star ${index < product.rating ? 'active' : ''}`}
+                                                        ></i>
+                                                    ))}
+                                                    <span className="rating-number">({product.rating})</span>
+                                                </p>
+                                                <div className="home-product-item_price">
+                                                    <span className="mota-name home-product-item_price-old"><s>{product.priceOld}</s></span>
+                                                    <span className="mota-name home-product-item_price-new">{product.priceNew}</span>
+                                                </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -122,7 +156,23 @@ const Homepage = () => {
                                                     className="home-product-item_img" 
                                                     style={{ backgroundImage: `url(${product.image})` }}
                                                 ></div>
-                                                <p className="home-product-item_name">{product.name}</p>
+                                                <div className="mota">
+                                                <p className="mota-name home-product-item_name">{product.name}</p>
+                                                <p className="mota-name home-product-item_desc">{product.desc}</p>
+                                                <p className="mota-name home-product-item_rating">
+                                                    {[...Array(5)].map((_, index) => (
+                                                        <i 
+                                                            key={index} 
+                                                            className={`fa-solid fa-star ${index < product.rating ? 'active' : ''}`}
+                                                        ></i>
+                                                    ))}
+                                                    <span className="rating-number">({product.rating})</span>
+                                                </p>
+                                                <div className="home-product-item_price">
+                                                    <span className="mota-name home-product-item_price-old"><s>{product.priceOld}</s></span>
+                                                    <span className="mota-name home-product-item_price-new">{product.priceNew}</span>
+                                                </div>
+                                                </div>
                                             </div>
                                         </div>
                                     ))}
@@ -131,6 +181,7 @@ const Homepage = () => {
                         </div>
                     </div>
                     </div>
+
                     <div className="product-namename">
                         <h3>New Arrivals</h3>
                     <div className="grid__row">                 
@@ -144,7 +195,23 @@ const Homepage = () => {
                                                     className="home-product-item_img" 
                                                     style={{ backgroundImage: `url(${product.image})` }}
                                                 ></div>
-                                                <p className="home-product-item_name">{product.name}</p>
+                                                <div className="mota">
+                                                <p className="mota-name home-product-item_name">{product.name}</p>
+                                                <p className="mota-name home-product-item_desc">{product.desc}</p>
+                                                <p className="mota-name home-product-item_rating">
+                                                    {[...Array(5)].map((_, index) => (
+                                                        <i 
+                                                            key={index} 
+                                                            className={`fa-solid fa-star ${index < product.rating ? 'active' : ''}`}
+                                                        ></i>
+                                                    ))}
+                                                    <span className="rating-number">({product.rating})</span>
+                                                </p>
+                                                <div className="home-product-item_price">
+                                                    <span className="mota-name home-product-item_price-old"><s>{product.priceOld}</s></span>
+                                                    <span className="mota-name home-product-item_price-new">{product.priceNew}</span>
+                                                </div>
+                                                </div>
                                             </div>
                                         </div>
                                     ))}
@@ -153,6 +220,7 @@ const Homepage = () => {
                         </div>
                     </div>
                     </div>
+
                 </div>
             </div>
         </div>
