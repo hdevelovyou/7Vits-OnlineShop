@@ -10,7 +10,7 @@
 <body>
     <h2>Login</h2>
     <form id="loginForm">
-        <input type="email" id="email" placeholder="Email" required><br>
+        <input type="text" id="userName" placeholder="Username" required><br>
         <input type="password" id="password" placeholder="Password" required><br>
         <button type="submit">Login</button>
     </form>
@@ -19,13 +19,13 @@
         document.getElementById("loginForm").addEventListener("submit", async function (event) {
             event.preventDefault();
 
-            const email = document.getElementById("email").value;
+            const userName = document.getElementById("userName").value;
             const password = document.getElementById("password").value;
 
             const response = await fetch("/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ userName, password })
             });
 
             const result = await response.json();
