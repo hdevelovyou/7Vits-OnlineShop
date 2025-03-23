@@ -40,11 +40,18 @@ const Homepage = () => {
             </div>
 
             {/* Logo Section */}
+            <div className="section-logo">
+          
+            <div className="grid">
             <div className="logo">
+         
                 {[logofc, League_of_Legends_2019_vector, steam_logo, adobe].map((logo, index) => (
                     <img key={index} src={logo} alt="" className="section-logo" />
                 ))}
             </div>
+            </div>
+            </div>
+                
 
             {/* Products Section */}
             <div className="Products">
