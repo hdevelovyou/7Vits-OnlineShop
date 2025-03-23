@@ -229,3 +229,79 @@ html {
         margin-right: 1.2rem;
         width: 100%;
 }
+
+
+
+.grid {
+        width: 120rem;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    
+    .grid__row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-left: -1.2rem;
+        margin-right: -1.2rem;
+    }
+    
+    .grid__column-12 {
+        margin-left: 1.2rem;
+        margin-right: 1.2rem;
+        width: 100%;
+    }
+    
+    /* 4 sản phẩm trên 1 dòng */
+    .grid__column-3 {
+        margin-left: 1.2rem;
+        margin-right: 1.2rem;
+        width: calc(25% - 2.4rem); /* Chia 4 cột */
+    }
+    
+    /* Products Section */
+    .Products {
+        padding: 50px 0;
+        text-align: center;
+    
+        .home-product-item {
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
+            cursor: pointer;
+    
+            &:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            }
+    
+            &_img {
+                width: 100%;
+                height: 200px;
+                background-size: cover;
+                background-position: center;
+                border-radius: 10px;
+            }
+    
+            &_name {
+                margin-top: 10px;
+                font-size: 1rem;
+                font-weight: bold;
+            }
+        }
+    }
+
+    
+    @media (max-width: 768px) {
+        .grid__column-3 {
+            width: calc(50% - 2.4rem); /* Chia 2 cột */
+        }
+    }
+    
+    /* Mobile: 1 sản phẩm trên 1 dòng */
+    @media (max-width: 480px) {
+        .grid__column-3 {
+            width: calc(100% - 2.4rem);
+        }
+    }
