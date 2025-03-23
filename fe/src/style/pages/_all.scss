@@ -3,6 +3,7 @@
 @import "responsive";
 html,
 body {
+    
     margin: 0;
     background: black;
 }
@@ -11,6 +12,7 @@ body {
     padding: 0;
     margin: 0;
     color: rgb(255, 255, 255);
+    box-sizing: border-box;
 }
 
 .container {
