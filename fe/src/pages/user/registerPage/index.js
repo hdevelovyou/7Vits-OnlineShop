@@ -66,7 +66,7 @@ const RegisterPage = () => {
                         </div>
     
                         <div className="sig-btn">
-                            <Link to="/otp"><button type="button">Đăng ký</button></Link>
+                            <Link to="/otp-for-signup"><button type="button">Đăng ký</button></Link>
                         </div>
                 </div>
             </div>

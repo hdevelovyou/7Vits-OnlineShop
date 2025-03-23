@@ -76,14 +76,16 @@
             text-decoration: underline;
         }
     }
-    .otherLogin{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    .otherLogin{   
         font-size: 2.5rem;
-        padding: 0.5rem 15rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+        padding: 0 2rem;
         .icon-gg{
-            font-size: 2.5rem;
+            padding-top: 0.2rem;
+            font-size: 3rem;
         }
     }
 

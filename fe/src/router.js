@@ -7,7 +7,8 @@ import { ROUTES } from "./utils/router";
 import { Routes, Route } from "react-router-dom";
 import OtpPage from "./pages/user/otpPage";
 import ForgotPage from "./pages/user/forgotPage";
-
+import OtpPage2 from "./pages/user/otpPage2";
+import NewPassword from "./pages/user/newPassword";
 const renderUserRoutes = () => {
     const userRouters = [
         {
@@ -27,12 +28,20 @@ const renderUserRoutes = () => {
             component: <RegisterPage />
         },
         {
-            path: ROUTES.USER.OTP   ,
+            path: ROUTES.USER.OTPFORSIGNUP ,
             component: <OtpPage />
         },
         {
             path: ROUTES.USER.FORGOTPASSWORD,
             component: <ForgotPage />
+        },
+        {
+            path: ROUTES.USER.OTPFORFORGOT, 
+            component: <OtpPage2 />
+        },
+        {
+            path: ROUTES.USER.NEWPASSWORD, 
+            component: <NewPassword />
         },
     ]
     return (

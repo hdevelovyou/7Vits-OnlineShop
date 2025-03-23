@@ -1,28 +1,28 @@
 import { memo } from "react";
 import "./style.scss";
 import { Link } from "react-router-dom";
-const ForgotPassword = () => {
+const OtpPage2 = () => {
     return (
-        <div className="forgot-page">
+        <div className="otp-page">
             <div className="form-otp">
                     <div className="title">
-                        <h1>Quên mật khẩu</h1>
+                        <h1>Nhập mã OTP</h1>
                     </div>
                     <div className="input-group">
                         <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="Nhập Email / SĐT"
+                            type="fname"
+                            id="fname"
+                            name="fname"
+                            placeholder="Mã OTP"
                         />
                        
                     </div>
                     <div className="btn">
-                        <Link to="/otp-for-forgot" className="cf-btn"><button type="button">Xác nhận</button></Link>
+                        <Link to="/new-password" className="cf-btn"><button type="button">Xác nhận</button></Link>
                     </div>
                 </div>
             </div>
     )
 }
 
-export default memo (ForgotPassword);
+export default memo (OtpPage2);
