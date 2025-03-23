@@ -7,11 +7,38 @@ import League_of_Legends_2019_vector from '../../../assets/images/League_of_Lege
 import steam_logo from '../../../assets/images/steam_logo.png';
 
 const products = [
-    { id: 1, image: cr7, name: "Cristiano Ronaldo Merchandise" },
-    { id: 2, image: adobe, name: "Adobe Creative Cloud" },
-    { id: 3, image: logofc, name: "Football Club Logo" },
-    { id: 4, image: League_of_Legends_2019_vector, name: "League of Legends Skin" },
-    { id: 5, image: steam_logo, name: "Steam Gift Card" }
+    {
+        id: 1,
+        name: "Áo CR7",
+        desc: "Áo đấu chính thức của Ronaldo.",
+        price: "499,000 VND",
+        image: cr7,
+        rating: 5,
+    },
+    {
+        id: 2,
+        name: "Adobe License",
+        desc: "Phần mềm bản quyền Adobe chính hãng.",
+        price: "1,299,000 VND",
+        image: adobe,
+        rating: 4,
+    },
+    {
+        id: 3,
+        name: "League of Legends Skin",
+        desc: "Trang phục độc quyền trong game.",
+        price: "399,000 VND",
+        image: League_of_Legends_2019_vector,
+        rating: 5,
+    },
+    {
+        id: 4,
+        name: "Steam Gift Card",
+        desc: "Thẻ nạp Steam dành cho game thủ.",
+        price: "1,000,000 VND",
+        image: steam_logo,
+        rating: 4,
+    },
 ];
 
 const Homepage = () => {
@@ -67,7 +94,12 @@ const Homepage = () => {
                                                     className="home-product-item_img" 
                                                     style={{ backgroundImage: `url(${product.image})` }}
                                                 ></div>
-                                                <p className="home-product-item_name">{product.name}</p>
+                                                <div className="mota">
+                                                <p className="mota-name home-product-item_name">{product.name}</p>
+                                                <p className="mota-name home-product-item_desc">{product.desc}</p>
+                                                <p className="mota-name home-product-item_price">{product.price}</p>
+                                                <p className="mota-name home-product-item_rating">Rating: {product.rating}</p>
+                                                </div>
                                             </div>
                                         </div>
                                     ))}
