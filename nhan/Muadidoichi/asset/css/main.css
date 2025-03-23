@@ -7,20 +7,19 @@
     overflow: hidden;
 }
 
+
 #section-1{
     position: absolute;
     color: #fff;
     justify-content: space-between;
-    align-items: center;
     display: flex;
     width: 100%;
-    bottom:0;
     font-size: 2rem;
+    top:60px;
 }
 
 #section-1 img {
-    width: 80rem;
-    height: auto;
+    bottom: 0;
     transition: transform 0.3s ease;
 }
 
@@ -32,6 +31,7 @@
    line-height: 70px;
    margin-left:20rem;
    animation: fadeInLeft 1s ease;
+   margin-top: 100px;
 }
 
 @keyframes fadeInLeft {
@@ -48,12 +48,11 @@
 #section-1 .text-introduce {
     font-weight: bold;
     text-transform: uppercase;
-    font-size: 8rem;
-    word-wrap: break-word; /* Tự động xuống dòng */
-    width: 850px;
-    height:14rem;
-    line-height: 9rem;
+    word-wrap: break-word;
+    width: 43rem;
+    line-height: 6rem;
     text-shadow: 4px 4px 8px #ccc;
+    height: 131px;
 }
 #section-1 .text-title{
     opacity: 0.5;
@@ -68,23 +67,21 @@
     line-height: 4rem;
     margin-top: 2rem;
 }
-#section-1 a{
+#section-1 .btn-shop{
    background-color: rgba(221, 43, 43, 0.842);
-   padding:1rem 9rem;
+   padding:8px 32px;
    border-radius: 60px;
    color:#fff;
    font-weight: bold;
    margin: 30px 0;
-   display: inline-block;
    text-decoration: none;
-   transition: transform 0.3s ease;
+   transition: all 0.3s ease;
    text-transform: uppercase;
    letter-spacing: 1px;
 }
 
 #section-1 a:hover {
     background-color: rgba(221, 43, 43, 1);
-    transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(221, 43, 43, 0.3);
 }
 
@@ -105,6 +102,7 @@
     font-size: 3.2rem;
     font-weight: bold;
     color: #fff;
+    padding-right: 100px;
 }
 
 .content-section .logo{
@@ -198,5 +196,11 @@
     #section-1 img {
         width: 25rem;
     }
+}
+
+
+.content_product{
+    background-color: #ccc;
+    height: 100vh;
 }
 

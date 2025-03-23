@@ -21,13 +21,6 @@
 .header_navbar img {
     font-size: 1rem;
 }
-.fullscreen-image {
-    width: 100%; /* Giữ nguyên chiều rộng */
-    height: 100vh; /* Chiếm toàn bộ chiều cao màn hình */
-    position: relative; /* Để có thể sử dụng z-index */
-    z-index: -1;
-}
-
 .header_navbar{
     display: flex;
     justify-content: space-between;
@@ -43,7 +36,6 @@
 
 .header_navbar-list a{
     text-decoration: none;
-    
 }
 
 .header_navbar-item{
@@ -225,7 +217,6 @@ input::placeholder {
     justify-content: space-around;
     padding: 40px 0;
     font-size: 20px;
-    margin: 0 200px;
 }
 
 #footer .footer_name{
