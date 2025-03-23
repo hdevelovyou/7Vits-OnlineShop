@@ -1,5 +1,230 @@
 .banner {
         background: url("../../../assets/images/main.png") no-repeat center center/cover;
-        height: 100vh;
+        height: 80vh;
         max-width: 100%;
+        position: relative;
+}
+html{
+        font-size: 62.5%;
+}
+#section-1 {
+        position: absolute;
+        color: #fff;
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        font-size: 2rem;
+        top: 60px;
+        bottom: 0;
+        top: 10rem;
+}
+
+#section-1 img {
+        bottom: 0;
+        transition: transform 0.3s ease;
+}
+
+#section-1 img:hover {
+        transform: scale(1.05);
+}
+
+#section-1 .introduce {
+        line-height: 70px;
+        margin-left: 10rem;
+        margin-top: 100px;
+        animation: fadeInLeft 1s ease;
+       
+}
+
+@keyframes fadeInLeft {
+        from {
+                opacity: 0;
+                transform: translateX(-50px);
+        }
+        to {
+                opacity: 1;
+                transform: translateX(0);
+        }
+}
+
+#section-1 .text-introduce {
+        font-weight: bold;
+        text-transform: uppercase;
+        word-wrap: break-word;
+        width: 43rem;
+        line-height: 6rem;
+        text-shadow: 4px 4px 8px #ccc;
+}
+
+#section-1 .text-title {
+        opacity: 0.5;
+        font-style: italic;
+        font-size: 1.6rem;
+        margin: 1rem 0;
+}
+
+#section-1 .quality {
+        display: flex;
+        justify-content: space-between;
+        width: 70%;
+        line-height: 4rem;
+        margin-top: 2rem;
+}
+
+#section-1 .btn-shop {
+        background-color: rgba(221, 43, 43, 0.842);
+        padding: 8px 32px;
+        border-radius: 60px;
+        color: #fff;
+        font-weight: bold;
+        margin: 30px 0;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+}
+
+#section-1 a:hover {
+        background-color: rgba(221, 43, 43, 1);
+        box-shadow: 0 5px 15px rgba(221, 43, 43, 0.3);
+}
+
+#section-1 .quality-text {
+        opacity: 0.5;
+        font-size: 1.3rem;
+}
+
+.quality-item {
+        transition: transform 0.3s ease;
+}
+
+.quality-item:hover {
+        transform: translateY(-5px);
+}
+
+.quality-count {
+        font-size: 3.2rem;
+        font-weight: bold;
+        color: #fff;
+        padding-right: 100px;
+}
+
+#content .logo {
+        background-color: #fff;
+        padding: 2rem 0;
+        box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+}
+
+.logo img {
+        height: 9rem;
+        transition: transform 0.3s ease;
+        filter: grayscale(100%);
+}
+
+.logo img:hover {
+        transform: scale(1.1);
+        filter: grayscale(0%);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1200px) {
+        #section-1 .text-introduce {
+                font-size: 6rem;
+                width: 600px;
+        }
+
+        #section-1 img {
+                width: 60rem;
+        }
+}
+
+@media screen and (max-width: 992px) {
+        #section-1 {
+                flex-direction: column;
+                text-align: center;
+                padding: 2rem;
+        }
+
+        #section-1 .introduce {
+                margin-left: 0;
+                margin-bottom: 2rem;
+        }
+
+        #section-1 .text-introduce {
+                width: 100%;
+                font-size: 4rem;
+        }
+
+        #section-1 img {
+                width: 40rem;
+        }
+
+        .logo {
+                flex-wrap: wrap;
+                gap: 2rem;
+        }
+}
+
+@media screen and (max-width: 768px) {
+        #section-1 .text-introduce {
+                font-size: 3rem;
+        }
+
+        #section-1 .quality {
+                flex-direction: column;
+                width: 100%;
+                text-align: center;
+        }
+
+        #section-1 img {
+                width: 30rem;
+        }
+
+        .logo img {
+                height: 8rem;
+        }
+}
+
+@media screen and (max-width: 576px) {
+        #section-1 .text-introduce {
+                font-size: 2.5rem;
+        }
+
+        #section-1 a {
+                padding: 0.8rem 4rem;
+        }
+
+        #section-1 img {
+                width: 25rem;
+        }
+}
+
+.content_product {
+        background-color: #ccc;
+        height: 100vh;
+}
+
+.grid {
+        width: 1200px;
+        max-width: 100%;
+        margin: 0 auto  ;
+}
+.grid__row{
+        display: flex;
+        flex-wrap: wrap;
+        margin-left: -12px;
+        margin-right: -12px;
+}
+.grid__column-12{
+        margin-left: 12px;
+        margin-right: 12px;
+        width: 100%;
+}
+.grid__column-3{
+        margin-left: 12px;
+        margin-right: 12px;
+        width: 100%;
 }
