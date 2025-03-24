@@ -10,11 +10,11 @@ const LoginPage = () => {
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const navigate = useNavigate(); // Chuyển hướng sau khi đăng nhập thành công
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        setError(""); // Xóa lỗi cũ
+        setError("");
 
         try {
             const response = await fetch("http://localhost:5000/api/auth/login", {
@@ -30,7 +30,7 @@ const LoginPage = () => {
             localStorage.setItem("user", JSON.stringify(data.user));
 
             alert("Đăng nhập thành công!");
-            navigate("/"); // Chuyển về trang chủ sau khi login thành công
+            navigate("/");
         } catch (err) {
             alert(err.message);
         }

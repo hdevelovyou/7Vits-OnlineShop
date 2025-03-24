@@ -7,12 +7,12 @@ exports.register = async (req, res) => {
     try {
         const { firstName, lastName, userName, email, password } = req.body;
 
-        // Kiểm tra xem user đã tồn tại chưa
+        // Kiểm tra xem user đã tồn tại chưa (email có thể là email hoặc số điện thoại)
         const checkUserSQL = `SELECT * FROM users WHERE userName = ? OR email = ?`;
         db.query(checkUserSQL, [userName, email], async (err, results) => {
             if (err) return res.status(500).json({ error: err.message });
             if (results.length > 0) {
-                return res.status(400).json({ error: 'UserName hoặc Email đã tồn tại' });
+                return res.status(400).json({ error: 'Username hoặc Email/SĐT đã tồn tại' });
             }
 
             // Mã hóa mật khẩu
@@ -29,12 +29,12 @@ exports.register = async (req, res) => {
     }
 };
 
-// Đăng nhập
+// Đăng nhập (chấp nhận username, email hoặc số điện thoại)
 exports.login = (req, res) => {
     const { userName, password } = req.body;
-    const sql = `SELECT * FROM users WHERE userName = ?`;
+    const sql = `SELECT * FROM users WHERE userName = ? OR email = ?`;
 
-    db.query(sql, [userName], async (err, results) => {
+    db.query(sql, [userName, userName], async (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
         if (results.length === 0) return res.status(400).json({ error: 'Tài khoản không tồn tại' });
 
