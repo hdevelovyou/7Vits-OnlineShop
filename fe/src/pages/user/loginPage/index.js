@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo, useState, useEffect } from "react";
 import "./style.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { FaFacebook } from "react-icons/fa6";
@@ -9,8 +9,21 @@ import { FaLock } from "react-icons/fa";
 const LoginPage = () => {
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
+    const [remember, setRemember] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
+
+    // Khi component mount, kiểm tra xem có dữ liệu được lưu không
+    useEffect(() => {
+        const savedUser = localStorage.getItem("rememberedUser");
+        const savedPassword = localStorage.getItem("rememberedPassword");
+
+        if (savedUser && savedPassword) {
+            setUserName(savedUser);
+            setPassword(savedPassword);
+            setRemember(true);
+        }
+    }, []);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -28,6 +41,15 @@ const LoginPage = () => {
 
             localStorage.setItem("token", data.token);
             localStorage.setItem("user", JSON.stringify(data.user));
+
+            // Nếu checkbox "Ghi nhớ đăng nhập" được chọn, lưu username và password vào localStorage
+            if (remember) {
+                localStorage.setItem("rememberedUser", userName);
+                localStorage.setItem("rememberedPassword", password);
+            } else {
+                localStorage.removeItem("rememberedUser");
+                localStorage.removeItem("rememberedPassword");
+            }
 
             alert("Đăng nhập thành công!");
             navigate("/");
@@ -73,7 +95,13 @@ const LoginPage = () => {
 
                     <div className="remember-forgot">
                         <label>
-                            <input type="checkbox" id="remember" name="remember" />
+                            <input
+                                type="checkbox"
+                                id="remember"
+                                name="remember"
+                                checked={remember}
+                                onChange={() => setRemember(!remember)}
+                            />
                             Ghi nhớ đăng nhập
                         </label>
                         <Link to="/forgot-password">Quên mật khẩu?</Link>
