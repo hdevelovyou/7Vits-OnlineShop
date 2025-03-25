@@ -1,7 +1,7 @@
 import { useState, memo } from "react";
 import "./style.scss";
 import cr7 from "../../../assets/images/cr7.png"
-
+import chatgpt from '../../../assets/images/chatgpt.png';
 const ProductPage = () => {
     const [quantity, setQuantity] = useState(1);
     const priceOld = 120000;
@@ -12,7 +12,7 @@ const ProductPage = () => {
         <div className="product-page">
             <div className="grid">
                 <div className="product-container">
-                    <img src={cr7} alt="Chat GPT Plus" className="product-image" />
+                    <img src={chatgpt} alt="Chat GPT Plus" className="product-image" />
                     <div className="product-info">
                         <h1 className="product-title">Tài Khoản Chat GPT 4 Plus (1 Tháng)</h1>
                         <div className="product-rating">

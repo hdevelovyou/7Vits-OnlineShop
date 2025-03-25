@@ -8,14 +8,17 @@ import steam_logo from '../../../assets/images/steam_logo.png';
 import yt from '../../../assets/images/yt.png'
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { Link } from "react-router-dom";
-
+import lolskin from '../../../assets/images/lolskin.jpg';
+import adobepd from '../../../assets/images/adobe-pd.jpg';
+import steamgc from '../../../assets/images/Steam-Gift-card.jpg';
+import chatgpt from '../../../assets/images/chatgpt.png';
 const products = [
-    { id: 1, name: "Áo CR7", desc: "Áo đấu chính thức của Ronaldo.", priceOld: "499,000đ", priceNew: "399,000đ", image: cr7, rating: 5 },
-    { id: 2, name: "Adobe License", desc: "Phần mềm bản quyền Adobe chính hãng.", priceOld: "1,299,000đ", priceNew: "800,000đ", image: adobe, rating: 4 },
-    { id: 3, name: "League of Legends Skin", desc: "Trang phục độc quyền trong game.", priceOld: "399,000đ", priceNew: "299,000đ", image: League_of_Legends_2019_vector, rating: 5 },
-    { id: 4, name: "Steam Gift Card", desc: "Thẻ nạp Steam dành cho game thủ.", priceOld: "1,000,000đ", priceNew: "800,000đ", image: steam_logo, rating: 4 },
+    { id: 1, name: "Tài khoản ChatGPT Plus 1 tháng", desc: "Áo đấu chính thức của Ronaldo.", priceOld: "499,000đ", priceNew: "399,000đ", image: chatgpt, rating: 5 },
+    { id: 2, name: "Adobe License", desc: "Phần mềm bản quyền Adobe chính hãng.", priceOld: "1,299,000đ", priceNew: "800,000đ", image: adobepd, rating: 4 },
+    { id: 3, name: "League of Legends Skin", desc: "Trang phục độc quyền trong game.", priceOld: "399,000đ", priceNew: "299,000đ", image: lolskin, rating: 5 },
+    { id: 4, name: "Steam Gift Card", desc: "Thẻ nạp Steam dành cho game thủ.", priceOld: "1,000,000đ", priceNew: "800,000đ", image: steamgc, rating: 4 },
     { id: 5, name: "Youtube 12 tháng", desc: "Thẻ nạp Netflix dành cho game thủ.", priceOld: "1,000,000đ", priceNew: "800,000đ", image: yt, rating: 4 },
-    { id: 5, name: "Steam Gift Card", desc: "Thẻ nạp Steam dành cho game thủ.", priceOld: "1,000,000đ", priceNew: "800,000đ", image: steam_logo, rating: 4 }
+    { id: 5, name: "Steam Gift Card", desc: "Thẻ nạp Steam dành cho game thủ.", priceOld: "1,000,000đ", priceNew: "800,000đ", image: steamgc, rating: 4 }
 ];
 
 // Danh sách các danh mục
