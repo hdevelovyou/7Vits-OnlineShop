@@ -21,9 +21,9 @@ const menuItems = [
     path: "/",
     isShowSubmenu: false,
     child: [
-      { name: "Loại Sản phẩm", path: "/" },
-      { name: "Loại Sản phẩm", path: "/" },
-      { name: "Loại Sản phẩm", path: "/" },
+      { name: "Tài khoản Game", path: "/" },
+      { name: "Key Bản quyền", path: "/" },
+      { name: "Key Game", path: "/" },
     ],
   },
   {
@@ -32,7 +32,7 @@ const menuItems = [
   },
 ];
 
-const Header = () => {
+const Header = ({ isLoggedIn, setIsLoggedIn }) => { // Nhận props isLoggedIn và setIsLoggedIn
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -43,6 +43,12 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleLogout = () => {
+    setIsLoggedIn(false); // Gọi setIsLoggedIn để cập nhật trạng thái đăng nhập về false khi logout
+    // Thêm logic xoá token/session ở đây nếu cần (ví dụ: localStorage.removeItem("token");)
+    alert('Đăng xuất thành công!'); // Thông báo đăng xuất (tùy chọn)
+  };
 
   return (
     
@@ -112,12 +118,25 @@ const Header = () => {
                   <div className="cart">
                     <FaShoppingCart />
                   </div>
-                  <Link to="/register" className="signup-btn">
-                    Đăng ký
-                  </Link>
-                  <Link to="/login" className="login-btn">
-                    Đăng nhập
-                  </Link>
+                  {isLoggedIn ? ( // Kiểm tra isLoggedIn để render có điều kiện
+                    <>
+                      <Link to="/profile" className="profile-btn"> {/* Đường dẫn tới trang profile */}
+                        Profile
+                      </Link>
+                      <button className="logout-btn" onClick={handleLogout}>
+                        Đăng xuất
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link to="/register" className="signup-btn">
+                        Đăng ký
+                      </Link>
+                      <Link to="/login" className="login-btn">
+                        Đăng nhập
+                      </Link>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
