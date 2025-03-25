@@ -12,7 +12,32 @@
     font-size: 1.4rem;
     margin: 1rem 0;
 }
-
+.quantity-container-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.4rem;
+    button {
+        
+        height: 30px;
+        background: #333;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        border:2px  #ccc;
+        padding: 0 3rem;
+    }
+}
+.button-group button {
+    border: none;
+    cursor: pointer;    
+    color: #fff;
+    background: red;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-weight: bold;
+    margin-top: 10px;
+}
 .product-page {
     display: flex;
     max-width: 1200px;
@@ -28,6 +53,11 @@
         border-radius: 10px;
     }
     height: 300px;
+    
+}
+.product-info {
+    flex: 2;
+    padding-left: 20px;
 }
 .product-container {
         display: flex;
@@ -47,7 +77,23 @@
     font-size: 24px;
     font-weight: bold;
 }
-
+span.discount {
+    background: red;
+    padding: 5px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: bold;
+}
+.quantity-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    .soluong {
+        font-size: 14px;
+        font-weight: bold;
+    }
+    
+}
 .product-price {
     display: flex;
     background-color: #262626;
@@ -56,6 +102,7 @@
     font-size: 20px;
     margin: 10px 0;
     padding: 10px;
+    gap: 10px;
 
     .old-price {
         text-decoration: line-through;
@@ -73,6 +120,7 @@
     font-size: 14px;
     margin: 10px 0;
     color: #ccc;
+    opacity: 0.5;
 }
 
 .product-quantity {
@@ -95,7 +143,7 @@
 .button-group {
     display: flex;
     gap: 10px;
-
+    margin-top: 10px;
     .btn {
         background: red;
         color: #fff;
