@@ -50,11 +50,16 @@
     border: none;
     cursor: pointer;    
     color: #fff;
-    background: red;
+    background: rgb(217, 85, 85);
     border-radius: 5px;
     padding: 10px 20px;
     font-weight: bold;
     margin-top: 10px;
+    &:hover {
+        background: rgb(255 255 255 / 16%);
+        cursor: pointer;
+        transition-duration: 200ms;
+    }
 }
 .product-page {
     display: flex;
@@ -157,7 +162,9 @@ span.discount {
         padding: 0 10px;
     }
 }
-
+button.buy-now {
+    background: #fc0606;
+}
 .button-group {
     display: flex;
     gap: 10px;

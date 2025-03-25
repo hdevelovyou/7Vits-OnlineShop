@@ -70,6 +70,7 @@
 
                 &:hover {
                     color: #ff0000;
+                    transition-duration: 200ms;
                 }
 
                 transition: all 0.3s;
@@ -125,6 +126,7 @@
 
         &:hover {
             background: #810000;
+            transition-duration: 200ms;
         }
     }
 
@@ -139,6 +141,7 @@
 
         &:hover {
             background: #3f3f3f;
+            transition-duration: 200ms;
         }
     }
 }
