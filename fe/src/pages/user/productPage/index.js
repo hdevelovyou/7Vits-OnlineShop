@@ -33,7 +33,7 @@ import cr7 from "../../../assets/images/cr7.png"
                             </div>
                             <div className="quantity-container-input">
                                 <button onClick={() => setQuantity(quantity > 1 ? quantity - 1 : 1)}>-</button>
-                                <span>{quantity}</span>
+                                <input type="text" value={quantity} onChange={(e) => setQuantity(e.target.value)}/>
                                 <button onClick={() => setQuantity(quantity + 1)}>+</button>
                             </div>
                         </div>

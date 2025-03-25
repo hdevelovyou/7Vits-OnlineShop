@@ -18,14 +18,19 @@
     gap: 10px;
     font-size: 1.4rem;
     button {
-        
+        flex: 1;
         height: 30px;
         background: #333;
         color: #fff;
-        border: none;
         cursor: pointer;
         border:2px  #ccc;
-        padding: 0 3rem;
+        padding: 0 1rem;
+    }
+    input {
+        height: 3rem;
+        flex:1;
+        color: #fff;
+        background: #333;
     }
 }
 .button-group button {
