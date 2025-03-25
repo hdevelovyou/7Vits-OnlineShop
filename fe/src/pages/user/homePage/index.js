@@ -6,6 +6,7 @@ import logofc from '../../../assets/images/logofc.png';
 import League_of_Legends_2019_vector from '../../../assets/images/League_of_Legends_2019_vector.png';
 import steam_logo from '../../../assets/images/steam_logo.png';
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import { Link } from "react-router-dom";
 
 const products = [
     { id: 1, name: "Áo CR7", desc: "Áo đấu chính thức của Ronaldo.", priceOld: "499,000đ", priceNew: "399,000đ", image: cr7, rating: 5 },
@@ -28,7 +29,7 @@ const Homepage = () => {
                     <div className="introduce">
                         <h1 className="text-introduce">YOUR SATISFACTION OUR Priority</h1>
                         <p className="text-title">We are committed to delivering top quality</p>
-                        <a href="" className="btn-shop">SHOP NOW</a>
+                        <a href="#Linkpro" className="btn-shop">SHOP NOW</a>
                         <div className="quality">
                             <div className="quality-item"><h2 className="quality-count">200+</h2><p className="quality-text">International Brands</p></div>
                             <div className="quality-item"><h2 className="quality-count">2,000+</h2><p className="quality-text">High-Quality Products</p></div>
@@ -54,7 +55,7 @@ const Homepage = () => {
                 
 
             {/* Products Section */}
-            <div className="Products">
+            <div className="Products" id="Linkpro">
                 <div className="grid">
                     {categories.map((category, index) => (
                         <div className="product-namename" key={index}>
