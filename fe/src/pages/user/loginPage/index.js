@@ -6,7 +6,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaCircleUser } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa";
 
-const LoginPage = ({ setIsLoggedIn }) => { // 1. Nhận setIsLoggedIn prop
+const LoginPage = ({ setIsLoggedIn }) => { // Nhận prop setIsLoggedIn
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const [remember, setRemember] = useState(false);
@@ -51,7 +51,7 @@ const LoginPage = ({ setIsLoggedIn }) => { // 1. Nhận setIsLoggedIn prop
                 localStorage.removeItem("rememberedPassword");
             }
 
-            setIsLoggedIn(true); // 2. Gọi setIsLoggedIn(true) khi đăng nhập thành công
+            setIsLoggedIn(true); // Sử dụng đúng hàm setIsLoggedIn
             alert("Đăng nhập thành công!");
             navigate("/");
         } catch (err) {
