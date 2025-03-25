@@ -2,7 +2,7 @@ import { useState, memo } from "react";
 import "./style.scss";
 import cr7 from "../../../assets/images/cr7.png"
 
-    const ProductPage = () => {
+const ProductPage = () => {
     const [quantity, setQuantity] = useState(1);
     const priceOld = 120000;
     const priceNew = 100000;
@@ -25,16 +25,55 @@ import cr7 from "../../../assets/images/cr7.png"
                             <span className="discount">{discount}% GIẢM</span>
                         </div>
                         <p className="product-description">
-                            - áo cr7 đỉnh cao bán chạy nhất thị trường 
+                            - áo cr7 đỉnh cao bán chạy nhất thị trường
                         </p>
                         <div className="quantity-container">
                             <div className="soluong">
                                 <p>số lượng </p>
                             </div>
                             <div className="quantity-container-input">
-                                <button onClick={() => setQuantity(quantity > 1 ? quantity - 1 : 1)}>-</button>
-                                <input type="text" value={quantity} onChange={(e) => setQuantity(e.target.value)}/>
-                                <button onClick={() => setQuantity(quantity + 1)}>+</button>
+                                <button id="btn-quantity"
+                                    onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
+                                    disabled={quantity <= 1}
+                                    className={quantity <= 1 ? 'disabled' : ''}
+                                >
+                                    -
+                                </button>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    max="99"
+                                    value={quantity === "" ? "" : quantity}  
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+
+                                       
+                                        if (value === "") {
+                                            setQuantity("");
+                                            return;
+                                        }
+
+                                        const numValue = parseInt(value);
+
+                                     
+                                        if (!isNaN(numValue) && numValue >= 1 && numValue <= 99) {
+                                            setQuantity(numValue);
+                                        }
+                                    }}
+                                    onBlur={(e) => {
+                                       
+                                        if (e.target.value === "") {
+                                            setQuantity(1);
+                                        }
+                                    }}
+                                />
+                                <button
+                                    onClick={() => setQuantity(prev => Math.min(99, prev + 1))}
+                                    disabled={quantity >= 99}
+                                    className={quantity >= 99 ? 'disabled' : ''}
+                                >
+                                    +
+                                </button>
                             </div>
                         </div>
                         <div className="button-group">
