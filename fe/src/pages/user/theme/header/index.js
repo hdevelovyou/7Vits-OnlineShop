@@ -84,7 +84,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => { // Nhận props isLoggedIn v
           <div className="row">
             <div className="col-lg-3 col-xl-3">
               <div className="header-logo">
-                <Link to="/" style={{ textDecoration: "none" }}>
+                <Link to={ROUTES.USER.HOME} onClick={() => window.scrollTo(0, 0)} style={{ textDecoration: "none" }}>
                   <img src={logo} alt="7vits-logo" />
                 </Link>
               </div>
@@ -94,7 +94,13 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => { // Nhận props isLoggedIn v
                 <ul>
                   {menuItems.map((menu, menuKey) => (
                     <li key={menuKey}>
-                      <Link to={menu.path}>{menu.name}</Link>
+                      {menu.name === "Trang chủ" ? (
+                        <Link to={menu.path} onClick={() => window.scrollTo(0, 0)}>
+                          {menu.name}
+                        </Link>
+                      ) : (
+                        <Link to={menu.path}>{menu.name}</Link>
+                      )}
                       {menu.child && menu.child.length > 0 && (
                         <ul className="header-submenu">
                           {menu.child.map((child, childKey) => (

@@ -46,17 +46,17 @@ const Homepage = () => {
 
             {/* Logo Section */}
             <div className="section-logo">
-          
-            <div className="grid">
-            <div className="logo">
-         
-                {[logofc, League_of_Legends_2019_vector, steam_logo, adobe].map((logo, index) => (
-                    <img key={index} src={logo} alt="" className="section-logo" />
-                ))}
+
+                <div className="grid">
+                    <div className="logo">
+
+                        {[logofc, League_of_Legends_2019_vector, steam_logo, adobe].map((logo, index) => (
+                            <img key={index} src={logo} alt="" className="section-logo" />
+                        ))}
+                    </div>
+                </div>
             </div>
-            </div>
-            </div>
-                
+
 
             {/* Products Section */}
             <div className="Products" id="Linkpro">
@@ -70,8 +70,15 @@ const Homepage = () => {
                                         <div className="grid__row">
                                             {products.map((product) => (
                                                 <div className="grid__column-3" key={product.id}>
-                                                    <Link to="/product" className="home-product-item" style={{display:"block", textDecoration:"none"}}>
-                                                        <div className="home-product-item_img" style={{ backgroundImage: `url(${product.image})` }}></div>
+                                                    <Link
+                                                        to={`/product/${product.id}`}
+                                                        className="home-product-item"
+                                                        style={{ display: "block", textDecoration: "none" }}
+                                                    >
+                                                        <div
+                                                            className="home-product-item_img"
+                                                            style={{ backgroundImage: `url(${product.image})` }}
+                                                        ></div>
                                                         <div className="mota">
                                                             <p className="mota-name home-product-item_name">{product.name}</p>
                                                             <p className="mota-name home-product-item_desc">{product.desc}</p>
@@ -82,8 +89,12 @@ const Homepage = () => {
                                                                 <span className="rating-number">({product.rating})</span>
                                                             </p>
                                                             <div className="home-product-item_price">
-                                                                <span className="mota-name home-product-item_price-old"><s>{product.priceOld}</s></span>
-                                                                <span className="mota-name home-product-item_price-new">{product.priceNew}</span>
+                                                                <span className="mota-name home-product-item_price-old">
+                                                                    <s>{product.priceOld}</s>
+                                                                </span>
+                                                                <span className="mota-name home-product-item_price-new">
+                                                                    {product.priceNew}
+                                                                </span>
                                                             </div>
                                                         </div>
                                                     </Link>
