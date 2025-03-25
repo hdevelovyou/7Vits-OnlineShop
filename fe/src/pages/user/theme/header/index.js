@@ -48,7 +48,6 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => { // Nhận props isLoggedIn v
     setIsLoggedIn(false); // Gọi setIsLoggedIn để cập nhật trạng thái đăng nhập về false khi logout
     localStorage.removeItem("token"); // Xóa token
     localStorage.removeItem("user"); // Xóa thông tin user
-    alert('Đăng xuất thành công!');
   };
 
   return (
