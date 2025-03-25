@@ -25,16 +25,24 @@ const RegisterPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError(""); // Clear previous errors
+        
         if (formData.password !== formData.confirmPassword) {
-            alert("Mật khẩu xác nhận không khớp");
+            setError("Mật khẩu không khớp"); // Set error for password mismatch
             return;
         }
+        
         try {
             const res = await axios.post("http://localhost:5000/api/auth/register", formData);
             alert("Đăng ký thành công!");
             navigate("/otp-for-signup");
         } catch (err) {
-            alert(err.response?.data?.error || "Đã có lỗi xảy ra");
+            // Better error handling to match your login page
+            if (err.response && err.response.data && err.response.data.error) {
+                setError(err.response.data.error);
+            } else {
+                setError(err.message || "Đăng ký thất bại. Vui lòng thử lại sau.");
+            }
         }
     };
 
@@ -44,7 +52,10 @@ const RegisterPage = () => {
                 <div className="title">
                     <h1>Đăng ký tài khoản</h1>
                 </div>
+                
+                {/* Error message display, styled the same as in LoginPage */}
                 {error && <p className="error-message">{error}</p>}
+                
                 <div className="input-group">
                     <input type="text" name="firstName" placeholder="Họ" onChange={handleChange} required />
                     <input type="text" name="lastName" placeholder="Tên" onChange={handleChange} required />

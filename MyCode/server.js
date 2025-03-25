@@ -13,3 +13,4 @@ app.use('/api/auth', authRoutes); // Đổi URL API để tránh trùng với ro
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+//update

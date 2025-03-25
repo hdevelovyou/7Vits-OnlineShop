@@ -36,11 +36,11 @@ exports.login = (req, res) => {
 
     db.query(sql, [userName, userName], async (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
-        if (results.length === 0) return res.status(400).json({ error: 'Tài khoản không tồn tại' });
+        if (results.length === 0) return res.status(400).json({ error : 'Tài khoản không tồn tại' });
 
         const user = results[0];
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(400).json({ error: 'Mật khẩu không đúng' });
+        if (!isMatch) return res.status(400).json({ error: 'Mật khẩu không đúng!' });
 
         // Tạo token JWT
         const token = jwt.sign({ id: user.id, userName: user.userName }, process.env.JWT_SECRET || 'secretkey', { expiresIn: '1h' });

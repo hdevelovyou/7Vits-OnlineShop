@@ -65,10 +65,9 @@ const LoginPage = ({ setIsLoggedIn }) => {
                 console.error('setIsLoggedIn không phải là hàm:', setIsLoggedIn);
             }
             
-            alert("Đăng nhập thành công!");
             navigate("/");
         } catch (err) {
-            alert(err.message);
+            setError(err.message);
         }
     };
 
