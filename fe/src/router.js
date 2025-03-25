@@ -9,53 +9,28 @@ import OtpPage from "./pages/user/otpPage";
 import ForgotPage from "./pages/user/forgotPage";
 import OtpPage2 from "./pages/user/otpPage2";
 import NewPassword from "./pages/user/newPassword";
+
 const renderUserRoutes = () => {
-    const userRouters = [
-        {
-            path: ROUTES.USER.HOME,
-            component: <Homepage />
-        },
-        {
-            path: ROUTES.USER.PROFILE   ,
-            component: <ProfilePage />
-        },
-        {
-            path: ROUTES.USER.LOGIN   ,
-            component: <LoginPage />
-        },
-        {
-            path: ROUTES.USER.REGISTER   ,
-            component: <RegisterPage />
-        },
-        {
-            path: ROUTES.USER.OTPFORSIGNUP ,
-            component: <OtpPage />
-        },
-        {
-            path: ROUTES.USER.FORGOTPASSWORD,
-            component: <ForgotPage />
-        },
-        {
-            path: ROUTES.USER.OTPFORFORGOT, 
-            component: <OtpPage2 />
-        },
-        {
-            path: ROUTES.USER.NEWPASSWORD, 
-            component: <NewPassword />
-        },
-    ]
     return (
-       <MasterLayout>
-            <Routes>
-                {userRouters.map((item, key) => (
-                    <Route key={key} path={item.path} element={item.component} />
-                ))}
-            </Routes>
-       </MasterLayout>
-    )
+        <MasterLayout>
+            {({ isLoggedIn, setIsLoggedIn }) => (
+                <Routes>
+                    <Route path={ROUTES.USER.HOME} element={<Homepage />} />
+                    <Route path={ROUTES.USER.PROFILE} element={<ProfilePage />} />
+                    <Route path={ROUTES.USER.LOGIN} element={<LoginPage setIsLoggedIn={setIsLoggedIn} />} />
+                    <Route path={ROUTES.USER.REGISTER} element={<RegisterPage />} />
+                    <Route path={ROUTES.USER.OTPFORSIGNUP} element={<OtpPage />} />
+                    <Route path={ROUTES.USER.FORGOTPASSWORD} element={<ForgotPage />} />
+                    <Route path={ROUTES.USER.OTPFORFORGOT} element={<OtpPage2 />} />
+                    <Route path={ROUTES.USER.NEWPASSWORD} element={<NewPassword />} />
+                </Routes>
+            )}
+        </MasterLayout>
+    );
 }
 
 const RouterCustom = () => {
     return renderUserRoutes();
 }
+
 export default RouterCustom;
