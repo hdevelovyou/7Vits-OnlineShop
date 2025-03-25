@@ -2,6 +2,7 @@
     width: 100%;
     z-index: 1;
     position: fixed;
+    height: 100px;
 }
 
 .header-top{
@@ -136,4 +137,12 @@
     font-size: 2.2rem;
     display: flex;
     padding: 3.6rem 1rem;
+}
+
+
+.scrolled{
+    background-color: #000;
+    transition: all 0.7s ease-in-out;
+    background-color: rgba(0, 0, 0, 0.9); // Nền header tối hơn khi cuộn
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); // Thêm hiệu ứng bóng
 }
