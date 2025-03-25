@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import logo from "../../../../assets/images/logo.png";
 import { ROUTES } from "../../../../utils/router.js";
 import { IoSearchCircleSharp } from "react-icons/io5";
-
+import { CgProfile } from "react-icons/cg";
 const menuItems = [
   {
     name: "Trang chủ",
@@ -121,9 +121,9 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => { // Nhận props isLoggedIn v
                 {isLoggedIn ? (
                   <>
                     <Link to="/profile" className="profile-btn">
-                      Profile
+                      <CgProfile />
                     </Link>
-                    <button className="login-btn" onClick={handleLogout}>
+                    <button className="logout-btn" onClick={handleLogout}>
                       Đăng xuất
                     </button>
                   </>

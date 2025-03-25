@@ -9,6 +9,7 @@ import OtpPage from "./pages/user/otpPage";
 import ForgotPage from "./pages/user/forgotPage";
 import OtpPage2 from "./pages/user/otpPage2";
 import NewPassword from "./pages/user/newPassword";
+import ProductPage from "./pages/user/productPage";
 
 const renderUserRoutes = () => {
     return (
@@ -23,6 +24,7 @@ const renderUserRoutes = () => {
                     <Route path={ROUTES.USER.FORGOTPASSWORD} element={<ForgotPage />} />
                     <Route path={ROUTES.USER.OTPFORFORGOT} element={<OtpPage2 />} />
                     <Route path={ROUTES.USER.NEWPASSWORD} element={<NewPassword />} />
+                    <Route path={ROUTES.USER.PRODUCT} element={<ProductPage />} />
                 </Routes>
             )}
         </MasterLayout>

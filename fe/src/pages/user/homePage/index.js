@@ -66,7 +66,7 @@ const Homepage = () => {
                                         <div className="grid__row">
                                             {products.map((product) => (
                                                 <div className="grid__column-3" key={product.id}>
-                                                    <div className="home-product-item">
+                                                    <Link to="/product" className="home-product-item" style={{display:"block", textDecoration:"none"}}>
                                                         <div className="home-product-item_img" style={{ backgroundImage: `url(${product.image})` }}></div>
                                                         <div className="mota">
                                                             <p className="mota-name home-product-item_name">{product.name}</p>
@@ -82,7 +82,7 @@ const Homepage = () => {
                                                                 <span className="mota-name home-product-item_price-new">{product.priceNew}</span>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    </Link>
                                                 </div>
                                             ))}
                                         </div>
