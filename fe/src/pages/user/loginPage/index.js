@@ -6,12 +6,19 @@ import { FcGoogle } from "react-icons/fc";
 import { FaCircleUser } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa";
 
-const LoginPage = ({ setIsLoggedIn }) => { // Nhận prop setIsLoggedIn
+const LoginPage = ({ setIsLoggedIn }) => {
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const [remember, setRemember] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
+
+    // Kiểm tra xem setIsLoggedIn có phải là hàm không
+    useEffect(() => {
+        if (setIsLoggedIn && typeof setIsLoggedIn !== 'function') {
+            console.error('setIsLoggedIn không phải là hàm:', setIsLoggedIn);
+        }
+    }, [setIsLoggedIn]);
 
     // Khi component mount, kiểm tra xem có dữ liệu được lưu không
     useEffect(() => {
@@ -51,7 +58,13 @@ const LoginPage = ({ setIsLoggedIn }) => { // Nhận prop setIsLoggedIn
                 localStorage.removeItem("rememberedPassword");
             }
 
-            setIsLoggedIn(true); // Sử dụng đúng hàm setIsLoggedIn
+            // Kiểm tra setIsLoggedIn trước khi gọi
+            if (setIsLoggedIn && typeof setIsLoggedIn === 'function') {
+                setIsLoggedIn(true);
+            } else {
+                console.error('setIsLoggedIn không phải là hàm:', setIsLoggedIn);
+            }
+            
             alert("Đăng nhập thành công!");
             navigate("/");
         } catch (err) {

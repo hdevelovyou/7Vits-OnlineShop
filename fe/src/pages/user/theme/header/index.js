@@ -123,7 +123,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => { // Nhận props isLoggedIn v
                     <Link to="/profile" className="profile-btn">
                       Profile
                     </Link>
-                    <button className="logout-btn" onClick={handleLogout}>
+                    <button className="login-btn" onClick={handleLogout}>
                       Đăng xuất
                     </button>
                   </>

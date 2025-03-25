@@ -1,13 +1,16 @@
-import { memo, useState, useEffect } from "react"; // Thêm useEffect
+import { memo, useState, useEffect } from "react";
 import Header from "../header";
 import Footer from "../footer";
-import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
-const MasterLayout = ({ children, ...props }) => {
+const MasterLayout = ({ children }) => {
     // Khởi tạo state isLoggedIn với giá trị từ localStorage
     const [isLoggedIn, setIsLoggedIn] = useState(() => {
         return localStorage.getItem("token") ? true : false;
     });
+    
+    const navigate = useNavigate();
+    const location = useLocation();
 
     // Theo dõi thay đổi của isLoggedIn
     useEffect(() => {
@@ -18,18 +21,13 @@ const MasterLayout = ({ children, ...props }) => {
         }
     }, [isLoggedIn]);
 
-    // Truyền prop setIsLoggedIn cho tất cả component con
-    const childrenWithProps = React.Children.map(children, child => {
-        if (React.isValidElement(child)) {
-            return React.cloneElement(child, { setIsLoggedIn });
-        }
-        return child;
-    });
-
+    // Không sử dụng React.Children.map nữa, thay vào đó truyền props trực tiếp
     return (
-        <div {...props}>
+        <div>
             <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-            {childrenWithProps}
+            {children && typeof children === 'function' 
+                ? children({ isLoggedIn, setIsLoggedIn }) 
+                : children}
             <Footer />
         </div>
     );
