@@ -30,17 +30,20 @@ const Homepage = () => {
             {/* Banner Section */}
             <div className="banner">
                 <div id="section-1">
-                    <div className="introduce">
-                        <h1 className="text-introduce">YOUR SATISFACTION OUR Priority</h1>
-                        <p className="text-title">We are committed to delivering top quality</p>
-                        <a href="#Linkpro" className="btn-shop">SHOP NOW</a>
+                    <div className="introduce grid" >
+                        <div className="grid__column-6">
+                            <h1 className="text-introduce">YOUR SATISFACTION OUR Priority</h1>
+                            <p className="text-title">We are committed to delivering top quality</p>
+                            <a href="#Linkpro" className="btn-shop">SHOP NOW</a>
+                        </div>
                         <div className="quality">
                             <div className="quality-item"><h2 className="quality-count">200+</h2><p className="quality-text">International Brands</p></div>
                             <div className="quality-item"><h2 className="quality-count">2,000+</h2><p className="quality-text">High-Quality Products</p></div>
                             <div className="quality-item"><h2 className="quality-count">30,000+</h2><p className="quality-text">Happy Customers</p></div>
                         </div>
                     </div>
-            
+               
+                       
                 </div>
             </div>
 
