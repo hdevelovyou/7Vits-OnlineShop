@@ -119,12 +119,12 @@ const ProductPage = () => {
     const [product, setProduct] = useState(null);
 
     useEffect(() => {
-        // Find the product with the matching ID
+        //Tìm sản phẩm có id trùng với id trong url
         const foundProduct = productsData.find(p => p.id === parseInt(id));
         if (foundProduct) {
             setProduct(foundProduct);
         } else {
-            // If product not found, redirect to homepage
+            //Nếu không tìm thấy sản phẩm, chuyển hướng về trang chủ
             navigate('/');
         }
     }, [id, navigate]);

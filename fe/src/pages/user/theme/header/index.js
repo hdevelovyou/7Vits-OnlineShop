@@ -87,6 +87,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => { // Nhận props isLoggedIn v
                 <Link to={ROUTES.USER.HOME} onClick={() => window.scrollTo(0, 0)} style={{ textDecoration: "none" }}>
                   <img src={logo} alt="7vits-logo" />
                 </Link>
+                <h1>7VIST</h1>
               </div>
             </div>
             <div className="col-lg-3 col-xl-6">
