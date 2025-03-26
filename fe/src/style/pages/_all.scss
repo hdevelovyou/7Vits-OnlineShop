@@ -14,13 +14,26 @@ body {
     color: rgb(255, 255, 255);
     box-sizing: border-box;
 }
-
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
 .container {
     width: 100%;
     max-width: 1200px;
     margin: auto;
 }
-
+@keyframes fadein {
+    from{
+        opacity: 0;
+        transform: translateY(-50px);
+    }  
+    to{
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 .row {
     display: flex;
     flex-wrap: wrap;

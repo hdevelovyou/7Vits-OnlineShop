@@ -9,10 +9,11 @@
 }
 .form-group{
     width: 40rem;
-    background: rgb(39, 39, 39);
+    background: #0a0a0ae8;
     border-radius: 4rem;
-    box-shadow: 0 0 1rem 0.5rem rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.8);
     padding-top: 3rem;
+    animation: fadein 2s ease;
     .title{
         color: white;
         font-size: 1.4rem;
@@ -42,6 +43,7 @@
         input::placeholder{
             color: white;
             font-size: 1.4rem;
+            opacity: 0.5;
         }
         .icon{
             position: absolute;

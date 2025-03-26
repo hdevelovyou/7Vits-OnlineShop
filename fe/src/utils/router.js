@@ -4,7 +4,7 @@ export const ROUTES = {
         LOGIN: '/login',
         REGISTER: '/register',
         PROFILE: '/profile',
-        PRODUCT: '/product',
+        PRODUCT: '/product/:id',
         OTPFORSIGNUP: '/otp-for-signup',
         FORGOTPASSWORD: '/forgot-password',
         OTPFORFORGOT: '/otp-for-forgot',
