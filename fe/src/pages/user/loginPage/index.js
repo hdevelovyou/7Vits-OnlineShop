@@ -1,26 +1,45 @@
 import { memo, useState, useEffect } from "react";
 import "./style.scss";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaFacebook } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { FaCircleUser } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa";
+import { handleFacebookLogin } from "../../../services/facebookAuth";
 
 const LoginPage = ({ setIsLoggedIn }) => {
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const [remember, setRemember] = useState(false);
     const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
 
-    // Kiểm tra xem setIsLoggedIn có phải là hàm không
+    // Check for Facebook login success
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const success = params.get('success');
+        const token = params.get('token');
+
+        if (success === 'true' && token) {
+            localStorage.setItem("token", token);
+            if (setIsLoggedIn && typeof setIsLoggedIn === 'function') {
+                setIsLoggedIn(true);
+            }
+            alert("Đăng nhập Facebook thành công!");
+            navigate("/");
+        }
+    }, [location, setIsLoggedIn, navigate]);
+
+    // Check if setIsLoggedIn is a function
     useEffect(() => {
         if (setIsLoggedIn && typeof setIsLoggedIn !== 'function') {
             console.error('setIsLoggedIn không phải là hàm:', setIsLoggedIn);
         }
     }, [setIsLoggedIn]);
 
-    // Khi component mount, kiểm tra xem có dữ liệu được lưu không
+    // Check for saved login data when component mounts
     useEffect(() => {
         const savedUser = localStorage.getItem("rememberedUser");
         const savedPassword = localStorage.getItem("rememberedPassword");
@@ -35,9 +54,10 @@ const LoginPage = ({ setIsLoggedIn }) => {
     const handleLogin = async (e) => {
         e.preventDefault();
         setError("");
+        setIsLoading(true);
 
         try {
-            const response = await fetch("http://localhost:5000/api/auth/login", {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ userName, password })
@@ -49,7 +69,6 @@ const LoginPage = ({ setIsLoggedIn }) => {
             localStorage.setItem("token", data.token);
             localStorage.setItem("user", JSON.stringify(data.user));
 
-            // Nếu checkbox "Ghi nhớ đăng nhập" được chọn, lưu username và password vào localStorage
             if (remember) {
                 localStorage.setItem("rememberedUser", userName);
                 localStorage.setItem("rememberedPassword", password);
@@ -58,7 +77,6 @@ const LoginPage = ({ setIsLoggedIn }) => {
                 localStorage.removeItem("rememberedPassword");
             }
 
-            // Kiểm tra setIsLoggedIn trước khi gọi
             if (setIsLoggedIn && typeof setIsLoggedIn === 'function') {
                 setIsLoggedIn(true);
             } else {
@@ -68,7 +86,9 @@ const LoginPage = ({ setIsLoggedIn }) => {
             alert("Đăng nhập thành công!");
             navigate("/");
         } catch (err) {
-            alert(err.message);
+            setError(err.message || "Đăng nhập thất bại!");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -92,6 +112,7 @@ const LoginPage = ({ setIsLoggedIn }) => {
                             value={userName}
                             onChange={(e) => setUserName(e.target.value)}
                             required
+                            disabled={isLoading}
                         />
                     </div>
                     <div className="input-group">
@@ -104,6 +125,7 @@ const LoginPage = ({ setIsLoggedIn }) => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            disabled={isLoading}
                         />
                     </div>
 
@@ -115,23 +137,42 @@ const LoginPage = ({ setIsLoggedIn }) => {
                                 name="remember"
                                 checked={remember}
                                 onChange={() => setRemember(!remember)}
+                                disabled={isLoading}
                             />
                             Ghi nhớ đăng nhập
                         </label>
-                        <Link to="/forgot-password">Quên mật khẩu?</Link>
+                        <Link to="/forgot-password" style={{ pointerEvents: isLoading ? 'none' : 'auto' }}>
+                            Quên mật khẩu?
+                        </Link>
                     </div>
 
                     <div className="otherLogin">
-                        <FaFacebook className="icon" />
-                        <FcGoogle className="icon-gg" />
+                        <Link to="/" style={{ pointerEvents: isLoading ? 'none' : 'auto' }}>
+                            <FcGoogle className="icon-gg" />
+                        </Link>
+                        <div 
+                            onClick={() => handleFacebookLogin(setIsLoading, setError, setIsLoggedIn, navigate)} 
+                            style={{ 
+                                cursor: isLoading ? 'not-allowed' : 'pointer',
+                                opacity: isLoading ? 0.7 : 1
+                            }}
+                        >
+                            <FaFacebook className="icon-fb" />
+                        </div>
                     </div>
 
                     <div className="login-btn">
-                        <button type="submit">Đăng nhập</button>
+                        <button type="submit" disabled={isLoading}>
+                            {isLoading ? 'Đang xử lý...' : 'Đăng nhập'}
+                        </button>
                     </div>
 
                     <div className="sig-btn">
-                        <Link to="/register"><button type="button">Đăng ký</button></Link>
+                        <Link to="/register" style={{ pointerEvents: isLoading ? 'none' : 'auto' }}>
+                            <button type="button" disabled={isLoading}>
+                                Đăng ký
+                            </button>
+                        </Link>
                     </div>
                 </form>
             </div>
