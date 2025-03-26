@@ -6,15 +6,6 @@ import { FcGoogle } from "react-icons/fc";
 import { FaCircleUser } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa";
 import axios from "axios";
-// Import Appwrite dependencies
-import { Client, Account } from 'appwrite';
-
-// Initialize Appwrite client
-const client = new Client()
-    .setEndpoint('https://cloud.appwrite.io/v1') // Update this with your Appwrite endpoint
-    .setProject('67e41482001ce25b7a7f'); // Update with your project ID
-
-const account = new Account(client);
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -28,21 +19,13 @@ const RegisterPage = () => {
     });
     const [error, setError] = useState("");
 
+    const handleGoogleSignup = () => {
+        window.location.href = 'http://localhost:5000/api/auth/google';
+        // For production: window.location.href = 'https://your-domain.com/api/auth/google';
+      };
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
-    const handleGoogleSignUp = async () => {
-        try {
-            // Redirect to Google OAuth login
-            await account.createOAuth2Session(
-                'google', 
-                'http://localhost:3000/', // Success URL - adjust as needed
-                'http://localhost:3000/fail' // Failure URL - adjust as needed
-            );
-        } catch (err) {
-            setError(err.message || "Google authentication failed");
-        }
     };
 
     const handleSubmit = async (e) => {
@@ -75,7 +58,7 @@ const RegisterPage = () => {
                     <h1>Đăng ký tài khoản</h1>
                 </div>
                 
-                {/* Error message display */}
+                {/* Error message display, styled the same as in LoginPage */}
                 {error && <p className="error-message">{error}</p>}
                 
                 <div className="input-group">
@@ -95,10 +78,10 @@ const RegisterPage = () => {
                     <input type="password" name="confirmPassword" placeholder="Xác nhận mật khẩu" onChange={handleChange} required />
                 </div>
                 <div className="signup">
-                    <div className="otherSignUp">
-                        <FaFacebook className="icon" />
-                        <FcGoogle className="icon-gg" onClick={handleGoogleSignUp} style={{cursor: 'pointer'}} />
-                    </div>
+                <div className="otherSignUp">
+                    <FaFacebook className="icon" />
+                    <FcGoogle className="icon-gg" onClick={handleGoogleSignup} style={{ cursor: 'pointer' }} />
+                </div>
                     <div className="sig-btn">
                         <button type="submit">Đăng ký</button>
                     </div>

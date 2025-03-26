@@ -13,6 +13,10 @@ const LoginPage = ({ setIsLoggedIn }) => {
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
+    const handleGoogleLogin = () => {
+        window.location.href = 'http://localhost:5000/api/auth/google';
+        // For production: window.location.href = 'https://your-domain.com/api/auth/google';
+      };
     // Kiểm tra xem setIsLoggedIn có phải là hàm không
     useEffect(() => {
         if (setIsLoggedIn && typeof setIsLoggedIn !== 'function') {
@@ -122,7 +126,7 @@ const LoginPage = ({ setIsLoggedIn }) => {
 
                     <div className="otherLogin">
                         <FaFacebook className="icon" />
-                        <FcGoogle className="icon-gg" />
+                        <FcGoogle className="icon-gg" onClick={handleGoogleLogin} style={{ cursor: 'pointer' }} />
                     </div>
 
                     <div className="login-btn">
