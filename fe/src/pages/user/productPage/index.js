@@ -12,12 +12,12 @@ import yt from "../../../assets/images/yt.png";
 
 // Product data (in a real app, this would be in a separate file or from an API)
 const productsData = [
-    { 
-        id: 1, 
-        name: "Tài khoản ChatGPT Plus 1 tháng", 
-        desc: "Tài khoản ChatGPT Plus chính hãng, đầy đủ tính năng GPT-4.", 
-        priceOld: 499000, 
-        priceNew: 399000, 
+    {
+        id: 1,
+        name: "Tài khoản ChatGPT Plus 1 tháng",
+        desc: "Tài khoản ChatGPT Plus chính hãng, đầy đủ tính năng GPT-4.",
+        priceOld: 499000,
+        priceNew: 399000,
         image: chatgpt,
         images: [chatgpt, chatgpt, chatgpt],
         rating: 5,
@@ -29,12 +29,12 @@ const productsData = [
             "Tài khoản chính hãng"
         ]
     },
-    { 
-        id: 2, 
-        name: "Adobe License", 
-        desc: "Phần mềm bản quyền Adobe chính hãng.", 
-        priceOld: 1299000, 
-        priceNew: 800000, 
+    {
+        id: 2,
+        name: "Adobe License",
+        desc: "Phần mềm bản quyền Adobe chính hãng.",
+        priceOld: 1299000,
+        priceNew: 800000,
         image: adobepd,
         images: [adobepd, adobepd, adobepd],
         rating: 4,
@@ -45,12 +45,12 @@ const productsData = [
             "Hỗ trợ kỹ thuật 24/7"
         ]
     },
-    { 
-        id: 3, 
-        name: "League of Legends Skin", 
-        desc: "Trang phục độc quyền trong game.", 
-        priceOld: 399000, 
-        priceNew: 299000, 
+    {
+        id: 3,
+        name: "League of Legends Skin",
+        desc: "Trang phục độc quyền trong game.",
+        priceOld: 399000,
+        priceNew: 299000,
         image: lolskin,
         images: [lolskin, lolskin, lolskin],
         rating: 5,
@@ -61,12 +61,12 @@ const productsData = [
             "Dành riêng cho tài khoản Liên Minh Huyền Thoại"
         ]
     },
-    { 
-        id: 4, 
-        name: "Steam Gift Card", 
-        desc: "Thẻ nạp Steam dành cho game thủ.", 
-        priceOld: 1000000, 
-        priceNew: 800000, 
+    {
+        id: 4,
+        name: "Steam Gift Card",
+        desc: "Thẻ nạp Steam dành cho game thủ.",
+        priceOld: 1000000,
+        priceNew: 800000,
         image: steamgc,
         images: [steamgc, steamgc, steamgc],
         rating: 4,
@@ -77,12 +77,28 @@ const productsData = [
             "Hỗ trợ tất cả tài khoản Steam"
         ]
     },
-    { 
-        id: 5, 
-        name: "Youtube Premium 12 tháng", 
-        desc: "Gói Youtube Premium chính hãng, không quảng cáo, phát nhạc nền.", 
-        priceOld: 1000000, 
-        priceNew: 800000, 
+    {
+        id: 5,
+        name: "Youtube Premium 12 tháng",
+        desc: "Gói Youtube Premium chính hãng, không quảng cáo, phát nhạc nền.",
+        priceOld: 1000000,
+        priceNew: 800000,
+        image: yt,
+        images: [yt, yt, yt],
+        rating: 4,
+        sold: 1300,
+        features: [
+            "Xem video không quảng cáo",
+            "Phát nhạc nền khi tắt màn hình",
+            "Tải video để xem ngoại tuyến"
+        ]
+    },
+    {
+        id: 6,
+        name: "Youtube Premium 12 tháng",
+        desc: "Gói Youtube Premium chính hãng, không quảng cáo, phát nhạc nền.",
+        priceOld: 1000000,
+        priceNew: 800000,
         image: yt,
         images: [yt, yt, yt],
         rating: 4,
@@ -143,15 +159,15 @@ const ProductPage = () => {
                 <div className="product-container">
                     <div className="product-gallery">
                         <div className="main-image">
-                            <img 
-                                src={product.images[selectedImage]} 
-                                alt={product.name} 
-                                className="product-image" 
+                            <img
+                                src={product.images[selectedImage]}
+                                alt={product.name}
+                                className="product-image"
                             />
                         </div>
                         <div className="thumbnail-list">
                             {product.images.map((image, index) => (
-                                <div 
+                                <div
                                     key={index}
                                     className={`thumbnail ${selectedImage === index ? 'active' : ''}`}
                                     onClick={() => setSelectedImage(index)}
@@ -166,8 +182,8 @@ const ProductPage = () => {
                         <div className="product-rating">
                             <div className="stars">
                                 {[...Array(5)].map((_, idx) => (
-                                    <i 
-                                        key={idx} 
+                                    <i
+                                        key={idx}
                                         className={`fa-solid fa-star ${idx < Math.floor(product.rating) ? 'active' : ''}`}
                                     ></i>
                                 ))}
@@ -194,7 +210,7 @@ const ProductPage = () => {
                                 <p>Số lượng</p>
                             </div>
                             <div className="quantity-container-input">
-                                <button 
+                                <button
                                     onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
                                     disabled={quantity <= 1}
                                     className={quantity <= 1 ? 'disabled' : ''}
@@ -206,14 +222,28 @@ const ProductPage = () => {
                                     type="number"
                                     min="1"
                                     max="99"
-                                    value={quantity}
-                                    onChange={(e) => handleQuantityChange(e.target.value)}
+                                    value={quantity === "" ? "" : quantity}  
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+
+                                    
+                                        if (value === "") {
+                                            setQuantity("");
+                                            return;
+                                        }
+
+                                        const numValue = parseInt(value);
+
+                                        if (!isNaN(numValue) && numValue >= 1 && numValue <= 99) {
+                                            setQuantity(numValue);
+                                        }
+                                    }}
                                     onBlur={(e) => {
+                                   
                                         if (e.target.value === "") {
                                             setQuantity(1);
                                         }
                                     }}
-                                    aria-label="Số lượng sản phẩm"
                                 />
                                 <button
                                     onClick={() => setQuantity(prev => Math.min(99, prev + 1))}
