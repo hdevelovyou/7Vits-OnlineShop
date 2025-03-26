@@ -40,7 +40,7 @@ const Homepage = () => {
                             <div className="quality-item"><h2 className="quality-count">30,000+</h2><p className="quality-text">Happy Customers</p></div>
                         </div>
                     </div>
-                    <img src={cr7} alt="" className="cr7" />
+            
                 </div>
             </div>
 

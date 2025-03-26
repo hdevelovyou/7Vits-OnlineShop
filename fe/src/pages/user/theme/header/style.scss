@@ -40,10 +40,18 @@
 .header-logo {
 
     display: flex;
-    justify-content: center;
-
+    align-items: center;
+    max-width: 100%;
+    width: 100%;
     img {
         width: 10rem;
+    }
+    h1 {
+        text-align: center;
+        display: inline-block;
+        font-size: 3rem;
+        color: #ff0000;
+        letter-spacing: 4px;
     }
 }
 
