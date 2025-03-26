@@ -19,6 +19,11 @@ const RegisterPage = () => {
     });
     const [error, setError] = useState("");
 
+    const handleGoogleSignup = () => {
+        window.location.href = 'http://localhost:5000/api/auth/google';
+        // For production: window.location.href = 'https://your-domain.com/api/auth/google';
+      };
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -73,10 +78,10 @@ const RegisterPage = () => {
                     <input type="password" name="confirmPassword" placeholder="Xác nhận mật khẩu" onChange={handleChange} required />
                 </div>
                 <div className="signup">
-                    <div className="otherSignUp">
-                        <FaFacebook className="icon" />
-                        <FcGoogle className="icon-gg" />
-                    </div>
+                <div className="otherSignUp">
+                    <FaFacebook className="icon" />
+                    <FcGoogle className="icon-gg" onClick={handleGoogleSignup} style={{ cursor: 'pointer' }} />
+                </div>
                     <div className="sig-btn">
                         <button type="submit">Đăng ký</button>
                     </div>

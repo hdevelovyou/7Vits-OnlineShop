@@ -1,6 +1,5 @@
 import { memo } from "react";
 import "./style.scss";
-import cr7 from '../../../assets/images/cr7.png';
 import adobe from '../../../assets/images/adobe.png';
 import logofc from '../../../assets/images/logofc.png';
 import League_of_Legends_2019_vector from '../../../assets/images/League_of_Legends_2019_vector.png';
