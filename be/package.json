@@ -1,27 +1,40 @@
 {
-  "name": "learnjs2",
-  "version": "1.0.0",
-  "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx babel-node src/server.js"
-  },
-  "author": "hdevelovyou",
-  "license": "ISC",
-  "description": "backend nodeJS my 1st proj",
-  "dependencies": {
-    "body-parser": "^1.19.0",
-    "dotenv": "^8.2.0",
-    "ejs": "^3.1.5",
-    "express": "^4.17.1",
-    "mysql2": "^3.13.0",
-    "sequelize": "^6.37.6"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.12.10",
-    "@babel/node": "^7.12.10",
-    "@babel/preset-env": "^7.12.10",
-    "nodemon": "^2.0.7",
-    "sequelize-cli": "^6.6.2"
-  }
+    "name": "web-coding",
+    "version": "1.0.0",
+    "description": "Bire web coding",
+    "main": "server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "nodemon ./7Vits-OnlineShop/MyCode/server.js"
+    },
+    "keywords": [
+        "nodejs"
+    ],
+    "author": "Bire",
+    "license": "ISC",
+    "dependencies": {
+        "bcryptjs": "^3.0.2",
+        "body-parser": "^1.19.0",
+        "cors": "^2.8.5",
+        "crypto": "^1.0.1",
+        "dotenv": "^16.4.7",
+        "ejs": "3.1.8",
+        "express": "4.18.2",
+        "express-validator": "^7.2.1",
+        "jsonwebtoken": "^9.0.2",
+        "mysql2": "^2.2.5",
+        "nodemailer": "^6.10.0",
+        "passport": "^0.7.0",
+        "passport-facebook": "^3.0.0",
+        "passport-google-oauth20": "^2.0.0",
+        "react-app": "^1.1.2",
+        "sequelize": "^6.37.6"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.12.10",
+        "@babel/node": "^7.12.10",
+        "@babel/preset-env": "^7.12.10",
+        "nodemon": "2.0.20",
+        "sequelize-cli": "^6.2.0"
+    }
 }
