@@ -44,6 +44,7 @@ html {
                 opacity: 0;
                 transform: translateX(-5rem);
         }
+
         to {
                 opacity: 1;
                 transform: translateX(0);
@@ -54,9 +55,10 @@ html {
         font-weight: bold;
         text-transform: uppercase;
         word-wrap: break-word;
-        width: 43rem;
+        width: 63rem;
         line-height: 6rem;
         text-shadow: 0.4rem 0.4rem 0.8rem #ccc;
+        font-size: 6rem;
 }
 
 #section-1 .text-title {
@@ -122,10 +124,12 @@ html {
         box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.7);
         border-radius: 10px;
 }
-.section-logo{
+
+.section-logo {
         background-color: #fff;
-        
+
 }
+
 .logo img {
         height: 9rem;
         transition: transform 0.3s ease;
@@ -216,19 +220,21 @@ html {
 }
 
 
-.grid__row{
+.grid__row {
         display: flex;
-        margin-top:2rem;
+        margin-top: 2rem;
         flex-wrap: wrap;
         margin-left: -1.2rem;
         margin-right: -1.2rem;
 }
-.grid__column-12{
+
+.grid__column-12 {
         margin-left: 1.2rem;
         margin-right: 1.2rem;
         width: 100%;
 }
-.grid__column-3{
+
+.grid__column-3 {
         margin-left: 1.2rem;
         margin-right: 1.2rem;
         width: calc(20% - 2.4rem);
@@ -239,105 +245,111 @@ html {
         max-width: 100%;
         margin: 0 auto;
 }
-    
-.product-namename{
-        h3{
+
+.product-namename {
+        h3 {
                 font-size: 5rem;
-                font-weight: bold;    
+                font-weight: bold;
                 text-align: center;
         }
-       margin: 140px 0px;
+
+        margin: 140px 0px;
 }
+
 .Products {
         padding: 50px 0;
         text-align: center;
+
         .home-product-item {
-            margin-bottom: 20px;
-            background: rgb(255 255 255 / 16%);
-            border-radius: 10px;
-            padding: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: 0.3s;
-            cursor: pointer;
-            text-align: left;
-            .mota-name{
-                font-size: 1.6rem;
-                font-weight: bold;
-                margin: 10px 0;
-              
-            }
-            &:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-            }
-    
-            &_img {
-                width: 100%;
-                height: 200px;
-                background-size: cover;
-                background-position: center;
+                margin-bottom: 20px;
+                background: rgb(255 255 255 / 16%);
                 border-radius: 10px;
-            }
-    
-            &_name {
-                margin-top: 10px;
-                font-size: 1rem;
-                font-weight: bold;
-                padding: 5px;
-            }
-    
-            &_desc {
-                font-size: 0.9rem;
-                color: gray;
-                padding: 0 5px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-    
-            &_price {
-                font-size: 1.2rem;
-                font-weight: bold;
-                color: #e63946;
-                padding: 5px;
-                display: flex;
-                justify-content: space-between;
-            }
-    
-            &_rating {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                padding: 5px;
-                
-                .fa-star {
-                    color: #ddd;
-                    font-size: 1.4rem;
-                    transition: color 0.2s ease;
-                    
-                    &.active {
-                        color: #FFD700;
-                    }
+                padding: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                transition: 0.3s;
+                cursor: pointer;
+                text-align: left;
+
+                .mota-name {
+                        font-size: 1.6rem;
+                        font-weight: bold;
+                        margin: 10px 0;
+
                 }
-                
-                .rating-number {
-                    font-size: 1.2rem;
-                    color: #666;
-                    margin-left: 0.5rem;
+
+                &:hover {
+                        transform: translateY(-5px);
+                        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
                 }
-            }
+
+                &_img {
+                        width: 100%;
+                        height: 200px;
+                        background-size: cover;
+                        background-position: center;
+                        border-radius: 10px;
+                }
+
+                &_name {
+                        margin-top: 10px;
+                        font-size: 1rem;
+                        font-weight: bold;
+                        padding: 5px;
+                }
+
+                &_desc {
+                        font-size: 0.9rem;
+                        color: gray;
+                        padding: 0 5px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                }
+
+                &_price {
+                        font-size: 1.2rem;
+                        font-weight: bold;
+                        color: #e63946;
+                        padding: 5px;
+                        display: flex;
+                        justify-content: space-between;
+                }
+
+                &_rating {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        padding: 5px;
+
+                        .fa-star {
+                                color: #ddd;
+                                font-size: 1.4rem;
+                                transition: color 0.2s ease;
+
+                                &.active {
+                                        color: #FFD700;
+                                }
+                        }
+
+                        .rating-number {
+                                font-size: 1.2rem;
+                                color: #666;
+                                margin-left: 0.5rem;
+                        }
+                }
         }
-    }
-   
-    @media (max-width: 768px) {
+}
+
+@media (max-width: 768px) {
         .grid__column-3 {
-            width: calc(50% - 2.4rem); /* Chia 2 cột */
+                width: calc(50% - 2.4rem);
+                /* Chia 2 cột */
         }
-    }
-    
-    /* Mobile: 1 sản phẩm trên 1 dòng */
-    @media (max-width: 480px) {
+}
+
+/* Mobile: 1 sản phẩm trên 1 dòng */
+@media (max-width: 480px) {
         .grid__column-3 {
-            width: calc(50% - 2.4rem);
+                width: calc(50% - 2.4rem);
         }
-    }
+}
