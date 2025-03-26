@@ -11,6 +11,7 @@ import OtpPage2 from "./pages/user/otpPage2";
 import NewPassword from "./pages/user/newPassword";
 import ProductPage from "./pages/user/productPage";
 import OAuthCallback from "./pages/user/OAuthCallback";
+import GoogleAuthCompletionPage from './pages/user/googleAuthCompletionPage';
 const renderUserRoutes = () => {
     return (
         <MasterLayout>
@@ -25,6 +26,7 @@ const renderUserRoutes = () => {
                     <Route path={ROUTES.USER.OTPFORFORGOT} element={<OtpPage2 />} />
                     <Route path={ROUTES.USER.NEWPASSWORD} element={<NewPassword />} />
                     <Route path={ROUTES.USER.PRODUCT} element={<ProductPage />} />
+                    <Route path="/complete-google-signup" element={<GoogleAuthCompletionPage />} />
                     <Route path="/oauth-callback" element={<OAuthCallback setIsLoggedIn={setIsLoggedIn} />} />
                 </Routes>
             )}

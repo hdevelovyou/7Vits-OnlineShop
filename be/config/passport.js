@@ -42,18 +42,17 @@ const setupPassport = () => {
                 const names = profile.displayName.split(' ');
                 const firstName = names[0];
                 const lastName = names.length > 1 ? names[names.length - 1] : '';
-                const userName = profile.emails[0].value.split('@')[0] + Math.floor(Math.random() * 1000);
                 
+                // Không tự động tạo userName nữa
                 const sql = `INSERT INTO users 
-                  (firstName, lastName, userName, email, googleId) 
-                  VALUES (?, ?, ?, ?, ?)`;
+                  (firstName, lastName, email, googleId) 
+                  VALUES (?, ?, ?, ?)`;
                 
                 db.query(
                   sql,
                   [
                     firstName,
                     lastName,
-                    userName,
                     profile.emails[0].value,
                     profile.id
                   ],
