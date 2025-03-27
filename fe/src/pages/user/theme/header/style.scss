@@ -7,6 +7,9 @@
     transition: all 0.4s ease-in-out;
 }
 
+.humberger_menu_wrapper, .hamergur_open{
+    display: none;
+}
 .header-top {
     background: #810000;
     width: 100%;
@@ -277,13 +280,17 @@ html {
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 100;
         visibility: hidden;
-        transition: all 0.2s ease-in-out;
+        transition: transform 0.2s ease-in-out;
+     
         &.active{
             visibility: visible;
+           
         }
     }
+    
     .header__menu_navbar{
        display: flex;
+      
        flex-direction: column;
        justify-content: space-between;
        height: 100%;
@@ -319,3 +326,4 @@ html {
         }
     }
 }
+

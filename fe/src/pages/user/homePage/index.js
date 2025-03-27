@@ -49,7 +49,7 @@ const Homepage = () => {
             {/* Logo Section */}
             <div className="section-logo">
 
-                <div className="containercontainer">
+                <div className="container">
                     <div className="logo">
 
                         {[logofc, League_of_Legends_2019_vector, steam_logo, adobe].map((logo, index) => (
