@@ -36,13 +36,29 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 .row {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+}
+.col-lg-6{
+    flex: 0 0 50%;
+    max-width: 50%;
 }
 
 @include Responsive($MEDIEUM){
     .col-lg-3 {
         flex: 0 0 25%;
         max-width: 25%;
+    }
+}
+
+@include Responsive($TABLET){
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    .col-md-12{
+        flex: 0 0 100%;
+        max-width: 100%;
     }
 }
 
@@ -55,6 +71,8 @@ input[type="number"]::-webkit-inner-spin-button {
         flex: 0 0 50%;
         max-width: 50%;
     }
+    
 }
+
 
 

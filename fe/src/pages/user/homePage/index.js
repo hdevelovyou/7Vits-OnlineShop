@@ -49,7 +49,7 @@ const Homepage = () => {
             {/* Logo Section */}
             <div className="section-logo">
 
-                <div className="grid">
+                <div className="containercontainer">
                     <div className="logo">
 
                         {[logofc, League_of_Legends_2019_vector, steam_logo, adobe].map((logo, index) => (
@@ -62,7 +62,7 @@ const Homepage = () => {
 
             {/* Products Section */}
             <div className="Products" id="Linkpro">
-                <div className="grid">
+                <div className="container">
                     {categories.map((category, index) => (
                         <div className="product-namename" key={index}>
                             <h3>{category}</h3>

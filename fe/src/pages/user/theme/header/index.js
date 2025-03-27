@@ -7,6 +7,9 @@ import logo from "../../../../assets/images/logo.png";
 import { ROUTES } from "../../../../utils/router.js";
 import { IoSearchCircleSharp } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
+import { AiOutlineMenu } from "react-icons/ai";
+import { AiOutlineDown } from "react-icons/ai";
+
 const menuItems = [
   {
     name: "Trang chủ",
@@ -34,6 +37,8 @@ const menuItems = [
 
 const Header = ({ isLoggedIn, setIsLoggedIn }) => { // Nhận props isLoggedIn và setIsLoggedIn
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isHumbergerMenuOpen, setIsHumbergerMenuOpen] = useState(false);
+  const [isShowSubmenu, setIsShowSubmenu] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,104 +56,161 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => { // Nhận props isLoggedIn v
   };
 
   return (
-    <div id="header" className={isScrolled ? "scrolled" : ""}>
-      <div className="header-top">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-3 col-xl-3 header-top-left">
-              <p>7vits.shop@gmail.com</p>
-            </div>
-            <div className="col-lg-3 col-xl-6 header-top-center">
-              <p>Giảm giá đến 30% cho đơn hàng đầu tiên của bạn</p>
-            </div>
-            <div className="col-lg-3 col-xl-3 header-top-right">
-              <ul>
-                <li>
-                  <Link to="https://www.facebook.com/7vits.shop" style={{ textDecoration: "none" }}>
-                    <CiFacebook className="word" />
+    <>
+      <div className={`humberger_menu_overlay ${
+        isHumbergerMenuOpen ? "active" : ""
+      }`} onClick={()=>setIsHumbergerMenuOpen(false)}/>
+
+      <div className={`humberger_menu_wrapper ${isHumbergerMenuOpen ? "show" : ""}`}>
+        <div className="header__menu_navbar">
+          <ul>
+            {menuItems.map((menu, menuKey) => (
+              <li key={menuKey}> 
+                {menu.name === "Trang chủ" ?  (
+                  <Link to={menu.path} onClick={() => window.scrollTo(0, 0)}>
+                    {menu.name}
                   </Link>
-                </li>
-                <li>
-                  <Link to="https://www.instagram.com/7vits.shop/" style={{ textDecoration: "none" }}>
-                    <FaInstagram className="word" />
+                ) : (
+                  <Link to={menu.path}
+                  onClick={()=>{
+                    const newmenu=[...menuItems];
+                    newmenu[menuKey].isShowSubmenu=!newmenu[menuKey].isShowSubmenu;
+                    setIsShowSubmenu(newmenu);
+                  }}
+                  >
+                  {menu.name}
+                  {menu.child && menu.child.length >0 && (
+                  <AiOutlineDown className="header__menu_navbar_icon" />
+                  )}
                   </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
+                )}
+                {menu.child && menu.child.length > 0 && (
+                  <ul className={`header-submenu ${menu.isShowSubmenu ? "show__submenu" : ""}`}>
+                    {menu.child.map((child, childKey) => (
+                      <li key={childKey}>
+                        <Link to={child.path}>{child.name}</Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
-      <div className="header-main">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-3 col-xl-3">
-              <div className="header-logo">
-                <Link to={ROUTES.USER.HOME} onClick={() => window.scrollTo(0, 0)} style={{ textDecoration: "none" }}>
-                  <img src={logo} alt="7vits-logo" />
-                </Link>
-                <h1>7VITS</h1>
+
+      <div id="header" className={isScrolled ? "scrolled" : ""}>
+        <div className="header-top">
+          <div className="container">
+            <div className="row">
+              <div className="col-lg-3 col-xl-3 header-top-left">
+                <p>7vits.shop@gmail.com</p>
               </div>
-            </div>
-            <div className="col-lg-3 col-xl-6">
-              <nav className="header-menu">
+              <div className="col-lg-3 col-xl-6 header-top-center">
+                <p>Giảm giá đến 30% cho đơn hàng đầu tiên của bạn</p>
+              </div>
+              <div className="col-lg-3 col-xl-3 header-top-right">
                 <ul>
-                  {menuItems.map((menu, menuKey) => (
-                    <li key={menuKey}>
-                      {menu.name === "Trang chủ" ? (
-                        <Link to={menu.path} onClick={() => window.scrollTo(0, 0)}>
-                          {menu.name}
-                        </Link>
-                      ) : (
-                        <Link to={menu.path}>{menu.name}</Link>
-                      )}
-                      {menu.child && menu.child.length > 0 && (
-                        <ul className="header-submenu">
-                          {menu.child.map((child, childKey) => (
-                            <li key={childKey}>
-                              <Link to={child.path}>{child.name}</Link>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </li>
-                  ))}
+                  <li>
+                    <Link to="https://www.facebook.com/7vits.shop" style={{ textDecoration: "none" }}>
+                      <CiFacebook className="word" />
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="https://www.instagram.com/7vits.shop/" style={{ textDecoration: "none" }}>
+                      <FaInstagram className="word" />
+                    </Link>
+                  </li>
                 </ul>
-              </nav>
-            </div>
-            <div className="col-lg-3 col-xl-3">
-              <div className="header-login-signup">
-                <div className="search">
-                  <IoSearchCircleSharp />
-                </div>
-                <div className="cart">
-                  <FaShoppingCart />
-                </div>
-                {isLoggedIn ? (
-                  <>
-                    <Link to="/profile" className="profile-btn">
-                      <CgProfile />
-                    </Link>
-                    <button className="logout-btn" onClick={handleLogout}>
-                      Đăng xuất
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link to="/register" className="signup-btn">
-                      Đăng ký
-                    </Link>
-                    <Link to="/login" className="login-btn">
-                      Đăng nhập
-                    </Link>
-                  </>
-                )}
               </div>
             </div>
           </div>
         </div>
+
+        <div className="header-main">
+          <div className="container">
+            <div className="row">
+              <div className="col-lg-3 ">
+                <div className="header-logo">
+                  <Link to={ROUTES.USER.HOME} onClick={() => window.scrollTo(0, 0)} style={{ textDecoration: "none" }}>
+                    <img src={logo} alt="7vits-logo" />
+                  </Link>
+                  <h1>7VITS</h1>
+                </div>
+              </div>
+              <div className="col-lg-3">
+                <nav className="header-menu">
+                  <ul>
+                    {menuItems.map((menu, menuKey) => (
+                      <li key={menuKey}>
+                        {menu.name === "Trang chủ" ? (
+                          <Link to={menu.path} onClick={() => window.scrollTo(0, 0)}>
+                            {menu.name}
+                          </Link>
+                        ) : (
+                          <Link to={menu.path}>{menu.name}</Link>
+                        )}
+                        {menu.child && menu.child.length > 0 && (
+                          <ul className="header-submenu">
+                            {menu.child.map((child, childKey) => (
+                              <li key={childKey}>
+                                <Link to={child.path}>{child.name}</Link>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              </div>
+              {/* responsive tablet */}
+              <div className="col-lg-3 ">
+                <div className="header-login-signup">
+                  <div className="search">
+                    <IoSearchCircleSharp />
+                  </div>
+                  <ul className="cart">
+                    <li>
+                      <Link to="/gio-hang" style={{ textDecoration: "none" }}>
+                        <FaShoppingCart /> <span>0</span>
+                      </Link>
+                    </li>
+                  </ul>
+                  {isLoggedIn ? (
+                    <>
+                      <Link to="/profile" className="profile-btn">
+                        <CgProfile />
+                      </Link>
+                      <button className="logout-btn" onClick={handleLogout}>
+                        Đăng xuất
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link to="/register" className="signup-btn">
+                        Đăng ký
+                      </Link>
+                      <Link to="/login" className="login-btn">
+                        Đăng nhập
+                      </Link>
+                    </>
+                  )}
+                  <div className="hamergur_open">
+                    <AiOutlineMenu
+                      onClick={()=>setIsHumbergerMenuOpen(true)}
+                    />
+                  </div>
+                </div>
+              </div>
+              {/* responsive tablet */}
+
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
