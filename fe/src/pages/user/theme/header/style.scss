@@ -261,6 +261,8 @@ html {
         transition: all 0.2s ease-in-out;
         font-size: 1.8rem;
         font-weight: bold;
+        overflow-y: scroll;
+        left: -300px;
         ul{
             list-style: none;
             padding: 0;
@@ -269,6 +271,7 @@ html {
         &.show{
             opacity: 1;
             z-index: 999;
+            left: 0;
         }
     }
     .humberger_menu_overlay{
@@ -290,7 +293,6 @@ html {
     
     .header__menu_navbar{
        display: flex;
-      
        flex-direction: column;
        justify-content: space-between;
        height: 100%;

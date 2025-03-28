@@ -1,35 +1,46 @@
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
+import axios from "axios";
 import "./style.scss";
 import adobe from '../../../assets/images/adobe.png';
 import logofc from '../../../assets/images/logofc.png';
 import League_of_Legends_2019_vector from '../../../assets/images/League_of_Legends_2019_vector.png';
 import steam_logo from '../../../assets/images/steam_logo.png';
-import yt from '../../../assets/images/yt.png'
+import yt from '../../../assets/images/yt.png';
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { Link } from "react-router-dom";
-import lolskin from '../../../assets/images/lolskin.jpg';
-import adobepd from '../../../assets/images/adobe-pd.jpg';
-import steamgc from '../../../assets/images/Steam-Gift-card.jpg';
-import chatgpt from '../../../assets/images/chatgpt.png';
-const products = [
-    { id: 1, name: "Tài khoản ChatGPT Plus", desc: "Tài khoản ChatGPT Plus chính hãng, đầy đủ tính năng GPT-4.", priceOld: "499,000đ", priceNew: "399,000đ", image: chatgpt, rating: 5 },
-    { id: 2, name: "Adobe License", desc: "Phần mềm bản quyền Adobe chính hãng.", priceOld: "1,299,000đ", priceNew: "800,000đ", image: adobepd, rating: 4 },
-    { id: 3, name: "League of Legends Skin", desc: "Trang phục độc quyền trong game.", priceOld: "399,000đ", priceNew: "299,000đ", image: lolskin, rating: 5 },
-    { id: 4, name: "Steam Gift Card", desc: "Thẻ nạp Steam dành cho game thủ.", priceOld: "1,000,000đ", priceNew: "800,000đ", image: steamgc, rating: 4 },
-    { id: 5, name: "Youtube 12 tháng", desc: "Thẻ nạp Netflix dành cho game thủ.", priceOld: "1,000,000đ", priceNew: "800,000đ", image: yt, rating: 4 },
-    { id: 6, name: "Steam Gift Card", desc: "Thẻ nạp Steam dành cho game thủ.", priceOld: "1,000,000đ", priceNew: "800,000đ", image: steamgc, rating: 4 }
-];
 
 // Danh sách các danh mục
 const categories = ["New Arrivals", "Best Sellers", "Discounted Items"];
 
 const Homepage = () => {
+    const [products, setProducts] = useState([]);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await axios.get("http://localhost:5000/api/products");
+                console.log(response.data); // Kiểm tra dữ liệu trả về từ API
+
+                // Lấy dữ liệu từ API - phải truy cập `list` thay vì `products`
+                if (Array.isArray(response.data.list)) {
+                    setProducts(response.data.list);
+                } else {
+                    console.error("Dữ liệu không đúng định dạng.");
+                }
+            } catch (error) {
+                console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
     return (
         <div id="content">
             {/* Banner Section */}
             <div className="banner">
                 <div id="section-1">
-                    <div className="introduce grid" >
+                    <div className="introduce grid">
                         <div className="grid__column-6">
                             <h1 className="text-introduce">YOUR SATISFACTION OUR Priority</h1>
                             <p className="text-title">We are committed to delivering top quality</p>
@@ -41,24 +52,19 @@ const Homepage = () => {
                             <div className="quality-item"><h2 className="quality-count">30,000+</h2><p className="quality-text">Happy Customers</p></div>
                         </div>
                     </div>
-               
-                       
                 </div>
             </div>
 
             {/* Logo Section */}
             <div className="section-logo">
-
                 <div className="container">
                     <div className="logo">
-
                         {[logofc, League_of_Legends_2019_vector, steam_logo, adobe].map((logo, index) => (
                             <img key={index} src={logo} alt="" className="section-logo" />
                         ))}
                     </div>
                 </div>
             </div>
-
 
             {/* Products Section */}
             <div className="Products" id="Linkpro">
@@ -79,23 +85,25 @@ const Homepage = () => {
                                                     >
                                                         <div
                                                             className="home-product-item_img"
-                                                            style={{ backgroundImage: `url(${product.image})` }}
+                                                            style={{ backgroundImage: `url(https://divineshop.vn${product.image})` }}
                                                         ></div>
                                                         <div className="mota">
                                                             <p className="mota-name home-product-item_name">{product.name}</p>
-                                                            <p className="mota-name home-product-item_desc">{product.desc}</p>
+                                                            <p className="mota-name home-product-item_desc">{product.slug}</p>
                                                             <p className="mota-name home-product-item_rating">
-                                                                {[...Array(5)].map((_, idx) => (
-                                                                    <i key={idx} className={`fa-solid fa-star ${idx < product.rating ? 'active' : ''}`}></i>
-                                                                ))}
-                                                                <span className="rating-number">({product.rating})</span>
+                                                                <i className="fa-solid fa-star active"></i>
+                                                                <i className="fa-solid fa-star active"></i>
+                                                                <i className="fa-solid fa-star active"></i>
+                                                                <i className="fa-solid fa-star active"></i>
+                                                                <i className="fa-solid fa-star"></i>
+                                                                <span className="rating-number">(4)</span>
                                                             </p>
                                                             <div className="home-product-item_price">
                                                                 <span className="mota-name home-product-item_price-old">
-                                                                    <s>{product.priceOld}</s>
+                                                                    <s>{product.originalPrice.toLocaleString()}đ</s>
                                                                 </span>
                                                                 <span className="mota-name home-product-item_price-new">
-                                                                    {product.priceNew}
+                                                                    {product.price.toLocaleString()}đ
                                                                 </span>
                                                             </div>
                                                         </div>

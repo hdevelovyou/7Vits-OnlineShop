@@ -3,6 +3,8 @@
     "@fortawesome/fontawesome-free": "^6.7.2",
     "appwrite": "^17.0.1",
     "axios": "^1.8.4",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
     "react-icons": "^5.5.0"
   }
 }

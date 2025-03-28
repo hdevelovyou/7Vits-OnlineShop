@@ -57,31 +57,30 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => { // Nhận props isLoggedIn v
 
   return (
     <>
-      <div className={`humberger_menu_overlay ${
-        isHumbergerMenuOpen ? "active" : ""
-      }`} onClick={()=>setIsHumbergerMenuOpen(false)}/>
+      <div className={`humberger_menu_overlay ${isHumbergerMenuOpen ? "active" : ""
+        }`} onClick={() => setIsHumbergerMenuOpen(false)} />
 
       <div className={`humberger_menu_wrapper ${isHumbergerMenuOpen ? "show" : ""}`}>
         <div className="header__menu_navbar">
           <ul>
             {menuItems.map((menu, menuKey) => (
-              <li key={menuKey}> 
-                {menu.name === "Trang chủ" ?  (
+              <li key={menuKey}>
+                {menu.name === "Trang chủ" ? (
                   <Link to={menu.path} onClick={() => window.scrollTo(0, 0)}>
                     {menu.name}
                   </Link>
                 ) : (
                   <Link to={menu.path}
-                  onClick={()=>{
-                    const newmenu=[...menuItems];
-                    newmenu[menuKey].isShowSubmenu=!newmenu[menuKey].isShowSubmenu;
-                    setIsShowSubmenu(newmenu);
-                  }}
+                    onClick={() => {
+                      const newmenu = [...menuItems];
+                      newmenu[menuKey].isShowSubmenu = !newmenu[menuKey].isShowSubmenu;
+                      setIsShowSubmenu(newmenu);
+                    }}
                   >
-                  {menu.name}
-                  {menu.child && menu.child.length >0 && (
-                  <AiOutlineDown className="header__menu_navbar_icon" />
-                  )}
+                    {menu.name}
+                    {menu.child && menu.child.length > 0 && (
+                      <AiOutlineDown className="header__menu_navbar_icon" />
+                    )}
                   </Link>
                 )}
                 {menu.child && menu.child.length > 0 && (
@@ -199,7 +198,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => { // Nhận props isLoggedIn v
                   )}
                   <div className="hamergur_open">
                     <AiOutlineMenu
-                      onClick={()=>setIsHumbergerMenuOpen(true)}
+                      onClick={() => setIsHumbergerMenuOpen(true)}
                     />
                   </div>
                 </div>
