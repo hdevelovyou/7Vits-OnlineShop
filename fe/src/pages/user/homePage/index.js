@@ -83,10 +83,11 @@ const Homepage = () => {
                                                         className="home-product-item"
                                                         style={{ display: "block", textDecoration: "none" }}
                                                     >
-                                                        <div
-                                                            className="home-product-item_img"
-                                                            style={{ backgroundImage: `url(https://divineshop.vn${product.image})` }}
-                                                        ></div>
+                                                        <img src={`https://www.divineshop.vn${product.image}`} alt="" className="home-product-item_img" />
+
+
+
+
                                                         <div className="mota">
                                                             <p className="mota-name home-product-item_name">{product.name}</p>
                                                             <p className="mota-name home-product-item_desc">{product.slug}</p>
