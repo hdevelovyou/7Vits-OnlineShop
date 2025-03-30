@@ -1,115 +1,8 @@
 import { useState, memo, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./style.scss";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-
-// Import all product images
-import chatgpt from "../../../assets/images/chatgpt.png";
-import adobepd from "../../../assets/images/adobe-pd.jpg";
-import lolskin from "../../../assets/images/lolskin.jpg";
-import steamgc from "../../../assets/images/Steam-Gift-card.jpg";
-import yt from "../../../assets/images/yt.png";
-
-// Product data (in a real app, this would be in a separate file or from an API)
-const productsData = [
-    {
-        id: 1,
-        name: "Tài khoản ChatGPT Plus 1 tháng",
-        desc: "Tài khoản ChatGPT Plus chính hãng, đầy đủ tính năng GPT-4.",
-        priceOld: 499000,
-        priceNew: 399000,
-        image: chatgpt,
-        images: [chatgpt, chatgpt, chatgpt],
-        rating: 5,
-        sold: 2410,
-        features: [
-            "Truy cập GPT-4 không giới hạn",
-            "Hỗ trợ kỹ thuật 24/7",
-            "Bảo hành 30 ngày",
-            "Tài khoản chính hãng"
-        ]
-    },
-    {
-        id: 2,
-        name: "Adobe License",
-        desc: "Phần mềm bản quyền Adobe chính hãng.",
-        priceOld: 1299000,
-        priceNew: 800000,
-        image: adobepd,
-        images: [adobepd, adobepd, adobepd],
-        rating: 4,
-        sold: 1520,
-        features: [
-            "Bản quyền trọn đời",
-            "Cập nhật thường xuyên",
-            "Hỗ trợ kỹ thuật 24/7"
-        ]
-    },
-    {
-        id: 3,
-        name: "League of Legends Skin",
-        desc: "Trang phục độc quyền trong game.",
-        priceOld: 399000,
-        priceNew: 299000,
-        image: lolskin,
-        images: [lolskin, lolskin, lolskin],
-        rating: 5,
-        sold: 1850,
-        features: [
-            "Skin giới hạn",
-            "Hiệu ứng đặc biệt",
-            "Dành riêng cho tài khoản Liên Minh Huyền Thoại"
-        ]
-    },
-    {
-        id: 4,
-        name: "Steam Gift Card",
-        desc: "Thẻ nạp Steam dành cho game thủ.",
-        priceOld: 1000000,
-        priceNew: 800000,
-        image: steamgc,
-        images: [steamgc, steamgc, steamgc],
-        rating: 4,
-        sold: 2100,
-        features: [
-            "Nạp tiền vào tài khoản Steam",
-            "Mua game và vật phẩm trong Steam",
-            "Hỗ trợ tất cả tài khoản Steam"
-        ]
-    },
-    {
-        id: 5,
-        name: "Youtube Premium 12 tháng",
-        desc: "Gói Youtube Premium chính hãng, không quảng cáo, phát nhạc nền.",
-        priceOld: 1000000,
-        priceNew: 800000,
-        image: yt,
-        images: [yt, yt, yt],
-        rating: 4,
-        sold: 1300,
-        features: [
-            "Xem video không quảng cáo",
-            "Phát nhạc nền khi tắt màn hình",
-            "Tải video để xem ngoại tuyến"
-        ]
-    },
-    {
-        id: 6,
-        name: "Youtube Premium 12 tháng",
-        desc: "Gói Youtube Premium chính hãng, không quảng cáo, phát nhạc nền.",
-        priceOld: 1000000,
-        priceNew: 800000,
-        image: yt,
-        images: [yt, yt, yt],
-        rating: 4,
-        sold: 1300,
-        features: [
-            "Xem video không quảng cáo",
-            "Phát nhạc nền khi tắt màn hình",
-            "Tải video để xem ngoại tuyến"
-        ]
-    }
-];
 
 const ProductPage = () => {
     const { id } = useParams();
@@ -119,21 +12,42 @@ const ProductPage = () => {
     const [product, setProduct] = useState(null);
 
     useEffect(() => {
-        //Tìm sản phẩm có id trùng với id trong url
-        const foundProduct = productsData.find(p => p.id === parseInt(id));
-        if (foundProduct) {
-            setProduct(foundProduct);
-        } else {
-            //Nếu không tìm thấy sản phẩm, chuyển hướng về trang chủ
-            navigate('/');
-        }
+        const fetchProduct = async () => {
+            try {
+                const response = await axios.get("http://localhost:5000/api/products");
+                // Giả sử API trả về dữ liệu dưới dạng { list: [...] }
+                if (Array.isArray(response.data.list)) {
+                    const found = response.data.list.find(p => p.id === parseInt(id));
+                    if (found) {
+                        // Nếu API chỉ trả về 1 ảnh ở trường "image", chuyển thành mảng "images"
+                        setProduct({
+                            ...found,
+                            images: found.image ? [found.image] : [],
+                            rating: found.rating !== undefined ? found.rating : 4,      // Giá trị mặc định: 4 sao
+                            sold: found.sold !== undefined ? found.sold : 0,            // Nếu chưa có, mặc định 0
+                            features: found.features ? found.features : [],             // Mảng rỗng nếu không có
+                            description: found.description ? found.description : found.slug // Dùng slug nếu chưa có mô tả
+                        });
+                    } else {
+                        navigate("/"); // Nếu không tìm thấy sản phẩm, điều hướng về trang chủ
+                    }
+                } else {
+                    console.error("Dữ liệu không đúng định dạng.");
+                }
+            } catch (error) {
+                console.error("Lỗi khi tải sản phẩm:", error);
+                navigate("/");
+            }
+        };
+
+        fetchProduct();
     }, [id, navigate]);
 
     if (!product) {
         return <div className="product-page">Loading...</div>;
     }
 
-    const discount = Math.round(((product.priceOld - product.priceNew) / product.priceOld) * 100);
+    const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
 
     const formatPrice = (price) => {
         return new Intl.NumberFormat('vi-VN', {
@@ -159,23 +73,36 @@ const ProductPage = () => {
                 <div className="product-container">
                     <div className="product-gallery">
                         <div className="main-image">
-                            <img
-                                src={product.images[selectedImage]}
-                                alt={product.name}
-                                className="product-image"
-                            />
+                            {product.images && product.images.length > 0 ? (
+                                <img
+                                    src={`https://www.divineshop.vn${product.images[selectedImage]}`}
+                                    alt={product.name}
+                                    className="product-image"
+                                />
+                            ) : (
+                                <img
+                                    src="https://via.placeholder.com/300x300?text=No+Image"
+                                    alt="No Image"
+                                    className="product-image"
+                                />
+                            )}
                         </div>
-                        <div className="thumbnail-list">
-                            {product.images.map((image, index) => (
-                                <div
-                                    key={index}
-                                    className={`thumbnail ${selectedImage === index ? 'active' : ''}`}
-                                    onClick={() => setSelectedImage(index)}
-                                >
-                                    <img src={image} alt={`${product.name} ${index + 1}`} />
-                                </div>
-                            ))}
-                        </div>
+                        {product.images && product.images.length >1 && (
+                            <div className="thumbnail-list">
+                                {product.images.map((img, index) => (
+                                    <div
+                                        key={index}
+                                        className={`thumbnail ${selectedImage === index ? 'active' : ''}`}
+                                        onClick={() => setSelectedImage(index)}
+                                    >
+                                        <img
+                                            src={`https://www.divineshop.vn${img}`}
+                                            alt={`${product.name} ${index + 1}`}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                     <div className="product-info">
                         <h1 className="product-title">{product.name}</h1>
@@ -192,18 +119,20 @@ const ProductPage = () => {
                             <span className="sold">{product.sold.toLocaleString()} Đã Bán</span>
                         </div>
                         <div className="product-price">
-                            <span className="old-price">{formatPrice(product.priceOld)}</span>
-                            <span className="new-price">{formatPrice(product.priceNew)}</span>
+                            <span className="old-price">{formatPrice(product.originalPrice)}</span>
+                            <span className="new-price">{formatPrice(product.price)}</span>
                             <span className="discount">{discount}% GIẢM</span>
                         </div>
-                        <div className="product-features">
-                            {product.features.map((feature, index) => (
-                                <div key={index} className="feature-item">
-                                    <i className="fa-solid fa-check"></i>
-                                    <span>{feature}</span>
-                                </div>
-                            ))}
-                        </div>
+                        {product.features.length > 0 && (
+                            <div className="product-features">
+                                {product.features.map((feature, index) => (
+                                    <div key={index} className="feature-item">
+                                        <i className="fa-solid fa-check"></i>
+                                        <span>{feature}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                         <p className="product-description">{product.description}</p>
                         <div className="quantity-container">
                             <div className="soluong">
@@ -222,24 +151,19 @@ const ProductPage = () => {
                                     type="number"
                                     min="1"
                                     max="99"
-                                    value={quantity === "" ? "" : quantity}  
+                                    value={quantity === "" ? "" : quantity}
                                     onChange={(e) => {
                                         const value = e.target.value;
-
-                                    
                                         if (value === "") {
                                             setQuantity("");
                                             return;
                                         }
-
                                         const numValue = parseInt(value);
-
                                         if (!isNaN(numValue) && numValue >= 1 && numValue <= 99) {
                                             setQuantity(numValue);
                                         }
                                     }}
                                     onBlur={(e) => {
-                                   
                                         if (e.target.value === "") {
                                             setQuantity(1);
                                         }
