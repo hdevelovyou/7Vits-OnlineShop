@@ -1,6 +1,7 @@
 import { memo, useState, useEffect } from "react";
 import Header from "../header";
 import Footer from "../footer";
+import productPage from "../../productPage";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const MasterLayout = ({ children }) => {
@@ -12,6 +13,10 @@ const MasterLayout = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const [cart, setCart] = useState(() => {
+        const savedCart = localStorage.getItem("cart");
+        return savedCart ? JSON.parse(savedCart) : [];
+    });
     // Theo dõi thay đổi của isLoggedIn
     useEffect(() => {
         if (!isLoggedIn) {
@@ -21,12 +26,13 @@ const MasterLayout = ({ children }) => {
         }
     }, [isLoggedIn]);
 
+    
     // Không sử dụng React.Children.map nữa, thay vào đó truyền props trực tiếp
     return (
         <div>
-            <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+            <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} sluong={cart.length} />
             {children && typeof children === 'function' 
-                ? children({ isLoggedIn, setIsLoggedIn }) 
+                ? children({ isLoggedIn, setIsLoggedIn, cart, setCart }) 
                 : children}
             <Footer />
         </div>

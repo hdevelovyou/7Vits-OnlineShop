@@ -35,7 +35,7 @@ const menuItems = [
   },
 ];
 
-const Header = ({ isLoggedIn, setIsLoggedIn }) => { // Nhận props isLoggedIn và setIsLoggedIn
+  const Header = ({ isLoggedIn, setIsLoggedIn, sluong}) => { // Nhận props isLoggedIn và setIsLoggedIn
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHumbergerMenuOpen, setIsHumbergerMenuOpen] = useState(false);
   const [isShowSubmenu, setIsShowSubmenu] = useState(false);
@@ -174,7 +174,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => { // Nhận props isLoggedIn v
                     <li>
                       <Link to="/gio-hang" style={{ textDecoration: "none" }}>
                         <FaShoppingCart /> 
-                        <span>0</span>
+                        <span>{sluong}</span>
                       </Link>
                     </li>
                   </ul>

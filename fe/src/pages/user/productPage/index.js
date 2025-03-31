@@ -3,15 +3,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./style.scss";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import Header from "../theme/header"
 
-const ProductPage = () => {
+
+const ProductPage = ({ cart, setCart }) => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [quantity, setQuantity] = useState(1);
     const [selectedImage, setSelectedImage] = useState(0);
     const [product, setProduct] = useState(null);
-    const [cart, setCart] = useState([]);
  
 
     useEffect(() => {
@@ -44,15 +43,6 @@ const ProductPage = () => {
 
         fetchProduct();
     }, [id, navigate]);
-    // Update localStorage whenever cart changes
-  
-    
-    if (!product) {
-        return <div className="product-page">Loading...</div>;
-    }
-
-    const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
-
     const formatPrice = (price) => {
         return new Intl.NumberFormat('vi-VN', {
             style: 'currency',
@@ -70,19 +60,41 @@ const ProductPage = () => {
             setQuantity(numValue);
         }
     };
-
+  
     const handleAddToCart = (product) => {
-        if (cart.indexOf(product) !== -1) return null;
-        const arr= [...cart];
-        product.amount=1;
-        arr.push(product);
-        setCart([...arr]);
+        const arr = [...cart];
+        const foundIndex = arr.findIndex(item => item.id === product.id);
+    
+        if (foundIndex !== -1) {
+            arr[foundIndex].amount += quantity;
+        } else {
+            arr.push({ ...product, amount: quantity });
+        }
+    
+        setCart(arr);
+        localStorage.setItem("cart", JSON.stringify(arr));  // Lưu giỏ hàng vào Local Storage
     };
-
+    useEffect(() => {
+        const savedCart = localStorage.getItem("cart");
+        if (savedCart) {
+            setCart(JSON.parse(savedCart));
+        }
+    }, []);
+    
+    useEffect(() => {
+        console.log(cart);
+    },[cart]);  // Thêm mảng dependencies
+    const getTotalQuantity = () => {
+        return cart.reduce((total, product) => total + product.amount, 0);
+    };
+    if (!product) {
+        return <div className="product-page">Loading...</div>;
+    }
+    const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
     return (
-        
+        <>
+
         <div className="product-page">
-          
             <div className="grid">
                 <div className="product-container">
                     <div className="product-gallery">
@@ -211,6 +223,7 @@ const ProductPage = () => {
                 </div>
             </div>
         </div>
+        </>
     );
 };
 
