@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./style.scss";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import Header from "../theme/header"
 
 const ProductPage = () => {
     const { id } = useParams();
@@ -10,26 +11,27 @@ const ProductPage = () => {
     const [quantity, setQuantity] = useState(1);
     const [selectedImage, setSelectedImage] = useState(0);
     const [product, setProduct] = useState(null);
+    const [cart, setCart] = useState([]);
+ 
 
     useEffect(() => {
         const fetchProduct = async () => {
             try {
                 const response = await axios.get("http://localhost:5000/api/products");
-                // Giả sử API trả về dữ liệu dưới dạng { list: [...] }
                 if (Array.isArray(response.data.list)) {
                     const found = response.data.list.find(p => p.id === parseInt(id));
+                   console.log(found);
                     if (found) {
-                        // Nếu API chỉ trả về 1 ảnh ở trường "image", chuyển thành mảng "images"
                         setProduct({
                             ...found,
                             images: found.image ? [found.image] : [],
-                            rating: found.rating !== undefined ? found.rating : 4,      // Giá trị mặc định: 4 sao
-                            sold: found.sold !== undefined ? found.sold : 0,            // Nếu chưa có, mặc định 0
-                            features: found.features ? found.features : [],             // Mảng rỗng nếu không có
-                            description: found.description ? found.description : found.slug // Dùng slug nếu chưa có mô tả
+                            rating: found.rating !== undefined ? found.rating : 4,
+                            sold: found.sold !== undefined ? found.sold : 0,
+                            features: found.features ? found.features : [],
+                            description: found.description ? found.description : found.slug
                         });
                     } else {
-                        navigate("/"); // Nếu không tìm thấy sản phẩm, điều hướng về trang chủ
+                        navigate("/");
                     }
                 } else {
                     console.error("Dữ liệu không đúng định dạng.");
@@ -42,7 +44,9 @@ const ProductPage = () => {
 
         fetchProduct();
     }, [id, navigate]);
-
+    // Update localStorage whenever cart changes
+  
+    
     if (!product) {
         return <div className="product-page">Loading...</div>;
     }
@@ -67,8 +71,18 @@ const ProductPage = () => {
         }
     };
 
+    const handleAddToCart = (product) => {
+        if (cart.indexOf(product) !== -1) return null;
+        const arr= [...cart];
+        product.amount=1;
+        arr.push(product);
+        setCart([...arr]);
+    };
+
     return (
+        
         <div className="product-page">
+          
             <div className="grid">
                 <div className="product-container">
                     <div className="product-gallery">
@@ -180,7 +194,11 @@ const ProductPage = () => {
                             </div>
                         </div>
                         <div className="button-group">
-                            <button className="add-to-cart">
+                            <button className="add-to-cart" 
+                                onClick={() => {
+                                handleAddToCart(product);
+    
+                            }}>
                                 <i className="fa-solid fa-cart-shopping"></i>
                                 Thêm Vào Giỏ Hàng
                             </button>

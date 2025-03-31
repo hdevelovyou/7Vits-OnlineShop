@@ -9,7 +9,7 @@ import { IoSearchCircleSharp } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
 import { AiOutlineMenu } from "react-icons/ai";
 import { AiOutlineDown } from "react-icons/ai";
-
+import {ProductPage} from "../../productPage/index.js"
 const menuItems = [
   {
     name: "Trang chủ",
@@ -173,7 +173,8 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => { // Nhận props isLoggedIn v
                   <ul className="cart">
                     <li>
                       <Link to="/gio-hang" style={{ textDecoration: "none" }}>
-                        <FaShoppingCart /> <span>0</span>
+                        <FaShoppingCart /> 
+                        <span>0</span>
                       </Link>
                     </li>
                   </ul>
