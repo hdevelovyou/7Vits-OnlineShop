@@ -1,0 +1,299 @@
+// Profile Page Styles
+// Main colors: Black, Gray, Red
+
+// Variables
+$main-color: #000000;  // Black - main color
+$secondary-color: #333333;  // Dark gray
+$text-color: #ffffff;  // White for text
+$light-gray: #666666;  // Light gray for secondary elements
+$highlight-color: #ff0000;  // Red for highlights
+$error-color: #ff3333;  // Light red for errors
+$success-color: #4caf50;  // Green for success messages
+
+.profile-page {
+    min-height: 100vh;
+    background-color: $main-color;
+    display: flex;
+    justify-content: center;
+    padding: 20rem 2rem;
+    
+    .profile-container {
+        width: 100%;
+        max-width: 800px;
+        background-color: $secondary-color;
+        border-radius: 1rem;
+        padding: 3rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
+        animation: fadein 0.8s ease;
+        
+        h1 {
+            font-size: 2.8rem;
+            color: $text-color;
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: -1rem;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 8rem;
+                height: 0.3rem;
+                background-color: $highlight-color;
+                border-radius: 0.2rem;
+            }
+        }
+        
+        .success-message {
+            display: flex;
+            align-items: center;
+            background-color: rgba($success-color, 0.2);
+            color: $success-color;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+            font-size: 1.6rem;
+            
+            .success-icon {
+                margin-right: 1rem;
+                font-size: 1.8rem;
+            }
+        }
+    }
+    
+    .profile-section {
+        display: flex;
+        flex-direction: column;
+        
+        @media (min-width: 768px) {
+            flex-direction: row;
+        }
+    }
+    
+    .avatar-section {
+        flex: 0 0 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 3rem;
+        
+        @media (min-width: 768px) {
+            flex: 0 0 40%;
+            margin-right: 3rem;
+            margin-bottom: 0;
+        }
+        
+        .avatar-container {
+            position: relative;
+            width: 20rem;
+            height: 20rem;
+            border-radius: 50%;
+            overflow: hidden;
+            cursor: pointer;
+            background-color: $light-gray;
+            border: 0.3rem solid $highlight-color;
+            transition: all 0.3s ease;
+            
+            &:hover {
+                .avatar-overlay {
+                    opacity: 1;
+                }
+            }
+            
+            .user-avatar {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            
+            .avatar-placeholder {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                
+                .avatar-icon {
+                    font-size: 8rem;
+                    color: rgba($text-color, 0.6);
+                }
+            }
+            
+            .avatar-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.6);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                
+                .camera-icon {
+                    font-size: 5rem;
+                    color: $text-color;
+                }
+            }
+        }
+        
+        .avatar-actions {
+            display: flex;
+            margin-top: 2rem;
+            gap: 1rem;
+            
+            button {
+                padding: 1rem 2rem;
+                border-radius: 0.5rem;
+                font-size: 1.4rem;
+                cursor: pointer;
+                border: none;
+                font-weight: bold;
+                transition: all 0.3s ease;
+            }
+            
+            .save-btn {
+                background-color: $highlight-color;
+                color: $text-color;
+                
+                &:hover {
+                    background-color: darken($highlight-color, 10%);
+                }
+            }
+            
+            .cancel-btn {
+                background-color: $light-gray;
+                color: $text-color;
+                
+                &:hover {
+                    background-color: darken($light-gray, 10%);
+                }
+            }
+        }
+    }
+    
+    .user-info {
+        flex: 1;
+        padding: 2rem;
+        background-color: rgba($main-color, 0.3);
+        border-radius: 1rem;
+        
+        .info-row {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 2rem;
+            
+            @media (min-width: 768px) {
+                flex-direction: row;
+                align-items: center;
+            }
+            
+            label {
+                font-size: 1.6rem;
+                font-weight: bold;
+                color: $text-color;
+                margin-bottom: 1rem;
+                
+                @media (min-width: 768px) {
+                    flex: 0 0 40%;
+                    margin-bottom: 0;
+                }
+            }
+            
+            .info-value {
+                display: flex;
+                align-items: center;
+                
+                span {
+                    font-size: 1.6rem;
+                    color: $text-color;
+                    margin-right: 1.5rem;
+                }
+                
+                .edit-btn {
+                    background-color: $light-gray;
+                    color: $text-color;
+                    border: none;
+                    padding: 0.5rem 1.5rem;
+                    border-radius: 0.4rem;
+                    cursor: pointer;
+                    font-size: 1.2rem;
+                    transition: all 0.3s ease;
+                    
+                    &:hover {
+                        background-color: $highlight-color;
+                    }
+                }
+            }
+            
+            .edit-field {
+                flex: 1;
+                
+                input {
+                    width: 100%;
+                    padding: 1rem;
+                    font-size: 1.6rem;
+                    border-radius: 0.4rem;
+                    border: 0.2rem solid $light-gray;
+                    background-color: rgba($main-color, 0.5);
+                    color: $text-color;
+                    margin-bottom: 1rem;
+                    
+                    &:focus {
+                        border-color: $highlight-color;
+                        outline: none;
+                    }
+                }
+                
+                .edit-actions {
+                    display: flex;
+                    gap: 1rem;
+                    
+                    button {
+                        padding: 0.5rem 1.5rem;
+                        border-radius: 0.4rem;
+                        font-size: 1.4rem;
+                        cursor: pointer;
+                        border: none;
+                        font-weight: bold;
+                        transition: all 0.3s ease;
+                    }
+                    
+                    .save-btn {
+                        background-color: $highlight-color;
+                        color: $text-color;
+                        
+                        &:hover {
+                            background-color: darken($highlight-color, 10%);
+                        }
+                    }
+                    
+                    .cancel-btn {
+                        background-color: $light-gray;
+                        color: $text-color;
+                        
+                        &:hover {
+                            background-color: darken($light-gray, 10%);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Animation
+@keyframes fadein {
+    from {
+        opacity: 0;
+        transform: translateY(-2rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
