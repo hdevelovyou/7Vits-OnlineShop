@@ -57,48 +57,20 @@ app.post('/api/chat', async (req, res) => {
   const { message } = req.body;
   
   // Kiểm tra xem có câu trả lời từ FAQ hay không
-  const faqAnswer = getBestAnswer(message);
-  if (faqAnswer.found) {
-    // Nếu tìm thấy câu trả lời trong FAQ, trả về ngay
+  const faqResults = searchFaq(message);
+  
+  // Chỉ trả lời nếu tìm thấy kết quả trong FAQ
+  if (faqResults && faqResults.length > 0) {
+    const bestMatch = faqResults[0];
     return res.json({ 
-      reply: `Em xin phép trả lời câu hỏi của anh/chị: "${faqAnswer.question}"\n\n${faqAnswer.answer}\n\nAnh/chị có cần em hỗ trợ thêm thông tin gì không ạ?` 
+      reply: `Em xin phép trả lời câu hỏi của anh/chị: "${bestMatch.question}"\n\n${bestMatch.answer}\n\nAnh/chị có cần em hỗ trợ thêm thông tin gì không ạ?` 
     });
   }
   
-  // Nếu không tìm thấy trong FAQ, chuyển sang Ollama
-  const systemPrompt = `Your Goal: Trả lời các câu thường gặp của khách hàng cho Website mua bán vật phẩm, tài sản ảo online
-
-Your Role: Trợ lý, Nhân viên tư vấn và chăm sóc khách hàng của Website.
-
-Tone of voice: Lịch sự, khiêm tốn giống như một nhân viên chăm sóc khách hàng chuyên nghiệp. Luôn xưng là "em", khách hàng là "anh/chị". Trả lời ngắn gọn trong khoảng 200 ký tự
-
-Steps:
-- Hỏi xem khách hàng có nhu cầu gì, cần trợ giúp vấn đề gì
-- Hỏi ngược lại khách hàng đến khi bạn có đủ thông tin
-- Nếu khách yêu cầu hoàn tiền, trả hàng, vấn đề lừa đảo bạn phải đưa số hotline, Facebook và gợi ý họ gọi hoặc nhắn tin trực tiếp cho người hỗ trợ
-- Đưa ra phản hồi chính xác và dễ hiểu
-- Nếu họ không cần tư vấn gì thêm hãy gửi đến họ một lời chúc
-
-Contact:
-- Hotline: 0839171005
-- Facebook: https://www.facebook.com/caPta1ntynn
-
-Important
-*Luôn hiển thị link đầy đủ ở dạng: https://abc.com/xyz (no markdown)
-*Nếu khách hàng hỏi những thông tin mà bạn không biết. Hãy xin lỗi họ và gợi ý cho họ liên hệ trực tiếp qua Contact`;
-  
-  try {
-    const response = await axios.post('http://localhost:11434/api/generate', {
-      model: 'gemma',
-      prompt: `${systemPrompt}\n\nUser: ${message}\nAssistant:`,
-      stream: false
-    });
-    
-    res.json({ reply: response.data.response });
-  } catch (error) {
-    console.error('Lỗi khi gọi API Ollama:', error);
-    res.status(500).json({ error: 'Lỗi khi tương tác với chatbot' });
-  }
+  // Nếu không tìm thấy trong FAQ, gợi ý liên hệ trực tiếp
+  return res.json({ 
+    reply: "Em xin lỗi, em chưa được đào tạo để trả lời câu hỏi này. Để được hỗ trợ tốt nhất, anh/chị vui lòng liên hệ trực tiếp với chúng tôi qua:\n\n- Hotline: 0839171005\n- Facebook: https://www.facebook.com/caPta1ntynn\n\nCảm ơn anh/chị đã sử dụng dịch vụ của 7VITS."
+  });
 });
 
 // API endpoint cho FAQ
