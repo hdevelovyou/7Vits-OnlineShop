@@ -3,6 +3,7 @@ import Header from "../header";
 import Footer from "../footer";
 import productPage from "../../productPage";
 import { useNavigate, useLocation } from "react-router-dom";
+import ChatbotComponent from "../../../../components/ChatBot/ChatBot";
 
 const MasterLayout = ({ children }) => {
     // Khởi tạo state isLoggedIn với giá trị từ localStorage
@@ -35,6 +36,14 @@ const MasterLayout = ({ children }) => {
                 ? children({ isLoggedIn, setIsLoggedIn, cart, setCart }) 
                 : children}
             <Footer />
+            <div style={{
+                position: 'fixed',
+                right: '20px',
+                bottom: '20px',
+                zIndex: 1000
+            }}>
+                <ChatbotComponent />
+            </div>
         </div>
     );
 }
