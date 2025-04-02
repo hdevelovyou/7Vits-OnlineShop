@@ -9,5 +9,6 @@ export const ROUTES = {
         FORGOTPASSWORD: '/forgot-password',
         OTPFORFORGOT: '/otp-for-forgot',
         NEWPASSWORD: '/new-password',
+        STORE: '/store',
     }
 }

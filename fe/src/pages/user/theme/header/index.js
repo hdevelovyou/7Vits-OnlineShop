@@ -9,7 +9,7 @@ import { IoSearchCircleSharp } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
 import { AiOutlineMenu } from "react-icons/ai";
 import { AiOutlineDown } from "react-icons/ai";
-import {ProductPage} from "../../productPage/index.js"
+
 const menuItems = [
   {
     name: "Trang chủ",
@@ -17,7 +17,7 @@ const menuItems = [
   },
   {
     name: "Cửa hàng",
-    path: ROUTES.USER.PRODUCT,
+    path: ROUTES.USER.STORE,
   },
   {
     name: "Danh mục",
