@@ -2,6 +2,7 @@ import { memo, useState, useEffect } from "react";
 import Header from "../header";
 import Footer from "../footer";
 import { useNavigate, useLocation } from "react-router-dom";
+import ChatbotComponent from "../../../../components/ChatBot/ChatBot";
 
 const MasterLayout = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -59,6 +60,14 @@ const MasterLayout = ({ children }) => {
                 ? children({ isLoggedIn, setIsLoggedIn, cart, setCart, updateCart,  })
                 : children}
             <Footer />
+            <div style={{
+                position: 'fixed',
+                right: '20px',
+                bottom: '20px',
+                zIndex: 1000
+            }}>
+                <ChatbotComponent />
+            </div>
         </div>
     );
 };
