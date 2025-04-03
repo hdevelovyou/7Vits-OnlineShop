@@ -1,20 +1,20 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const db = require('./connectDB');
-const env = require('./enviroment');
+require('dotenv').config();
 
 // Initialize passport
 const setupPassport = () => {
   // Check if Google OAuth credentials are available
-  if (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
+  if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
     console.log("Setting up Google OAuth strategy with credentials");
     
     // Set up Google OAuth strategy
     passport.use(
       new GoogleStrategy(
         {
-          clientID: env.GOOGLE_CLIENT_ID,
-          clientSecret: env.GOOGLE_CLIENT_SECRET,
+          clientID: process.env.GOOGLE_CLIENT_ID,
+          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
           callbackURL: "/api/auth/google/callback",
           scope: ['profile', 'email']
         },

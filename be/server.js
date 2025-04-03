@@ -1,7 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
-const env = require('./config/enviroment'); // Use the environment config
+require('dotenv').config();
 const passport = require('./config/passport');
 const db = require('./config/connectDB');
 const axios = require('axios');
@@ -19,7 +19,7 @@ app.use(cors({
 
 // Session configuration
 app.use(session({
-  secret: env.SESSION_SECRET || 'default_secret',
+  secret: process.env.SESSION_SECRET || 'default_secret',
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -38,7 +38,7 @@ app.use('/api/auth', require('./routes/auth'));
 
 // Simple test route
 app.get('/api/test', (req, res) => {
-  res.json({ message: 'API is working', env: env.GOOGLE_CLIENT_ID ? 'OAuth configured' : 'OAuth not configured' });
+  res.json({ message: 'API is working', env: process.env.GOOGLE_CLIENT_ID ? 'OAuth configured' : 'OAuth not configured' });
 });
 
 app.use(cors()); 

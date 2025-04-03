@@ -2,7 +2,7 @@ const express = require('express');
 const { register, login } = require('../controllers/authController');
 const passport = require('../config/passport');
 const jwt = require('jsonwebtoken');
-const env = require('../config/enviroment'); // Import environment
+require('dotenv').config();
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const db = require('../config/connectDB');
@@ -12,7 +12,7 @@ router.post('/login', login);
 router.post('/logout', (req, res) => res.json({ message: 'Logout successful' }));
 
 // Google OAuth routes - only set up if credentials exist
-if (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   router.get('/google', passport.authenticate('google', {
     scope: ['profile', 'email']
   }));
@@ -23,7 +23,7 @@ if (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
       // Generate JWT token for the user
       const token = jwt.sign(
         { id: req.user.id, userName: req.user.userName },
-        env.JWT_SECRET || 'default_secret',
+        process.env.JWT_SECRET || 'default_secret',
         { expiresIn: '1h' }
       );
 
