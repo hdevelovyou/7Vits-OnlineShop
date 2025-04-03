@@ -7,6 +7,7 @@ import { FaCircleUser } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa";
 
 const LoginPage = ({ setIsLoggedIn }) => {
+    console.log({setIsLoggedIn});
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const [remember, setRemember] = useState(false);

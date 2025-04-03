@@ -13,6 +13,7 @@ import ProductPage from "./pages/user/productPage";
 import OAuthCallback from "./pages/user/OAuthCallback";
 import GoogleAuthCompletionPage from './pages/user/googleAuthCompletionPage';
 import StorePage from "./pages/user/storePage";
+import CartPage from "./pages/user/cartpage";
 const renderUserRoutes = () => {
     return (
         <MasterLayout>
@@ -30,6 +31,8 @@ const renderUserRoutes = () => {
                     <Route path="/complete-google-signup" element={<GoogleAuthCompletionPage />} />
                     <Route path="/oauth-callback" element={<OAuthCallback setIsLoggedIn={setIsLoggedIn} />} />
                     <Route path={ROUTES.USER.STORE} element={<StorePage />} />
+                    <Route path={ROUTES.USER.CART} element={<CartPage />} />
+                    
                 </Routes>
             )}
         </MasterLayout>

@@ -10,5 +10,6 @@ export const ROUTES = {
         OTPFORFORGOT: '/otp-for-forgot',
         NEWPASSWORD: '/new-password',
         STORE: '/store',
+        CART: '/gio-hang',
     }
 }

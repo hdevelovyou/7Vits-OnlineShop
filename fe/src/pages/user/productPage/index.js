@@ -11,8 +11,7 @@ const ProductPage = ({ cart, setCart }) => {
     const [quantity, setQuantity] = useState(1);
     const [selectedImage, setSelectedImage] = useState(0);
     const [product, setProduct] = useState(null);
- 
-
+    
     useEffect(() => {
         const fetchProduct = async () => {
             try {
@@ -68,8 +67,11 @@ const ProductPage = ({ cart, setCart }) => {
         if (foundIndex !== -1) {
             arr[foundIndex].amount += quantity;
         } else {
-            arr.push({ ...product, amount: quantity });
+            
+            arr.push({...product, amount: quantity });
+            console.log(arr);
         }
+       
     
         setCart(arr);
         localStorage.setItem("cart", JSON.stringify(arr));  // Lưu giỏ hàng vào Local Storage
@@ -83,7 +85,7 @@ const ProductPage = ({ cart, setCart }) => {
     
     useEffect(() => {
         console.log(cart);
-    },[cart]);  // Thêm mảng dependencies
+    },[cart]); 
     const getTotalQuantity = () => {
         return cart.reduce((total, product) => total + product.amount, 0);
     };
