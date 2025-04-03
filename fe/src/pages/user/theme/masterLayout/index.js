@@ -56,7 +56,7 @@ const MasterLayout = ({ children }) => {
         <div>
             <Header cart={cart} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} sluong={cart.length} />
             {children && typeof children === "function"
-                ? children({ isLoggedIn, setIsLoggedIn, cart, setCart, updateCart })
+                ? children({ isLoggedIn, setIsLoggedIn, cart, setCart, updateCart,  })
                 : children}
             <Footer />
         </div>
