@@ -69,7 +69,6 @@ const CartPage = () => {
                         </div>
                     ))}
                     <hr className="divider" />
-                    <h2 className="total-price">Tổng tiền toàn bộ giỏ hàng: {formatPrice(totalPrice)}</h2>
                     <div className="payment-section">
                         <h2 className="total-payment">Tổng tiền cần thanh toán: {formatPrice(totalPrice)}</h2>
                         <button className="checkout-btn">Thanh Toán Ngay</button>
