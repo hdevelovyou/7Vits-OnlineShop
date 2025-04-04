@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import "./style.scss";
 
-const CartPage = () => {
-  const [cart, setCart] = useState([]);
+const CartPage = ({cart,setCart}) => {
   const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {

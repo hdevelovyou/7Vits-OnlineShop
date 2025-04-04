@@ -31,7 +31,7 @@ const renderUserRoutes = () => {
                     <Route path="/complete-google-signup" element={<GoogleAuthCompletionPage />} />
                     <Route path="/oauth-callback" element={<OAuthCallback setIsLoggedIn={setIsLoggedIn} />} />
                     <Route path={ROUTES.USER.STORE} element={<StorePage />} />
-                    <Route path={ROUTES.USER.CART} element={<CartPage />} />
+                    <Route path={ROUTES.USER.CART} element={<CartPage cart={cart} setCart={setCart} />} />
                     
                 </Routes>
             )}
