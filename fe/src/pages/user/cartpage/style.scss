@@ -1,5 +1,4 @@
 .cart-page {
-  background-color: #1e1e1e; // Màu nền tối
   color: #fff; // Màu chữ trắng
   min-height: 100vh;
   padding-top: 150px; // Chừa khoảng cho header (tuỳ ý)
@@ -34,7 +33,7 @@
 
       th {
         padding: 15px;
-        text-align: center;
+        text-align: start;
         font-weight: 500;
         border: 1px solid #333;
       }
@@ -52,7 +51,7 @@
 
       td {
         padding: 15px;
-        text-align: center;
+        text-align: start;
         vertical-align: middle;
       }
     }
@@ -96,7 +95,6 @@
       gap: 10px;
       display: flex;
       flex-direction: row;
-      justify-content: center;
       position: relative;
       top: -23px;
 
