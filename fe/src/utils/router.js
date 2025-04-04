@@ -11,5 +11,8 @@ export const ROUTES = {
         NEWPASSWORD: '/new-password',
         STORE: '/store',
         CART: '/gio-hang',
+        OAUTH_CALLBACK: '/oauth-callback',
+        COMPLETE_GOOGLE_SIGNUP: '/complete-google-signup',
+        COMPLETE_FACEBOOK_SIGNUP: '/complete-facebook-signup',
     }
 }

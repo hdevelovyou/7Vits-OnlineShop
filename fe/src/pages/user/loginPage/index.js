@@ -18,6 +18,13 @@ const LoginPage = ({ setIsLoggedIn }) => {
         window.location.href = 'http://localhost:5000/api/auth/google';
         // For production: window.location.href = 'https://your-domain.com/api/auth/google';
       };
+
+     // Add Facebook login handler
+     const handleFacebookLogin = () => {
+        window.location.href = 'http://localhost:5000/api/auth/facebook';
+        // For production: window.location.href = 'https://your-domain.com/api/auth/facebook';
+    };
+
     // Kiểm tra xem setIsLoggedIn có phải là hàm không
     useEffect(() => {
         if (setIsLoggedIn && typeof setIsLoggedIn !== 'function') {
@@ -126,8 +133,9 @@ const LoginPage = ({ setIsLoggedIn }) => {
                     </div>
 
                     <div className="otherLogin">
-                        <FaFacebook className="icon" />
-                        <FcGoogle className="icon-gg" onClick={handleGoogleLogin} style={{ cursor: 'pointer' }} />
+                        {/* Add Facebook button alongside Google button */}
+                        <FaFacebook className="icon-fb" style={{ color: '#1877F2', cursor: 'pointer' }} onClick={handleFacebookLogin} />
+                        <FcGoogle className="icon-gg" style={{ color: '#DB4437', cursor: 'pointer' }} onClick={handleGoogleLogin} />
                     </div>
 
                     <div className="login-btn">
