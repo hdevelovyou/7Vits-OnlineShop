@@ -72,8 +72,6 @@ const Homepage = () => {
                     {categories.map((category, index) => (
                         <div className="product-namename" key={index}>
                             <h3>{category}</h3>
-                            <div className="grid__row">
-                                <div className="grid__column-12">
                                     <div className="home-product">
                                         <div className="grid__row">
                                             {products.map((product) => (
@@ -84,10 +82,6 @@ const Homepage = () => {
                                                         style={{ display: "block", textDecoration: "none" }}
                                                     >
                                                         <img src={`https://www.divineshop.vn${product.image}`} alt="" className="home-product-item_img" />
-
-
-
-
                                                         <div className="mota">
                                                             <p className="mota-name home-product-item_name">{product.name}</p>
                                                             <p className="mota-name home-product-item_desc">{product.slug}</p>
@@ -113,8 +107,6 @@ const Homepage = () => {
                                             ))}
                                         </div>
                                     </div>
-                                </div>
-                            </div>
                         </div>
                     ))}
                 </div>

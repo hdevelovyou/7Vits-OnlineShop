@@ -329,3 +329,125 @@ html {
     }
 }
 
+
+@include Responsive($SMALL)
+{
+    .header-menu,
+    .header-top,
+    .search,
+    .signup-btn,
+    .login-btn 
+    {
+        display: none;
+    }
+    .login-btn-mobile{
+        display: flex;
+        justify-content: center;
+        align-items: center;  
+        color: white;
+        gap: 16px;
+        svg{
+            font-size: 25px;
+        }
+    }
+    .mobile-menu{
+        display: flex;
+        justify-content: flex-end;
+        padding-right: 10px ;
+    }
+    .header-logo{
+        img{
+            width: 80px;
+        }
+    }
+    .hamergur_open{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        svg{
+            font-size: 25px;
+        }
+    }
+    .humberger_menu_wrapper{
+        position: fixed;
+        display: flex;
+        flex-direction: column;
+        width: 300px;
+        color: white;
+        height: 100%;
+        overflow-y: auto;
+        z-index: -999;
+        margin-top: 97px;
+        opacity: 0;
+        display: block;
+        background-color: #000000;
+        transition: all 0.2s ease-in-out;
+        font-size: 1.8rem;
+        font-weight: bold;
+        overflow-y: scroll;
+        left: -300px;
+        ul{
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        &.show{
+            opacity: 1;
+            z-index: 999;
+            left: 0;
+        }
+    }
+    .humberger_menu_overlay{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 100;
+        visibility: hidden;
+        transition: transform 0.2s ease-in-out;
+     
+        &.active{
+            visibility: visible;
+           
+        }
+    }
+    
+    .header__menu_navbar{
+       display: flex;
+       flex-direction: column;
+       justify-content: space-between;
+       height: 100%;
+       padding: 0 20px 10px;
+       li{
+        padding: 20px 0;
+        border-bottom: 1px solid #fff;
+       }
+        a{
+            font-size: 2rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .header__menu_navbar_icon{
+            font-size: 1.5rem;
+            margin-left: 10px;
+            margin-top: 10px;
+        }
+        .header-submenu{
+           
+            padding: 10px;
+            display: none;
+            
+
+        }
+        .show__submenu{
+            display: block;
+            li{
+                &:last-child{
+                border-bottom: unset;
+                }
+            }
+        }
+    }
+}

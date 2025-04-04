@@ -7,7 +7,7 @@ import logo from "../../../../assets/images/logo.png";
 import { ROUTES } from "../../../../utils/router.js";
 import { IoSearchCircleSharp } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
-import { AiOutlineMenu } from "react-icons/ai";
+import { AiOutlineMenu, AiOutlineUser } from "react-icons/ai";
 import { AiOutlineDown } from "react-icons/ai";
 
 const menuItems = [
@@ -130,7 +130,7 @@ const menuItems = [
         <div className="header-main">
           <div className="container">
             <div className="row">
-              <div className="col-lg-3 ">
+              <div className="col-lg-3 col-sm-6">
                 <div className="header-logo">
                   <Link to={ROUTES.USER.HOME} onClick={() => window.scrollTo(0, 0)} style={{ textDecoration: "none" }}>
                     <img src={logo} alt="7vits-logo" />
@@ -138,7 +138,7 @@ const menuItems = [
                   <h1>7VITS</h1>
                 </div>
               </div>
-              <div className="col-lg-3">
+              <div className="col-lg-3 ">
                 <nav className="header-menu">
                   <ul>
                     {menuItems.map((menu, menuKey) => (
@@ -165,11 +165,14 @@ const menuItems = [
                 </nav>
               </div>
               {/* responsive tablet */}
-              <div className="col-lg-3 ">
+              <div className="col-lg-3 col-sm-6 mobile-menu">
                 <div className="header-login-signup">
                   <div className="search">
                     <IoSearchCircleSharp />
                   </div>
+                  <Link to="/login" className="login-btn-mobile">
+                        <AiOutlineUser/>
+                  </Link>
                   <ul className="cart">
                     <li>
                       <Link to="/gio-hang" style={{ textDecoration: "none" }}>
