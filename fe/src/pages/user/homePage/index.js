@@ -56,7 +56,7 @@ const Homepage = () => {
                 <div className="container">
                     <div className="logo">
                         {[logofc, League_of_Legends_2019_vector, steam_logo, adobe].map((logo, index) => (
-                            <img key={index} src={logo} alt="" className="section-logo" />
+                            <img key={index} src={logo} alt="" className="section-logo col-sm-3" />
                         ))}
                     </div>
                 </div>

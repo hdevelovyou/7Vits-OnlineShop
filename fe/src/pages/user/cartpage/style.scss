@@ -1,3 +1,7 @@
+
+.cart-mobile{
+  display: none;
+}
 .cart-page {
   color: #fff; // Màu chữ trắng
   min-height: 100vh;
@@ -141,20 +145,19 @@
   .cart-summary {
     margin: 20px auto 50px;
     max-width: 1200px;
-    display: flex;
+
     justify-content: flex-end;
     align-items: center;
     padding-right: 10px;
 
     .summary-info {
       text-align: right;
-      margin-right: 30px;
 
       .summary-title {
         font-size: 18px;
         font-weight: 500;
         display: flex;
-        justify-content: center;
+        justify-content: flex-end;
         align-items: center;
         gap: 10px;
       }
@@ -194,6 +197,75 @@
       &:hover {
         background-color: #e03d00;
       }
+    }
+  }
+}
+
+// responsive 
+@media screen and (max-width: 576px) {
+  .cart-table{
+    display: none;
+  }
+  .cart-page .cart-summary {
+    margin: 20px auto 50px;
+  }
+  .checkout-btn{
+    width: 100%;
+    margin-top: 20px;
+  }
+  .cart-mobile {
+    display: flex;
+    font-size: 25px;
+    flex-direction: column;
+    
+    .cart-item-mobile{
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding: 20px;
+      p{
+        color: #ff4500;
+      }
+      .quantity-btn {
+        width: 30px;
+        height: 30px;
+        background-color: transparent;
+        border: 1px solid #fff;
+        color: #fff;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+
+        &:hover {
+          background-color: #444;
+        }
+      }
+
+      .quantity {
+        min-width: 20px;
+        text-align: center;
+        font-weight: bold;
+      }
+    }
+  }
+  .cart-state{
+    display: flex;
+    justify-content: space-between;
+    .cart-state-mobile{
+      display: flex;
+      gap: 10px;
+     align-items: center;
+    }
+    .cart-remove{
+      background-color: rgb(255 255 255 / 8%);
+      color: #ff4500;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
     }
   }
 }

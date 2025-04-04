@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "./style.scss";
 
+
 const CartPage = ({ cart, setCart }) => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalDiscountPrice, setTotalDiscountPrice] = useState(0);
@@ -23,7 +24,7 @@ const CartPage = ({ cart, setCart }) => {
     calculateTotaldiscountPrice();
   }, [cart]);
   const calculateTotaldiscountPrice = () => {
-    const total = cart.reduce((sum, item) => sum + (item.originalPrice-item.price) * item.amount, 0);
+    const total = cart.reduce((sum, item) => sum + (item.originalPrice - item.price) * item.amount, 0);
     setTotalDiscountPrice(total);
   };
 
@@ -119,20 +120,53 @@ const CartPage = ({ cart, setCart }) => {
             </tbody>
           </table>
 
+          <div className="cart-mobile">
+            {cart.map((item) => (
+              <div key={item.id} className="cart-item-mobile">
+                <div className="">
+                  <div className="cart-item">
+                    <h5>{item.name}</h5>
+                    <p>{item.price.toLocaleString()} đ</p>
+                  </div>
+                </div>
+                <div className="cart-state">
+                  <div className="cart-state-mobile">
+                  <button
+                      className="quantity-btn"
+                      onClick={() => handleUpdateAmount(item.id, item.amount - 1)}
+                    >
+                      -
+                    </button>
+                    <span className="quantity">{item.amount}</span>
+                    <button
+                      className="quantity-btn"
+                      onClick={() => handleUpdateAmount(item.id, item.amount + 1)}
+                    >
+                      +
+                    </button>
+                  </div>
+                  <button className="cart-remove" onClick={() => handleRemoveItem(item.id)}>Xóa</button>
+                </div>
+
+              </div>
+            ))}
+          </div>
+
           {/* Khu vực tính tiền */}
           <div className="cart-summary">
-            <div className="summary-info">
+            <div className="summary-info col-sm-12">
               <span className="summary-title">
                 Tổng Thanh Toán ({cart.length} Sản Phẩm):
                 <span className="summary-total">{formatPrice(totalPrice)}</span>
               </span>
-              
-              <divdiv className="saving">
-               <span style={{opacity:0.5}}>Tiết kiệm </span> 
+
+              <div className="saving">
+                <span style={{ opacity: 0.5 }}>Tiết kiệm </span>
                 <span className="summary-distotal">{formatPrice(totalDiscountPrice)}</span>
-              </divdiv>
+                <button className="checkout-btn col-sm-12 ">Mua Ngay</button>
+              </div>
             </div>
-            <button className="checkout-btn">Mua Ngay</button>
+          
           </div>
         </>
       )}
