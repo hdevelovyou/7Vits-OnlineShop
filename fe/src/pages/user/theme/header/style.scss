@@ -7,7 +7,7 @@
     transition: all 0.4s ease-in-out;
 }
 
-.humberger_menu_wrapper, .hamergur_open{
+.humberger_menu_wrapper, .hamergur_ope,.login-btn-mobile{
     display: none;
 }
 .header-top {
@@ -228,7 +228,8 @@ html {
 @include Responsive($TABLET)
 {
     .header-menu,
-    .header-top
+    .header-top,
+    .login-btn-mobile
     {
         display: none;
     }
