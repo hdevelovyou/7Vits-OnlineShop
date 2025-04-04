@@ -75,8 +75,13 @@
   
       /* Đơn giá, số tiền */
       .price {
+        gap: 10px;
         font-weight: 600;
         color: #ff4500; // Màu cam/đỏ
+         .original-price {
+          font-size: 12px;
+          margin-right: 10px;
+         }
       }
   
       /* Số lượng */

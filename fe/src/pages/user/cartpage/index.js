@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import "./style.scss";
 
-const CartPage = ({cart,setCart}) => {
+const CartPage = ({ cart, setCart }) => {
   const [totalPrice, setTotalPrice] = useState(0);
-
+  const [totalDiscountPrice, setTotalDiscountPrice] = useState(0);
   useEffect(() => {
     const savedCart = localStorage.getItem("cart");
     if (savedCart) {
@@ -18,6 +18,13 @@ const CartPage = ({cart,setCart}) => {
   const calculateTotalPrice = () => {
     const total = cart.reduce((sum, item) => sum + item.price * item.amount, 0);
     setTotalPrice(total);
+  };
+  useEffect(() => {
+    calculateTotaldiscountPrice();
+  }, [cart]);
+  const calculateTotaldiscountPrice = () => {
+    const total = cart.reduce((sum, item) => sum + (item.originalPrice-item.price) * item.amount, 0);
+    setTotalDiscountPrice(total);
   };
 
   const handleUpdateAmount = (id, newAmount) => {
@@ -71,7 +78,12 @@ const CartPage = ({cart,setCart}) => {
                   </td>
 
                   {/* Cột: Đơn Giá */}
-                  <td className="price">{formatPrice(item.price)}</td>
+                  <td className="price">
+                    <span className="original-price">
+                      <s> {formatPrice(item.originalPrice)}</s>
+                    </span>
+                    {formatPrice(item.price)}
+                  </td>
 
                   {/* Cột: Số Lượng */}
                   <td className="quantity-control">
@@ -115,7 +127,7 @@ const CartPage = ({cart,setCart}) => {
               </span>
               <span className="summary-total">{formatPrice(totalPrice)}</span>
               {/* Ví dụ tạm: Tiết kiệm 375.000đ, bạn có thể tính toán tuỳ ý */}
-              <p className="saving">Tiết Kiệm: 375.000 đ</p>
+              <p className="saving">{formatPrice(totalDiscountPrice)}</p>
             </div>
             <button className="checkout-btn">Mua Ngay</button>
           </div>
