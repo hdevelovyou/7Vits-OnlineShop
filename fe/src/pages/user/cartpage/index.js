@@ -124,10 +124,13 @@ const CartPage = ({ cart, setCart }) => {
             <div className="summary-info">
               <span className="summary-title">
                 Tổng Thanh Toán ({cart.length} Sản Phẩm):
+                <span className="summary-total">{formatPrice(totalPrice)}</span>
               </span>
-              <span className="summary-total">{formatPrice(totalPrice)}</span>
-              {/* Ví dụ tạm: Tiết kiệm 375.000đ, bạn có thể tính toán tuỳ ý */}
-              <p className="saving">{formatPrice(totalDiscountPrice)}</p>
+              
+              <divdiv className="saving">
+               <span style={{opacity:0.5}}>Tiết kiệm </span> 
+                <span className="summary-distotal">{formatPrice(totalDiscountPrice)}</span>
+              </divdiv>
             </div>
             <button className="checkout-btn">Mua Ngay</button>
           </div>
