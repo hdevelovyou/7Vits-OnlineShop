@@ -333,6 +333,9 @@ html {
 
 @include Responsive($SMALL)
 {
+    .form-group .sig-btn button {
+         background-color: #ff4500;
+    }
     .header-menu,
     .header-top,
     .search,

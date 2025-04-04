@@ -148,13 +148,13 @@
 
     justify-content: flex-end;
     align-items: center;
-    padding-right: 10px;
+    padding:0 10px;
 
     .summary-info {
       text-align: right;
 
       .summary-title {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 500;
         display: flex;
         justify-content: flex-end;
@@ -172,7 +172,7 @@
       .saving {
         font-size: 14px;
         color: #ff4500;
-        margin-top: 5px;
+        margin: 5px 0;
         display: flex ;
         justify-content: flex-end;
         align-items: center;
@@ -206,8 +206,15 @@
   .cart-table{
     display: none;
   }
+  .saving-mobile{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+  }
   .cart-page .cart-summary {
     margin: 20px auto 50px;
+   
   }
   .checkout-btn{
     width: 100%;
@@ -224,6 +231,7 @@
       gap: 10px;
       margin-bottom: 20px;
       padding: 20px;
+      border-bottom: 1px solid #333;
       p{
         color: #ff4500;
       }
