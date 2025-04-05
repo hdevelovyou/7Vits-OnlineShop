@@ -1,5 +1,6 @@
 @use "sass:map";
 @import "../../../../style/pages/all";
+
 #header {
     width: 100%;
     z-index: 1;
@@ -7,9 +8,13 @@
     transition: all 0.4s ease-in-out;
 }
 
-.humberger_menu_wrapper, .hamergur_open,.login-btn-mobile{
+.humberger_menu_wrapper,
+.hamergur_open,
+.login-btn-mobile,
+.input-search {
     display: none;
 }
+
 .header-top {
     background: #810000;
     width: 100%;
@@ -122,7 +127,8 @@
     display: flex;
     font-size: 1.4rem;
     font-weight: bold;
-    gap:10px;
+    gap: 10px;
+
     .login-btn {
         margin: 3rem 0 3rem 1rem;
         background: #ff0000;
@@ -170,34 +176,38 @@
 }
 
 
-.cart{
+.cart {
     display: flex;
     justify-content: center;
     align-items: center;
-     li{
+
+    li {
         list-style: none;
         position: relative;
         margin-right: 20px;
-        svg{
+
+        svg {
             font-size: 25px;
         }
-        span{
+
+        span {
             color: white;
             position: absolute;
-            background-color:red;
+            background-color: red;
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            top:-8px;
-            left:20px;
+            top: -8px;
+            left: 20px;
             display: inline-block;
             text-align: center;
             font-size: 13px;
             line-height: 20px;
             font-weight: 500;
         }
-     }
+    }
 }
+
 .logout-btn {
     margin: 3rem 0 3rem 1rem;
     border: none;
@@ -225,28 +235,32 @@ html {
 }
 
 
-@include Responsive($TABLET)
-{
+@include Responsive($TABLET) {
+
     .header-menu,
     .header-top,
-    .login-btn-mobile
-    {
+    .login-btn-mobile,
+    .input-search {
         display: none;
     }
-    .header-logo{
-        img{
+
+    .header-logo {
+        img {
             width: 80px;
         }
     }
-    .hamergur_open{
+
+    .hamergur_open {
         display: flex;
         justify-content: center;
         align-items: center;
-        svg{
+
+        svg {
             font-size: 25px;
         }
     }
-    .humberger_menu_wrapper{
+
+    .humberger_menu_wrapper {
         position: fixed;
         display: flex;
         flex-direction: column;
@@ -264,18 +278,21 @@ html {
         font-weight: bold;
         overflow-y: scroll;
         left: -300px;
-        ul{
+
+        ul {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-        &.show{
+
+        &.show {
             opacity: 1;
             z-index: 999;
             left: 0;
         }
     }
-    .humberger_menu_overlay{
+
+    .humberger_menu_overlay {
         position: fixed;
         top: 0;
         left: 0;
@@ -285,45 +302,48 @@ html {
         z-index: 100;
         visibility: hidden;
         transition: transform 0.2s ease-in-out;
-     
-        &.active{
+
+        &.active {
             visibility: visible;
-           
+
         }
     }
-    
-    .header__menu_navbar{
-       display: flex;
-       flex-direction: column;
-       justify-content: space-between;
-       height: 100%;
-       padding: 0 20px 10px;
-       li{
-        padding: 20px 0;
-        border-bottom: 1px solid #fff;
-       }
-        a{
+
+    .header__menu_navbar {
+        height: 100%;
+        padding: 0 20px 10px;
+
+        li {
+            padding: 20px 0;
+            border-bottom: 1px solid #fff;
+        }
+
+        a {
             font-size: 2rem;
             font-weight: bold;
             text-decoration: none;
         }
-        .header__menu_navbar_icon{
+
+        .header__menu_navbar_icon {
             font-size: 1.5rem;
             margin-left: 10px;
             margin-top: 10px;
         }
-        .header-submenu{
-           
+
+        .header-submenu {
+
             padding: 10px;
             display: none;
-            
+
 
         }
-        .show__submenu{
+
+        .show__submenu {
             display: block;
-            li{
-                &:last-child{
-                border-bottom: unset;
+
+            li {
+                &:last-child {
+                    border-bottom: unset;
                 }
             }
         }
@@ -331,49 +351,55 @@ html {
 }
 
 
-@include Responsive($SMALL)
-{
+@include Responsive($SMALL) {
     .form-group .sig-btn button {
-         background-color: #ff4500;
+        background-color: #ff4500;
     }
+
     .header-menu,
     .header-top,
     .search,
     .signup-btn,
-    .login-btn 
-    {
+    .login-btn {
         display: none;
     }
-    .login-btn-mobile{
-        display: flex;
-        justify-content: center;
-        align-items: center;  
-        color: white;
-        gap: 16px;
-        width: 50px;
-        svg{
-            font-size: 25px;
-        }
-    }
-    .mobile-menu{
-        display: flex;
-        justify-content: flex-end;
-        padding-right: 10px ;
-    }
-    .header-logo{
-        img{
-            width: 80px;
-        }
-    }
-    .hamergur_open{
+
+    .login-btn-mobile {
         display: flex;
         justify-content: center;
         align-items: center;
-        svg{
+        color: white;
+        gap: 16px;
+        width: 50px;
+
+        svg {
             font-size: 25px;
         }
     }
-    .humberger_menu_wrapper{
+
+    .mobile-menu {
+        display: flex;
+        justify-content: flex-end;
+        padding-right: 10px;
+    }
+
+    .header-logo {
+        img {
+            width: 80px;
+        }
+    }
+
+    .hamergur_open {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        svg {
+            font-size: 25px;
+        }
+    }
+
+    .humberger_menu_wrapper {
         position: fixed;
         display: flex;
         flex-direction: column;
@@ -391,18 +417,21 @@ html {
         font-weight: bold;
         overflow-y: scroll;
         left: -300px;
-        ul{
+
+        ul {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-        &.show{
+
+        &.show {
             opacity: 1;
             z-index: 999;
             left: 0;
         }
     }
-    .humberger_menu_overlay{
+
+    .humberger_menu_overlay {
         position: fixed;
         top: 0;
         left: 0;
@@ -412,46 +441,77 @@ html {
         z-index: 100;
         visibility: hidden;
         transition: transform 0.2s ease-in-out;
-     
-        &.active{
+
+        &.active {
             visibility: visible;
-           
+
         }
     }
-    
-    .header__menu_navbar{
-       display: flex;
-       flex-direction: column;
-       justify-content: space-between;
-       height: 100%;
-       padding: 0 20px 10px;
-       li{
-        padding: 20px 0;
-        border-bottom: 1px solid #fff;
-       }
-        a{
+
+    .header__menu_navbar {
+
+        height: 100%;
+        padding: 0 20px 10px;
+
+        li {
+            padding: 20px 0;
+            border-bottom: 1px solid #fff;
+        }
+
+        a {
             font-size: 2rem;
             font-weight: bold;
             text-decoration: none;
         }
-        .header__menu_navbar_icon{
+
+        .header__menu_navbar_icon {
             font-size: 1.5rem;
             margin-left: 10px;
             margin-top: 10px;
         }
-        .header-submenu{
-           
+
+        .header-submenu {
+
             padding: 10px;
             display: none;
-            
+
 
         }
-        .show__submenu{
+
+        .show__submenu {
             display: block;
-            li{
-                &:last-child{
-                border-bottom: unset;
+
+            li {
+                &:last-child {
+                    border-bottom: unset;
                 }
+            }
+        }
+
+        input {
+            background-color: #000;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .input-search {
+            display: flex;
+            border: 0.5px solid #fff;
+            justify-content: center;
+            align-items: center;
+            border-radius: 5px;
+            .header-search {
+                font-size: 40px;
+                color: #fff;
+                background-color: rgb(255 255 255 / 8%);
+                margin: 2px;
+                padding: 5px;
+                border-radius: 5px;
+                cursor: pointer;
             }
         }
     }

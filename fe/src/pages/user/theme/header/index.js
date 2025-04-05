@@ -7,7 +7,7 @@ import logo from "../../../../assets/images/logo.png";
 import { ROUTES } from "../../../../utils/router.js";
 import { IoSearchCircleSharp } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
-import { AiOutlineMenu, AiOutlineUser } from "react-icons/ai";
+import { AiOutlineMenu, AiOutlineSearch, AiOutlineUser } from "react-icons/ai";
 import { AiOutlineDown } from "react-icons/ai";
 
 const menuItems = [
@@ -62,6 +62,10 @@ const menuItems = [
 
       <div className={`humberger_menu_wrapper ${isHumbergerMenuOpen ? "show" : ""}`}>
         <div className="header__menu_navbar">
+          <div className="input-search">
+          <input type="text" placeholder="Nhập từ khóa cần tìm kiếm" />
+          <AiOutlineSearch className="header-search" />
+          </div>
           <ul>
             {menuItems.map((menu, menuKey) => (
               <li key={menuKey}>
@@ -148,7 +152,7 @@ const menuItems = [
                             {menu.name}
                           </Link>
                         ) : (
-                          <Link to={menu.path}>{menu.name}</Link>
+                          <Link to={menu.path} onClick={()=>window.scrollTo(0,0)}>{menu.name}</Link>
                         )}
                         {menu.child && menu.child.length > 0 && (
                           <ul className="header-submenu">
@@ -170,12 +174,12 @@ const menuItems = [
                   <div className="search">
                     <IoSearchCircleSharp />
                   </div>
-                  <Link to="/login" className="login-btn-mobile">
+                  <Link to="/login" onClick={()=>window.scrollTo(0,0)} className="login-btn-mobile">
                         <AiOutlineUser/>
                   </Link>
                   <ul className="cart">
                     <li>
-                      <Link to="/gio-hang" style={{ textDecoration: "none" }}>
+                      <Link to="/gio-hang" onClick={()=>window.scrollTo(0,0)} style={{ textDecoration: "none" }}>
                         <FaShoppingCart /> 
                         <span>{sluong}</span>
                       </Link>
@@ -183,7 +187,7 @@ const menuItems = [
                   </ul>
                   {isLoggedIn ? (
                     <>
-                      <Link to="/profile" className="profile-btn">
+                      <Link to="/profile " className="profile-btn">
                         <CgProfile />
                       </Link>
                       <button className="logout-btn" onClick={handleLogout}>
@@ -192,10 +196,10 @@ const menuItems = [
                     </>
                   ) : (
                     <>
-                      <Link to="/register" className="signup-btn">
+                      <Link to="/register " onClick={()=>window.scrollTo(0,0)} className="signup-btn">
                         Đăng ký
                       </Link>
-                      <Link to="/login" className="login-btn">
+                      <Link to="/login" onClick={()=>window.scrollTo(0,0)} className="login-btn">
                         Đăng nhập
                       </Link>
                     </>

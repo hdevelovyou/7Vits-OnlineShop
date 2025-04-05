@@ -275,13 +275,6 @@ html {
         #section-1 .text-introduce {
                 font-size: 3rem;
         }
-
-        #section-1 .quality {
-                flex-direction: column;
-                width: 100%;
-                text-align: center;
-        }
-
         #section-1 img {
                 width: 100%;
         }
@@ -293,6 +286,9 @@ html {
 @media (max-width: 480px) {
         .grid__column-3 {
                 width: calc(50% - 2.4rem);
+        }
+        .logo img {
+                height: 5rem;
         }
 }
 
