@@ -264,12 +264,12 @@ html {
         position: fixed;
         display: flex;
         flex-direction: column;
-        width: 300px;
+        width: 50%;
         color: white;
         height: 100%;
         overflow-y: auto;
         z-index: -999;
-        margin-top: 97px;
+        top:81px;
         opacity: 0;
         display: block;
         background-color: #000000;
@@ -312,10 +312,11 @@ html {
     .header__menu_navbar {
         height: 100%;
         padding: 0 20px 10px;
-
+       
         li {
             padding: 20px 0;
             border-bottom: 1px solid #fff;
+            
         }
 
         a {
@@ -340,10 +341,12 @@ html {
 
         .show__submenu {
             display: block;
-
+            
             li {
+                
                 &:last-child {
                     border-bottom: unset;
+                    
                 }
             }
         }
@@ -403,12 +406,12 @@ html {
         position: fixed;
         display: flex;
         flex-direction: column;
-        width: 300px;
+        width: 75%;
         color: white;
         height: 100%;
         overflow-y: auto;
         z-index: -999;
-        margin-top: 97px;
+        top:81px;
         opacity: 0;
         display: block;
         background-color: #000000;
@@ -452,7 +455,7 @@ html {
 
         height: 100%;
         padding: 0 20px 10px;
-
+        
         li {
             padding: 20px 0;
             border-bottom: 1px solid #fff;
@@ -482,6 +485,9 @@ html {
             display: block;
 
             li {
+                a{
+                    font-size: 1.6rem;
+                }
                 &:last-child {
                     border-bottom: unset;
                 }

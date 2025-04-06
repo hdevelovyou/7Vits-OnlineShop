@@ -21,7 +21,6 @@ const menuItems = [
   },
   {
     name: "Danh mục",
-    path: "/",
     isShowSubmenu: false,
     child: [
       { name: "Tài khoản Game", path: "/" },
@@ -35,7 +34,7 @@ const menuItems = [
   },
 ];
 
-  const Header = ({ isLoggedIn, setIsLoggedIn, sluong}) => { // Nhận props isLoggedIn và setIsLoggedIn
+const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLoggedIn và setIsLoggedIn
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHumbergerMenuOpen, setIsHumbergerMenuOpen] = useState(false);
   const [isShowSubmenu, setIsShowSubmenu] = useState(false);
@@ -63,22 +62,22 @@ const menuItems = [
       <div className={`humberger_menu_wrapper ${isHumbergerMenuOpen ? "show" : ""}`}>
         <div className="header__menu_navbar">
           <div className="input-search">
-          <input type="text" placeholder="Nhập từ khóa cần tìm kiếm" />
-          <AiOutlineSearch className="header-search" />
+            <input type="text" placeholder="Nhập từ khóa cần tìm kiếm" />
+            <AiOutlineSearch className="header-search" />
           </div>
           <ul>
             {menuItems.map((menu, menuKey) => (
               <li key={menuKey}>
-                {menu.name === "Trang chủ" ? (
-                  <Link to={menu.path} onClick={() => window.scrollTo(0, 0)}>
-                    {menu.name}
-                  </Link>
-                ) : (
-                  <Link to={menu.path}
-                    onClick={() => {
-                      const newmenu = [...menuItems];
-                      newmenu[menuKey].isShowSubmenu = !newmenu[menuKey].isShowSubmenu;
-                      setIsShowSubmenu(newmenu);
+                {menu.name === "Danh mục" ? (
+                  // Mục "Danh mục": chỉ toggle submenu mà không đóng menu
+                  <Link
+                    to={menu.path}
+                    onClick={(e) => {
+                      e.preventDefault(); // Ngăn không chuyển hướng ngay
+                      // Toggle hiển thị submenu
+                      const newMenuItems = [...menuItems];
+                      newMenuItems[menuKey].isShowSubmenu = !newMenuItems[menuKey].isShowSubmenu;
+                      setIsShowSubmenu(newMenuItems);
                     }}
                   >
                     {menu.name}
@@ -86,12 +85,31 @@ const menuItems = [
                       <AiOutlineDown className="header__menu_navbar_icon" />
                     )}
                   </Link>
+                ) : (
+                  // Các mục khác: đóng menu và chuyển hướng
+                  <Link
+                    to={menu.path}
+                    onClick={() => {
+                      window.scrollTo(0, 0);
+                      setIsHumbergerMenuOpen(false);
+                    }}
+                  >
+                    {menu.name}
+                  </Link>
                 )}
                 {menu.child && menu.child.length > 0 && (
                   <ul className={`header-submenu ${menu.isShowSubmenu ? "show__submenu" : ""}`}>
                     {menu.child.map((child, childKey) => (
                       <li key={childKey}>
-                        <Link to={child.path}>{child.name}</Link>
+                        <Link
+                          to={child.path}
+                          onClick={() => {
+                            window.scrollTo(0, 0);
+                            setIsHumbergerMenuOpen(false);
+                          }}
+                        >
+                          {child.name}
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -100,9 +118,9 @@ const menuItems = [
             ))}
           </ul>
         </div>
+
+
       </div>
-
-
       <div id="header" className={isScrolled ? "scrolled" : ""}>
         <div className="header-top">
           <div className="container">
@@ -152,7 +170,7 @@ const menuItems = [
                             {menu.name}
                           </Link>
                         ) : (
-                          <Link to={menu.path} onClick={()=>window.scrollTo(0,0)}>{menu.name}</Link>
+                          <Link to={menu.path} onClick={() => window.scrollTo(0, 0)}>{menu.name}</Link>
                         )}
                         {menu.child && menu.child.length > 0 && (
                           <ul className="header-submenu">
@@ -174,13 +192,13 @@ const menuItems = [
                   <div className="search">
                     <IoSearchCircleSharp />
                   </div>
-                  <Link to="/login" onClick={()=>window.scrollTo(0,0)} className="login-btn-mobile">
-                        <AiOutlineUser/>
+                  <Link to="/login" onClick={() => window.scrollTo(0, 0)} className="login-btn-mobile">
+                    <AiOutlineUser />
                   </Link>
                   <ul className="cart">
                     <li>
-                      <Link to="/gio-hang" onClick={()=>window.scrollTo(0,0)} style={{ textDecoration: "none" }}>
-                        <FaShoppingCart /> 
+                      <Link to="/gio-hang" onClick={() => window.scrollTo(0, 0)} style={{ textDecoration: "none" }}>
+                        <FaShoppingCart />
                         <span>{sluong}</span>
                       </Link>
                     </li>
@@ -196,10 +214,10 @@ const menuItems = [
                     </>
                   ) : (
                     <>
-                      <Link to="/register " onClick={()=>window.scrollTo(0,0)} className="signup-btn">
+                      <Link to="/register " onClick={() => window.scrollTo(0, 0)} className="signup-btn">
                         Đăng ký
                       </Link>
-                      <Link to="/login" onClick={()=>window.scrollTo(0,0)} className="login-btn">
+                      <Link to="/login" onClick={() => window.scrollTo(0, 0)} className="login-btn">
                         Đăng nhập
                       </Link>
                     </>
