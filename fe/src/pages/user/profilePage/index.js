@@ -1,17 +1,18 @@
-import { memo, useState, useEffect, useRef } from "react";
+import { memo, useState, useEffect } from "react";
 import "./style.scss";
-import { FaCamera, FaUser, FaCheck } from "react-icons/fa";
+import { FaUser, FaCheck } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const ProfilePage = () => {
     const [user, setUser] = useState({
         userName: "",
-        avatar: null
     });
-    const [previewAvatar, setPreviewAvatar] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [newUserName, setNewUserName] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
-    const fileInputRef = useRef(null);
+    
+    // URL của ảnh mặc định - thay thế bằng URL thật của bạn
+    const defaultAvatarUrl = "https://sv1.anhsieuviet.com/2025/04/10/7VITS-9.png"; 
 
     useEffect(() => {
         // Get user data from localStorage
@@ -20,47 +21,10 @@ const ProfilePage = () => {
             const parsedUser = JSON.parse(userData);
             setUser({
                 userName: parsedUser.userName || "",
-                avatar: localStorage.getItem("userAvatar") || null
             });
             setNewUserName(parsedUser.userName || "");
         }
     }, []);
-
-    const handleAvatarClick = () => {
-        fileInputRef.current.click();
-    };
-
-    const handleAvatarChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPreviewAvatar(reader.result);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
-    const handleSaveAvatar = () => {
-        if (previewAvatar) {
-            // Save avatar to localStorage
-            localStorage.setItem("userAvatar", previewAvatar);
-            
-            // Update user state
-            setUser(prev => ({
-                ...prev,
-                avatar: previewAvatar
-            }));
-            
-            setPreviewAvatar(null);
-            setSuccessMessage("Avatar đã được cập nhật thành công!");
-            
-            // Clear success message after 3 seconds
-            setTimeout(() => {
-                setSuccessMessage("");
-            }, 3000);
-        }
-    };
 
     const handleEditUserName = () => {
         setIsEditing(true);
@@ -116,62 +80,44 @@ const ProfilePage = () => {
                 
                 <div className="profile-section">
                     <div className="avatar-section">
-                        <div className="avatar-container" onClick={handleAvatarClick}>
-                            {previewAvatar || user.avatar ? (
-                                <img 
-                                    src={previewAvatar || user.avatar} 
-                                    alt="User Avatar" 
-                                    className="user-avatar" 
-                                />
-                            ) : (
-                                <div className="avatar-placeholder">
-                                    <FaUser className="avatar-icon" />
-                                </div>
-                            )}
-                            <div className="avatar-overlay">
-                                <FaCamera className="camera-icon" />
+                        <div className="avatar-container">
+                            {/* Hiển thị ảnh mặc định */}
+                            <img 
+                                src={defaultAvatarUrl} 
+                                alt="Default Avatar" 
+                                className="user-avatar" 
+                                onError={(e) => {
+                                    // Fallback nếu URL ảnh lỗi
+                                    e.target.style.display = 'none';
+                                    e.target.nextSibling.style.display = 'flex';
+                                }}
+                            />
+                            <div className="avatar-placeholder" style={{ display: 'none' }}>
+                                <FaUser className="avatar-icon" />
                             </div>
                         </div>
-                        <input 
-                            type="file" 
-                            ref={fileInputRef} 
-                            onChange={handleAvatarChange} 
-                            accept="image/*" 
-                            style={{ display: 'none' }} 
-                        />
-                        
-                        {previewAvatar && (
-                            <div className="avatar-actions">
-                                <button className="save-btn" onClick={handleSaveAvatar}>Lưu Avatar</button>
-                                <button className="cancel-btn" onClick={() => setPreviewAvatar(null)}>Hủy</button>
-                            </div>
-                        )}
                     </div>
                     
                     <div className="user-info">
                         <div className="info-row">
                             <label>Tên người dùng:</label>
-                            {isEditing ? (
-                                <div className="edit-field">
-                                    <input 
-                                        type="text" 
-                                        value={newUserName} 
-                                        onChange={(e) => setNewUserName(e.target.value)}
-                                    />
-                                    <div className="edit-actions">
-                                        <button className="save-btn" onClick={handleSaveUserName}>Lưu</button>
-                                        <button className="cancel-btn" onClick={handleCancelEdit}>Hủy</button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="info-value">
-                                    <span>{user.userName}</span>
-                                    <button className="edit-btn" onClick={handleEditUserName}>Sửa</button>
-                                </div>
-                            )}
+                            <div className="info-value">
+                                <span>{user.userName}</span>
+                            </div>
+                        </div>
+                        <div className="profile-action-buttons">
+                            <Link to="/sell-product" className="nav-link sell-product-button">
+                                Đăng bán sản phẩm
+                            </Link>
+                            <Link to="/my-products" className="nav-link sell-product-button">
+                                Sản phẩm của tôi
+                            </Link>
                         </div>
                     </div>
                 </div>
+                
+                {/* Add the sell product link button */}
+                
             </div>
         </div>
     );

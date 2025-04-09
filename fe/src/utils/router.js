@@ -14,5 +14,9 @@ export const ROUTES = {
         OAUTH_CALLBACK: '/oauth-callback',
         COMPLETE_GOOGLE_SIGNUP: '/complete-google-signup',
         COMPLETE_FACEBOOK_SIGNUP: '/complete-facebook-signup',
+        // New routes
+        SELL_PRODUCT: '/sell-product',
+        MY_PRODUCTS: '/my-products',
+        EDIT_PRODUCT: '/edit-product/:id',
     }
 }

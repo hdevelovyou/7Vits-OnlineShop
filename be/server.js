@@ -6,7 +6,7 @@ const passport = require('./config/passport');
 const db = require('./config/connectDB');
 const axios = require('axios');
 const { getBestAnswer, searchFaq } = require('./utils/faqUtils');
-
+const productRoutes = require('./routes/productRoutes');
 const app = express();
 
 // Middleware
@@ -35,6 +35,7 @@ app.use(passport.session());
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 // Other routes...
+app.use('/api', productRoutes);
 
 // Simple test route
 app.get('/api/test', (req, res) => {

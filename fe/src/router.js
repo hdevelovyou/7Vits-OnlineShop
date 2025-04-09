@@ -15,10 +15,15 @@ import GoogleAuthCompletionPage from './pages/user/googleAuthCompletionPage';
 import StorePage from "./pages/user/storePage";
 import CartPage from "./pages/user/cartpage";
 import FacebookAuthCompletionPage from './pages/user/facebookAuthCompletionPage';
+// Import new components
+import SellProductPage from "./pages/user/sellProductPage/sellProductPage";
+import MyProductsPage from "./pages/user/myProductPage/myProductPage";
+import EditProductPage from "./pages/user/editProductPage/editProductPage";
+
 const renderUserRoutes = () => {
     return (
         <MasterLayout>
-            {({ isLoggedIn, setIsLoggedIn ,cart,setCart}) => (
+            {({ isLoggedIn, setIsLoggedIn, cart, setCart }) => (
                 <Routes>
                     <Route path={ROUTES.USER.HOME} element={<Homepage />} />
                     <Route path={ROUTES.USER.PROFILE} element={<ProfilePage />} />
@@ -35,6 +40,10 @@ const renderUserRoutes = () => {
                     <Route path={ROUTES.USER.CART} element={<CartPage cart={cart} setCart={setCart} />} />
                     <Route path={ROUTES.USER.COMPLETE_FACEBOOK_SIGNUP} element={<FacebookAuthCompletionPage />} />
                     
+                    {/* New routes for selling products */}
+                    <Route path={ROUTES.USER.SELL_PRODUCT} element={<SellProductPage />} />
+                    <Route path={ROUTES.USER.MY_PRODUCTS} element={<MyProductsPage />} />
+                    <Route path={ROUTES.USER.EDIT_PRODUCT} element={<EditProductPage />} />
                 </Routes>
             )}
         </MasterLayout>
