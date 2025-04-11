@@ -4,29 +4,33 @@
     padding: 20rem 2rem 2rem; // Giữ padding-top 20rem, điều chỉnh padding sides
     border-radius: 12px;
     min-height: 100vh; // Thay đổi từ height sang min-height để linh hoạt hơn
+    display: flex;
+    flex-direction: column;
+    background-color: #000000;
   
     .header-section {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      margin-bottom: 2.4rem;
+      align-items: center;
+      margin-bottom: 2rem;
       position: relative; // Đảm bảo vị trí tương đối
       z-index: 1; // Đảm bảo header hiển thị trên các phần tử khác
   
       h1 {
-        color: #fff;
+        color: #ffffff;
+        font-size: 2.5rem;
         margin: 0;
-        font-size: 2rem;
       }
   
       .add-product-btn {
         background-color: #ff0000;
         color: white;
         padding: 0.8rem 1.5rem;
-        border-radius: 6px;
+        border: none;
+        font-size: 1.2rem;
         text-decoration: none;
-        font-weight: 500;
-        font-size: 2rem;
+        border-radius: 0;
+        font-weight: 600;
         transition: background-color 0.3s;
   
         &:hover {
@@ -36,40 +40,48 @@
     }
   
     .error-message {
-      background-color: rgba(255, 0, 0, 0.2);
-      color: #ff5252;
+      background-color: #3a3a3a;
+      color: #ff0000;
       padding: 1rem;
-      border-radius: 6px;
-      margin-bottom: 1.4rem;
+      border-radius: 0;
+      margin-bottom: 1.5rem;
       text-align: center;
-      font-size: 1rem;
     }
   
     .loading {
-      text-align: center;
-      padding: 2.4rem;
-      font-size: 1.4rem;
-      color: #ccc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #ffffff;
+      font-size: 1.5rem;
+      height: 50vh;
     }
   
     .no-products {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      border: 2px dashed #444;
+      border-radius: 0;
+      color: #fff;
       text-align: center;
-      padding: 2.4rem;
   
       p {
-        color: #ccc;
-        margin-bottom: 2rem;
-        font-size: 1.2rem;
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
       }
   
       .add-first-product-btn {
         background-color: #ff0000;
         color: white;
-        padding: 1rem 1.5rem;
-        border-radius: 6px;
+        padding: 1rem 2rem;
+        border: none;
+        font-size: 1.2rem;
         text-decoration: none;
-        font-weight: 500;
-        font-size: 2rem;
+        border-radius: 0;
+        font-weight: 600;
         transition: background-color 0.3s;
   
         &:hover {
@@ -96,6 +108,7 @@
           text-align: left;
           border-bottom: 2px solid #444;
           font-size: 1.1rem;
+          vertical-align: middle;
         }
   
         th {
@@ -113,11 +126,16 @@
         .status-badge {
           padding: 0.6rem 1rem;
           border-radius: 24px;
-          font-size: 1.1rem;
+          font-size: 1rem;
           font-weight: 600;
-          display: inline-block;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
           min-width: 100px;
+          height: 32px;
           text-align: center;
+          margin: 0;
+          line-height: 1;
   
           &.status-active {
             background-color: rgba(0, 200, 83, 0.2);
@@ -135,47 +153,67 @@
           }
         }
   
+        .product-thumbnail {
+          width: 70px;
+          height: 70px;
+          object-fit: cover;
+          border-radius: 4px;
+          border: 1px solid #444;
+        }
+  
+        .no-image {
+          width: 80px;
+          height: 80px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: #333;
+          color: #aaa;
+          font-size: 0.9rem;
+          border-radius: 4px;
+          text-align: center;
+        }
+  
+        a {
+          color: #fff;
+          text-decoration: none;
+          transition: color 0.3s;
+  
+          &:hover {
+            color: #ff0000;
+          }
+        }
+  
         .actions {
           display: flex;
           gap: 1rem;
           align-items: center;
-          min-height: 60px;
+          min-height: 100px;
+          justify-content: flex-start;
+          padding: 0.5rem 0;
   
           .edit-btn, .delete-btn {
-            padding: 0.7rem 1.2rem;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            cursor: pointer;
+            background: none;
             border: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
           }
   
-          .edit-btn {
-            background-color: #1976d2;
-            color: white;
-            text-decoration: none;
-  
-            &:hover {
-              background-color: #1565c0;
-              transform: translateY(-2px);
-            }
-          }
-  
-          .delete-btn {
-            background-color: #d32f2f;
-            color: white;
-  
-            &:hover {
-              background-color: #b71c1c;
-              transform: translateY(-2px);
-            }
+          .delete-btn:hover {
+            color: #ff5252;
           }
   
           .dropdown {
             position: relative;
-            display: inline-block;
-            height: 100%;
+            display: inline-flex;
+            align-items: center;
+            height: auto;
   
             .change-status-btn {
               padding: 0.7rem 1.2rem;
@@ -187,6 +225,9 @@
               background-color: #616161;
               color: white;
               transition: all 0.3s ease;
+              display: flex;
+              align-items: center;
+              justify-content: center;
   
               &:hover {
                 background-color: #424242;
@@ -198,6 +239,7 @@
               display: none;
               position: absolute;
               right: 0;
+              top: 100%; // Thêm vị trí top
               background-color: #333;
               min-width: 220px;
               box-shadow: 0px 10px 25px 0px rgba(0,0,0,0.5);
@@ -205,6 +247,7 @@
               border-radius: 8px;
               overflow: hidden;
               border: 1px solid #444;
+              margin-top: 5px; // Thêm khoảng cách với nút
   
               button {
                 color: white;

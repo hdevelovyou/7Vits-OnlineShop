@@ -12,6 +12,8 @@ const SellProductPage = () => {
         category: '',
         stock: 1
     });
+    const [image, setImage] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -21,6 +23,28 @@ const SellProductPage = () => {
             ...formData,
             [name]: value
         });
+    };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Kiểm tra kích thước file (giới hạn 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                setError('Kích thước ảnh không được vượt quá 5MB');
+                return;
+            }
+            
+            // Kiểm tra định dạng file
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+            if (!allowedTypes.includes(file.type)) {
+                setError('Chỉ chấp nhận file ảnh (JPG, JPEG, PNG, GIF, WEBP)');
+                return;
+            }
+
+            setImage(file);
+            setPreviewUrl(URL.createObjectURL(file));
+            setError('');
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -38,16 +62,23 @@ const SellProductPage = () => {
             }
 
             // Format price as number
-            const productData = {
-                ...formData,
-                price: parseFloat(formData.price),
-                stock: parseInt(formData.stock)
-            };
+            const productData = new FormData();
+            productData.append('name', formData.name);
+            productData.append('description', formData.description);
+            productData.append('price', parseFloat(formData.price));
+            productData.append('category', formData.category);
+            productData.append('stock', parseInt(formData.stock));
+            
+            // Thêm ảnh vào form data nếu có
+            if (image) {
+                productData.append('image', image);
+            }
 
             // Send request to create product
             const response = await axios.post('/api/products', productData, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
                 }
             });
 
@@ -142,6 +173,22 @@ const SellProductPage = () => {
                         required
                         min="1"
                     />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="image">Ảnh sản phẩm</label>
+                    <input
+                        type="file"
+                        id="image"
+                        name="image"
+                        onChange={handleImageChange}
+                        accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
+                    />
+                    {previewUrl && (
+                        <div className="image-preview">
+                            <img src={previewUrl} alt="Preview" />
+                        </div>
+                    )}
                 </div>
 
                 <button 

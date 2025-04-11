@@ -1,5 +1,6 @@
 const db = require('../config/connectDB');
 const { authMiddleware } = require('./authController');
+const upload = require('../utils/fileUpload');
 
 // Get all products
 exports.getAllProducts = (req, res) => {
@@ -30,16 +31,26 @@ exports.getProductById = (req, res) => {
     });
 };
 
+// Upload product image middleware
+exports.uploadProductImage = upload.single('image');
+
 // Create a new product
 exports.createProduct = (req, res) => {
     try {
         const { name, description, price, category, stock } = req.body;
         const seller_id = req.user.id; // From JWT auth middleware
         
-        const sql = `INSERT INTO products (name, description, price, category, stock, seller_id) 
-                    VALUES (?, ?, ?, ?, ?, ?)`;
+        // Xử lý file ảnh nếu có
+        let imagePath = null;
+        if (req.file) {
+            // Lấy đường dẫn tương đối của file ảnh để lưu vào DB
+            imagePath = `/images/products/${req.file.filename}`;
+        }
         
-        db.query(sql, [name, description, price, category, stock, seller_id], (err, result) => {
+        const sql = `INSERT INTO products (name, description, price, category, stock, seller_id, image_url) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?)`;
+        
+        db.query(sql, [name, description, price, category, stock, seller_id, imagePath], (err, result) => {
             if (err) return res.status(500).json({ error: err.message });
             res.status(201).json({ 
                 message: 'Product created successfully', 
@@ -65,13 +76,20 @@ exports.updateProduct = (req, res) => {
             if (err) return res.status(500).json({ error: err.message });
             if (results.length === 0) return res.status(403).json({ error: 'Unauthorized access to this product' });
             
+            // Xử lý file ảnh nếu có
+            let imagePath = results[0].image_url; // Giữ lại ảnh cũ nếu không có ảnh mới
+            if (req.file) {
+                // Lấy đường dẫn tương đối của file ảnh để lưu vào DB
+                imagePath = `/images/products/${req.file.filename}`;
+            }
+            
             // Update the product
             const updateSQL = `UPDATE products 
                               SET name = ?, description = ?, price = ?, 
-                                  category = ?, stock = ?, status = ? 
+                                  category = ?, stock = ?, status = ?, image_url = ? 
                               WHERE id = ?`;
             
-            db.query(updateSQL, [name, description, price, category, stock, status, id], (err, result) => {
+            db.query(updateSQL, [name, description, price, category, stock, status, imagePath, id], (err, result) => {
                 if (err) return res.status(500).json({ error: err.message });
                 res.json({ message: 'Product updated successfully' });
             });

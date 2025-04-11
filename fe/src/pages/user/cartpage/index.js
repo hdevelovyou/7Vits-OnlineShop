@@ -24,7 +24,7 @@ const CartPage = ({ cart, setCart }) => {
     calculateTotaldiscountPrice();
   }, [cart]);
   const calculateTotaldiscountPrice = () => {
-    const total = cart.reduce((sum, item) => sum + (item.originalPrice - item.price) * item.amount, 0);
+    const total = cart.reduce((sum, item) => sum + ((item.originalPrice || item.price * 1.2) - item.price) * item.amount, 0);
     setTotalDiscountPrice(total);
   };
 
@@ -45,6 +45,9 @@ const CartPage = ({ cart, setCart }) => {
   };
 
   const formatPrice = (price) => {
+    if (price === undefined || price === null) {
+      return '0 ₫';
+    }
     return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
   };
 
@@ -71,7 +74,7 @@ const CartPage = ({ cart, setCart }) => {
                   {/* Cột: Sản Phẩm */}
                   <td className="product-info">
                     <img
-                      src={`https://www.divineshop.vn${item.image}`}
+                      src={item.image || 'https://via.placeholder.com/100x100?text=No+Image'}
                       alt={item.name}
                       className="product-img"
                     />
@@ -80,9 +83,11 @@ const CartPage = ({ cart, setCart }) => {
 
                   {/* Cột: Đơn Giá */}
                   <td className="price">
-                    <span className="original-price">
-                      <s> {formatPrice(item.originalPrice)}</s>
-                    </span>
+                    {item.originalPrice && (
+                      <span className="original-price">
+                        <s>{formatPrice(item.originalPrice)}</s>
+                      </span>
+                    )}
                     {formatPrice(item.price)}
                   </td>
 
@@ -90,21 +95,21 @@ const CartPage = ({ cart, setCart }) => {
                   <td className="quantity-control">
                     <button
                       className="quantity-btn"
-                      onClick={() => handleUpdateAmount(item.id, item.amount - 1)}
+                      onClick={() => handleUpdateAmount(item.id, (item.amount || 1) - 1)}
                     >
                       -
                     </button>
-                    <span className="quantity">{item.amount}</span>
+                    <span className="quantity">{item.amount || 1}</span>
                     <button
                       className="quantity-btn"
-                      onClick={() => handleUpdateAmount(item.id, item.amount + 1)}
+                      onClick={() => handleUpdateAmount(item.id, (item.amount || 1) + 1)}
                     >
                       +
                     </button>
                   </td>
 
                   {/* Cột: Số Tiền */}
-                  <td className="price">{formatPrice(item.price * item.amount)}</td>
+                  <td className="price">{formatPrice(item.price * (item.amount || 1))}</td>
 
                   {/* Cột: Thao Tác */}
                   <td>
@@ -123,31 +128,35 @@ const CartPage = ({ cart, setCart }) => {
           <div className="cart-mobile">
             {cart.map((item) => (
               <div key={item.id} className="cart-item-mobile">
-                <div className="">
+                <div className="cart-item-details">
+                  <img 
+                    src={item.image || 'https://via.placeholder.com/50x50?text=No+Image'} 
+                    alt={item.name}
+                    className="product-img-mobile" 
+                  />
                   <div className="cart-item">
                     <h5>{item.name}</h5>
-                    <p>{item.price.toLocaleString()} đ</p>
+                    <p>{item.price ? item.price.toLocaleString() : '0'} đ</p>
                   </div>
                 </div>
                 <div className="cart-state">
                   <div className="cart-state-mobile">
                   <button
                       className="quantity-btn"
-                      onClick={() => handleUpdateAmount(item.id, item.amount - 1)}
+                      onClick={() => handleUpdateAmount(item.id, (item.amount || 1) - 1)}
                     >
                       -
                     </button>
-                    <span className="quantity">{item.amount}</span>
+                    <span className="quantity">{item.amount || 1}</span>
                     <button
                       className="quantity-btn"
-                      onClick={() => handleUpdateAmount(item.id, item.amount + 1)}
+                      onClick={() => handleUpdateAmount(item.id, (item.amount || 1) + 1)}
                     >
                       +
                     </button>
                   </div>
                   <button className="cart-remove" onClick={() => handleRemoveItem(item.id)}>Xóa</button>
                 </div>
-
               </div>
             ))}
           </div>

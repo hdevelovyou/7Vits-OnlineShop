@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 const passport = require('./config/passport');
 const db = require('./config/connectDB');
@@ -12,10 +13,17 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Cấu hình CORS để cho phép tất cả các nguồn trong môi trường phát triển
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: ['http://localhost:3000', 'http://localhost:5000'],
   credentials: true
 }));
+
+// Phục vụ tệp tĩnh từ thư mục public
+app.use('/images', express.static(path.join(__dirname, 'public/images')));
+// Log đường dẫn tĩnh
+console.log('Serving static files from:', path.join(__dirname, 'public/images'));
 
 // Session configuration
 app.use(session({
@@ -40,18 +48,6 @@ app.use('/api', productRoutes);
 // Simple test route
 app.get('/api/test', (req, res) => {
   res.json({ message: 'API is working', env: process.env.GOOGLE_CLIENT_ID ? 'OAuth configured' : 'OAuth not configured' });
-});
-
-app.use(cors()); 
-
-app.get('/api/products', async (req, res) => {
-  try {
-      const response = await axios.get('https://divineshop.vn/api/product/list?limit=24&tag=Gi%E1%BA%A3i+tr%C3%AD');
-      res.json(response.data);
-  } catch (error) {
-      console.error('Lỗi khi lấy dữ liệu:', error.message);
-      res.status(500).json({ error: 'Lỗi khi lấy dữ liệu từ API.' });
-  }
 });
 
 app.post('/api/chat', async (req, res) => {
@@ -85,10 +81,24 @@ app.get('/api/faq/search', (req, res) => {
   res.json({ results });
 });
 
+// Thêm route kiểm tra file static
+app.get('/test-image/:filename', (req, res) => {
+  const { filename } = req.params;
+  const filePath = path.join(__dirname, 'public/images/products', filename);
+  
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error('Error sending file:', err);
+      res.status(404).send('File not found');
+    }
+  });
+});
+
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Static files served at: http://localhost:${PORT}/images`);
   console.log(`FAQ system loaded and active`);
 });
 

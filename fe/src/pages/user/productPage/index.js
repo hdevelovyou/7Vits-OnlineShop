@@ -4,118 +4,176 @@ import axios from "axios";
 import "./style.scss";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
-
 const ProductPage = ({ cart, setCart }) => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [quantity, setQuantity] = useState(1);
     const [selectedImage, setSelectedImage] = useState(0);
     const [product, setProduct] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/api/products");
-                if (Array.isArray(response.data.list)) {
-                    const found = response.data.list.find(p => p.id === parseInt(id));
-                   console.log(found);
-                    if (found) {
-                        setProduct({
-                            ...found,
-                            images: found.image ? [found.image] : [],
-                            rating: found.rating !== undefined ? found.rating : 4,
-                            sold: found.sold !== undefined ? found.sold : 0,
-                            features: found.features ? found.features : [],
-                            description: found.description ? found.description : found.slug
-                        });
-                    } else {
-                        navigate("/");
-                    }
+                setLoading(true);
+                const response = await axios.get(`/api/products/${id}`);
+                console.log("Chi tiết sản phẩm:", response.data);
+                
+                if (response.data) {
+                    setProduct({
+                        ...response.data,
+                        images: response.data.image_url ? [response.data.image_url] : [],
+                        rating: response.data.rating !== undefined ? response.data.rating : 4,
+                        sold: response.data.sold !== undefined ? response.data.sold : 0,
+                        features: response.data.features ? response.data.features : [],
+                        originalPrice: response.data.price * 1.2
+                    });
                 } else {
-                    console.error("Dữ liệu không đúng định dạng.");
+                    setError("Không tìm thấy thông tin sản phẩm");
+                    navigate("/");
                 }
             } catch (error) {
                 console.error("Lỗi khi tải sản phẩm:", error);
+                setError("Đã xảy ra lỗi khi tải thông tin sản phẩm");
                 navigate("/");
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchProduct();
     }, [id, navigate]);
+
     const formatPrice = (price) => {
-        return new Intl.NumberFormat('vi-VN', {
-            style: 'currency',
-            currency: 'VND'
-        }).format(price);
+        return price ? price.toLocaleString('vi-VN') : '0';
+    };
+    
+    // Xử lý đường dẫn hình ảnh
+    const getImageUrl = (imageUrl) => {
+        if (!imageUrl) {
+            console.log("Không có đường dẫn ảnh");
+            return "https://via.placeholder.com/300x300?text=No+Image";
+        }
+        
+        // Kiểm tra nếu đường dẫn bắt đầu bằng http hoặc https thì giữ nguyên
+        if (imageUrl && (imageUrl.startsWith('http://') || imageUrl.startsWith('https://'))) {
+            return imageUrl;
+        }
+        
+        // Nếu có đường dẫn nhưng không phải là URL đầy đủ, thêm domain
+        const fullUrl = `http://localhost:5000${imageUrl}`;
+        console.log("URL hình ảnh đầy đủ:", fullUrl);
+        return fullUrl;
     };
 
-    const handleQuantityChange = (value) => {
-        if (value === "") {
-            setQuantity(1);
-            return;
-        }
-        const numValue = parseInt(value);
-        if (!isNaN(numValue) && numValue >= 1 && numValue <= 99) {
-            setQuantity(numValue);
+    const handleQuantityChange = (e) => {
+        const value = parseInt(e.target.value);
+        if (!isNaN(value) && value > 0) {
+            setQuantity(value);
         }
     };
-  
-    const handleAddToCart = (product) => {
-        const arr = [...cart];
-        const foundIndex = arr.findIndex(item => item.id === product.id);
-    
-        if (foundIndex !== -1) {
-            arr[foundIndex].amount += quantity;
+
+    const decreaseQuantity = () => {
+        if (quantity > 1) {
+            setQuantity(quantity - 1);
+        }
+    };
+
+    const increaseQuantity = () => {
+        setQuantity(quantity + 1);
+    };
+
+    const addToCart = () => {
+        const item = {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            originalPrice: product.originalPrice,
+            image: getImageUrl(product.images[0]),
+            amount: quantity
+        };
+
+        // Check if item is already in cart
+        const existingItemIndex = cart.findIndex(cartItem => cartItem.id === item.id);
+        
+        let updatedCart;
+        if (existingItemIndex >= 0) {
+            // Update item quantity if already in cart
+            updatedCart = [...cart];
+            updatedCart[existingItemIndex].amount += quantity;
+            setCart(updatedCart);
         } else {
-            
-            arr.push({...product, amount: quantity });
-            console.log(arr);
+            // Add new item to cart
+            updatedCart = [...cart, item];
+            setCart(updatedCart);
         }
-       
-    
-        setCart(arr);
-        localStorage.setItem("cart", JSON.stringify(arr));  // Lưu giỏ hàng vào Local Storage
+        
+        // Save to localStorage for persistence
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+        
+        alert("Đã thêm vào giỏ hàng!");
     };
-    useEffect(() => {
-        const savedCart = localStorage.getItem("cart");
-        if (savedCart) {
-            setCart(JSON.parse(savedCart));
-        }
-    }, []);
-    
-    useEffect(() => {
-        console.log(cart);
-    },[cart]); 
-    const getTotalQuantity = () => {
-        return cart.reduce((total, product) => total + product.amount, 0);
-    };
-    if (!product) {
-        return <div className="product-page">Loading...</div>;
-    }
-    const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
-    return (
-        <>
 
+    if (loading) {
+        return (
+            <div className="loading-container">
+                <div className="loading-spinner"></div>
+                <p>Đang tải sản phẩm...</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="error-container">
+                <p>{error}</p>
+                <button onClick={() => navigate('/')}>Quay lại trang chủ</button>
+            </div>
+        );
+    }
+
+    if (!product) {
+        return (
+            <div className="error-container">
+                <p>Không tìm thấy sản phẩm</p>
+                <button onClick={() => navigate('/')}>Quay lại trang chủ</button>
+            </div>
+        );
+    }
+
+    const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+
+    return (
         <div className="product-page">
-            <div className="grid">
-                <div className="product-container">
+            <div className="product-container">
+                <div className="product-breadcrumb">
+                    <a href="/" className="breadcrumb-link">Trang chủ</a>
+                    <i className="fas fa-chevron-right"></i>
+                    <a href="/shop" className="breadcrumb-link">Cửa hàng</a>
+                    <i className="fas fa-chevron-right"></i>
+                    <span className="breadcrumb-current">{product.name}</span>
+                </div>
+                
+                <div className="product-content">
                     <div className="product-gallery">
                         <div className="main-image">
-                            {product.images && product.images.length > 0 ? (
-                                <img
-                                    src={`https://www.divineshop.vn${product.images[selectedImage]}`}
-                                    alt={product.name}
-                                    className="product-image"
-                                />
-                            ) : (
-                                <img
-                                    src="https://via.placeholder.com/300x300?text=No+Image"
-                                    alt="No Image"
-                                    className="product-image"
-                                />
+                            <img
+                                src={getImageUrl(product.images[selectedImage])}
+                                alt={product.name}
+                                className="product-image"
+                                onError={(e) => {
+                                    console.error("Lỗi tải ảnh:", product.images[selectedImage]);
+                                    e.target.src = "https://via.placeholder.com/300x300?text=No+Image";
+                                }}
+                            />
+                            {discount > 0 && (
+                                <div className="discount-badge">
+                                    <span>-{discount}%</span>
+                                </div>
                             )}
                         </div>
-                        {product.images && product.images.length >1 && (
+                        {product.images && product.images.length > 1 && (
                             <div className="thumbnail-list">
                                 {product.images.map((img, index) => (
                                     <div
@@ -124,108 +182,107 @@ const ProductPage = ({ cart, setCart }) => {
                                         onClick={() => setSelectedImage(index)}
                                     >
                                         <img
-                                            src={`https://www.divineshop.vn${img}`}
+                                            src={getImageUrl(img)}
                                             alt={`${product.name} ${index + 1}`}
+                                            onError={(e) => {
+                                                e.target.src = "https://via.placeholder.com/100x100?text=Error";
+                                            }}
                                         />
                                     </div>
                                 ))}
                             </div>
                         )}
                     </div>
+                    
                     <div className="product-info">
                         <h1 className="product-title">{product.name}</h1>
-                        <div className="product-rating">
-                            <div className="stars">
-                                {[...Array(5)].map((_, idx) => (
-                                    <i
-                                        key={idx}
-                                        className={`fa-solid fa-star ${idx < Math.floor(product.rating) ? 'active' : ''}`}
-                                    ></i>
-                                ))}
+                        
+                        <div className="product-meta">
+                            <div className="product-rating">
+                                <div className="stars">
+                                    {[...Array(5)].map((_, idx) => (
+                                        <i
+                                            key={idx}
+                                            className={`fa-solid fa-star ${idx < Math.floor(product.rating) ? 'active' : ''}`}
+                                        ></i>
+                                    ))}
+                                </div>
+                                <span className="rating-number">{product.rating}/5</span>
+                                <span className="divider">|</span>
+                                <span className="sold">{product.sold.toLocaleString()} Đã Bán</span>
                             </div>
-                            <span className="rating-number">({product.rating})</span>
-                            <span className="sold">{product.sold.toLocaleString()} Đã Bán</span>
                         </div>
+                        
                         <div className="product-price">
-                            <span className="old-price">{formatPrice(product.originalPrice)}</span>
-                            <span className="new-price">{formatPrice(product.price)}</span>
-                            <span className="discount">{discount}% GIẢM</span>
+                            <div className="price-info">
+                                <span className="new-price">{formatPrice(product.price)}đ</span>
+                                <span className="old-price">{formatPrice(product.originalPrice)}đ</span>
+                            </div>
+                            {discount > 0 && (
+                                <span className="discount">{discount}% GIẢM</span>
+                            )}
                         </div>
-                        {product.features.length > 0 && (
-                            <div className="product-features">
-                                {product.features.map((feature, index) => (
-                                    <div key={index} className="feature-item">
-                                        <i className="fa-solid fa-check"></i>
-                                        <span>{feature}</span>
-                                    </div>
-                                ))}
+                        
+                        {product.description && (
+                            <div className="product-description">
+                                <h3 className="section-title">Mô tả sản phẩm</h3>
+                                <p>{product.description}</p>
                             </div>
                         )}
-                        <p className="product-description">{product.description}</p>
-                        <div className="quantity-container">
-                            <div className="soluong">
-                                <p>Số lượng</p>
+                        
+                        {product.features && product.features.length > 0 && (
+                            <div className="product-features">
+                                <h3 className="section-title">Tính năng nổi bật</h3>
+                                <ul className="feature-list">
+                                    {product.features.map((feature, index) => (
+                                        <li key={index} className="feature-item">
+                                            <i className="fa-solid fa-check"></i>
+                                            <span>{feature}</span>
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
-                            <div className="quantity-container-input">
-                                <button
-                                    onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
-                                    disabled={quantity <= 1}
-                                    className={quantity <= 1 ? 'disabled' : ''}
-                                    aria-label="Giảm số lượng"
-                                >
-                                    -
+                        )}
+                        
+                        <div className="product-actions">
+                            <div className="quantity-control">
+                                <span className="quantity-label">Số lượng:</span>
+                                <div className="quantity-selector">
+                                    <button 
+                                        onClick={decreaseQuantity} 
+                                        className="quantity-btn"
+                                        disabled={quantity <= 1}
+                                    >
+                                        <i className="fas fa-minus"></i>
+                                    </button>
+                                    <input 
+                                        type="number" 
+                                        value={quantity} 
+                                        onChange={handleQuantityChange}
+                                        min="1"
+                                        className="quantity-input"
+                                    />
+                                    <button onClick={increaseQuantity} className="quantity-btn">
+                                        <i className="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div className="action-buttons">
+                                <button className="buy-now-btn">
+                                    <i className="fa-solid fa-bolt-lightning"></i>
+                                    Mua ngay
                                 </button>
-                                <input
-                                    type="number"
-                                    min="1"
-                                    max="99"
-                                    value={quantity === "" ? "" : quantity}
-                                    onChange={(e) => {
-                                        const value = e.target.value;
-                                        if (value === "") {
-                                            setQuantity("");
-                                            return;
-                                        }
-                                        const numValue = parseInt(value);
-                                        if (!isNaN(numValue) && numValue >= 1 && numValue <= 99) {
-                                            setQuantity(numValue);
-                                        }
-                                    }}
-                                    onBlur={(e) => {
-                                        if (e.target.value === "") {
-                                            setQuantity(1);
-                                        }
-                                    }}
-                                />
-                                <button
-                                    onClick={() => setQuantity(prev => Math.min(99, prev + 1))}
-                                    disabled={quantity >= 99}
-                                    className={quantity >= 99 ? 'disabled' : ''}
-                                    aria-label="Tăng số lượng"
-                                >
-                                    +
+                                <button onClick={addToCart} className="add-to-cart-btn">
+                                    <i className="fa-solid fa-cart-plus"></i>
+                                    Thêm vào giỏ hàng
                                 </button>
                             </div>
-                        </div>
-                        <div className="button-group">
-                            <button className="add-to-cart" 
-                                onClick={() => {
-                                handleAddToCart(product);
-    
-                            }}>
-                                <i className="fa-solid fa-cart-shopping"></i>
-                                Thêm Vào Giỏ Hàng
-                            </button>
-                            <button className="buy-now">
-                                <i className="fa-solid fa-bolt"></i>
-                                Mua Ngay
-                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        </>
     );
 };
 

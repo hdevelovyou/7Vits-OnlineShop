@@ -1,6 +1,93 @@
-
 .cart-mobile{
   display: none;
+  
+  @media (max-width: 768px) {
+    display: block;
+    width: 100%;
+    
+    .cart-item-mobile {
+      background-color: #1a1a1a;
+      margin-bottom: 15px;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      
+      .cart-item-details {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        
+        .product-img-mobile {
+          width: 60px;
+          height: 60px;
+          object-fit: cover;
+          border-radius: 6px;
+          margin-right: 10px;
+        }
+        
+        .cart-item {
+          flex: 1;
+          
+          h5 {
+            margin: 0 0 5px;
+            font-size: 16px;
+            color: #fff;
+          }
+          
+          p {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #ff4500;
+          }
+        }
+      }
+      
+      .cart-state {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        .cart-state-mobile {
+          display: flex;
+          align-items: center;
+          
+          .quantity-btn {
+            width: 30px;
+            height: 30px;
+            background-color: transparent;
+            border: 1px solid #fff;
+            color: #fff;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            
+            &:hover {
+              background-color: #333;
+            }
+          }
+          
+          .quantity {
+            margin: 0 10px;
+            font-weight: bold;
+          }
+        }
+        
+        .cart-remove {
+          background-color: #ff4d4f;
+          color: #fff;
+          border: none;
+          padding: 8px 12px;
+          border-radius: 4px;
+          cursor: pointer;
+          
+          &:hover {
+            background-color: #e04344;
+          }
+        }
+      }
+    }
+  }
 }
 .cart-page {
   color: #fff; // Màu chữ trắng
@@ -28,6 +115,10 @@
     border-collapse: collapse;
     margin: 0 auto;
     max-width: 1200px;
+    
+    @media (max-width: 768px) {
+      display: none; // Hide the table on mobile
+    }
 
     thead {
       tr {
