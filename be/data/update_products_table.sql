@@ -12,7 +12,15 @@ CREATE TABLE IF NOT EXISTS users (
     facebookId VARCHAR(255),
     displayName VARCHAR(255)
 );
-
+CREATE TABLE IF NOT EXISTS comments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    product_id INT NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
 -- Kiểm tra nếu bảng products đã tồn tại
 CREATE TABLE IF NOT EXISTS products (
     id INT AUTO_INCREMENT PRIMARY KEY,

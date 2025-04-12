@@ -8,6 +8,8 @@ const db = require('./config/connectDB');
 const axios = require('axios');
 const { getBestAnswer, searchFaq } = require('./utils/faqUtils');
 const productRoutes = require('./routes/productRoutes');
+const bodyParser = require("body-parser");
+const commentRoutes = require("./routes/comments");
 const app = express();
 
 // Middleware
@@ -43,9 +45,9 @@ app.use(passport.session());
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 // Other routes...
+app.use("/api/comments", commentRoutes);
+// Routes products
 app.use('/api', productRoutes);
-
-// Simple test route
 app.get('/api/test', (req, res) => {
   res.json({ message: 'API is working', env: process.env.GOOGLE_CLIENT_ID ? 'OAuth configured' : 'OAuth not configured' });
 });
@@ -96,6 +98,12 @@ app.get('/test-image/:filename', (req, res) => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
+console.log('--- Các route đang được khai báo ---');
+app._router.stack.forEach(function(r){
+  if (r.route && r.route.path){
+    console.log(r.route.stack[0].method.toUpperCase(), r.route.path);
+  }
+});
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Static files served at: http://localhost:${PORT}/images`);

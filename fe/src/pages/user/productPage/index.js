@@ -1,6 +1,7 @@
 import { useState, memo, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import CommentSection from "../../../components/comment/comment";
 import "./style.scss";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
@@ -145,7 +146,9 @@ const ProductPage = ({ cart, setCart }) => {
     const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
 
     return (
+        <>
         <div className="product-page">
+            
             <div className="product-container">
                 <div className="product-breadcrumb">
                     <a href="/" className="breadcrumb-link">Trang chủ</a>
@@ -282,7 +285,12 @@ const ProductPage = ({ cart, setCart }) => {
                     </div>
                 </div>
             </div>
+            <CommentSection productId={product.id} userId={JSON.parse(localStorage.getItem("user")).id} />
+
         </div>
+        
+        </>
+        
     );
 };
 
