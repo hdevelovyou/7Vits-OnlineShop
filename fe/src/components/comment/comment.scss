@@ -108,25 +108,24 @@ $font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 }
 .reply-list {
-    margin-left: 30px;
+    margin-left: 20px;
     padding-left: 10px;
-    border-left: 2px solid #ccc;
-    margin-top: 10px;
-  }
-  
-  .reply-btn {
-    margin-top: 5px;
-    font-size: 0.9rem;
-    color: blue;
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .reply-form {
-    margin-top: 10px;
-  }
-  
-  .reply-item {
-    margin-bottom: 10px;
-  }
+    border-left: 2px solid #ddd;
+}
+
+.reply-user {
+    font-weight: bold;
+}
+
+.reply-time {
+    font-size: 0.85em;
+    color: #311515;
+}
+
+.reply-body {
+    background-color: #f9f9f9;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-top: 4px;
+    color: #080303
+}

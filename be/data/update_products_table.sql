@@ -18,9 +18,12 @@ CREATE TABLE IF NOT EXISTS comments (
     product_id INT NOT NULL,
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    parent_id INT DEFAULT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    FOREIGN KEY (parent_id) REFERENCES comments(id) ON DELETE CASCADE
 );
+
 -- Kiểm tra nếu bảng products đã tồn tại
 CREATE TABLE IF NOT EXISTS products (
     id INT AUTO_INCREMENT PRIMARY KEY,

@@ -1,26 +1,69 @@
-const db = require("../config/connectDB"); // file kết nối MySQL
+const db = require("../config/connectDB"); // hoặc tùy theo nơi bạn kết nối database
 
-exports.getCommentsByProduct = (req, res) => {
+exports.getCommentsByProduct = async (req, res) => {
     const productId = req.params.productId;
-    const query = `
-        SELECT comments.*, users.userName, users.profilePic 
-        FROM comments 
-        JOIN users ON comments.user_id = users.id 
-        WHERE product_id = ?
-        ORDER BY created_at DESC`;
+    try {
+        const [rows] = await db.query(`
+            SELECT c.*, u.username 
+            FROM comments c
+            JOIN users u ON c.user_id = u.id
+            WHERE c.product_id = ?
+            ORDER BY c.created_at ASC
+        `, [productId]);
 
-    db.query(query, [productId], (err, results) => {
-        if (err) return res.status(500).json({ error: err });
-        res.json(results);
-    });
+        // Gom nhóm comment cha và reply
+        const parentComments = rows.filter(c => c.parent_id === null);
+        const replies = rows.filter(c => c.parent_id !== null);
+
+        const result = parentComments.map(comment => ({
+            ...comment,
+            replies: replies.filter(reply => reply.parent_id === comment.id)
+        }));
+
+        res.json(result);
+    } catch (err) {
+        res.status(500).json({ error: "Lỗi khi lấy bình luận." });
+    }
 };
 
-exports.addComment = (req, res) => {
-    const { user_id, product_id, content } = req.body;
-    const query = "INSERT INTO comments (user_id, product_id, content) VALUES (?, ?, ?)";
+exports.addComment = async (req, res) => {
+    const { userId, productId, content } = req.body;
+    try {
+        await db.query(
+            `INSERT INTO comments (user_id, product_id, content) VALUES (?, ?, ?)`,
+            [userId, productId, content]
+        );
+        res.status(201).json({ message: "Đã thêm bình luận" });
+    } catch (err) {
+        res.status(500).json({ error: "Lỗi khi thêm bình luận." });
+    }
+};
 
-    db.query(query, [user_id, product_id, content], (err, result) => {
-        if (err) return res.status(500).json({ error: err });
-        res.status(201).json({ message: "Bình luận thành công" });
-    });
+exports.replyToComment = async (req, res) => {
+    const { userId, commentId, content } = req.body;
+
+    try {
+        // Lấy product_id từ comment cha
+        const [rows] = await db.query(
+            `SELECT product_id FROM comments WHERE id = ?`,
+            [commentId]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: "Comment cha không tồn tại" });
+        }
+
+        const productId = rows[0].product_id;
+
+        // Thêm reply
+        await db.query(
+            `INSERT INTO comments (user_id, product_id, content, parent_id)
+             VALUES (?, ?, ?, ?)`,
+            [userId, productId, content, commentId]
+        );
+
+        res.status(201).json({ message: "Đã thêm trả lời bình luận" });
+    } catch (err) {
+        res.status(500).json({ error: "Lỗi khi thêm reply" });
+    }
 };

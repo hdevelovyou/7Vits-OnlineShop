@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./comment.scss";
+
 const CommentSection = ({ productId, userId }) => {
     const storedUser = localStorage.getItem("user");
     const user = storedUser ? JSON.parse(storedUser) : null;
@@ -9,15 +10,33 @@ const CommentSection = ({ productId, userId }) => {
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(false);
     const [showAll, setShowAll] = useState(false);
+    // replyContents lưu nội dung reply cho từng comment (key = comment id)
     const [replyContents, setReplyContents] = useState({});
-    const [activeReplyId, setActiveReplyId] = useState(null); // Comment đang mở khung trả lời
+    // activeReplyId lưu id của bình luận (bao gồm cả reply) đang mở form trả lời
+    const [activeReplyId, setActiveReplyId] = useState(null);
 
     useEffect(() => {
-        axios.get(`/api/comments/${productId}`).then(res => setComments(res.data));
+        axios.get(`/api/comments/${productId}`)
+            .then(res => setComments(res.data))
+            .catch(err => console.error("Lỗi lấy bình luận:", err));
     }, [productId]);
+
     const COMMENTS_LIMIT = 7;
     const displayedComments = showAll ? comments : comments.slice(0, COMMENTS_LIMIT);
-    // cmt chính 
+
+    // Hàm flattenReplies: chuyển danh sách reply lồng vào 1 mảng phẳng
+    const flattenReplies = (replies) => {
+      let flat = [];
+      replies.forEach((reply) => {
+          flat.push(reply);
+          if (reply.replies && reply.replies.length > 0) {
+              flat = flat.concat(flattenReplies(reply.replies));
+          }
+      });
+      return flat;
+    };
+
+    // Xử lý gửi bình luận chính
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!content.trim()) return;
@@ -28,31 +47,41 @@ const CommentSection = ({ productId, userId }) => {
             const res = await axios.get(`/api/comments/${productId}`);
             setComments(res.data);
         } catch (error) {
-            console.error("❌ Lỗi khi gửi comment:", error);
+            console.error("❌ Lỗi khi gửi bình luận:", error);
         } finally {
             setLoading(false);
         }
     };
-    // Hàm gửi reply cho từng bình luận
+
+    // Khi nhấn nút "Trả lời", mở form trả lời và tự động thêm tag tên
+    const handleReplyClick = (comment) => {
+        setActiveReplyId((prev) => (prev === comment.id ? null : comment.id));
+        setReplyContents((prev) => ({
+            ...prev,
+            [comment.id]: prev[comment.id] || `@${comment.userName} `
+        }));
+    };
+
+    // Cập nhật nội dung reply cho bình luận có ID = commentId
+    const handleReplyChange = (commentId, text) => {
+        setReplyContents((prev) => ({ ...prev, [commentId]: text }));
+    };
+
+    // Gửi reply cho comment
     const handleReplySubmit = async (commentId) => {
         const replyContent = replyContents[commentId];
         if (!replyContent?.trim()) return;
         try {
-            // Giả sử API endpoint trả lời comment là `/api/comments/reply`
             await axios.post("/api/comments/reply", { userId, commentId, content: replyContent });
-            // Reload lại danh sách bình luận sau khi gửi reply
+            setReplyContents((prev) => ({ ...prev, [commentId]: "" }));
+            setActiveReplyId(null);
             const res = await axios.get(`/api/comments/${productId}`);
             setComments(res.data);
-            // Xóa nội dung reply cho comment này sau khi gửi thành công
-            setReplyContents((prev) => ({ ...prev, [commentId]: "" }));
         } catch (error) {
             console.error("❌ Lỗi khi gửi reply:", error);
         }
     };
-    const handleReplyChange = (commentId, text) => {
-        setReplyContents((prev) => ({ ...prev, [commentId]: text }));
-    };
-    // chương trình chính
+
     return (
         <div className="comment-section container">
             <h3>Bình luận</h3>
@@ -77,56 +106,69 @@ const CommentSection = ({ productId, userId }) => {
                     <li key={c.id}>
                         <div className="comment-name">
                             <strong className="comment-user">{c.userName}</strong>
-                            <span className="comment-time">Bình Luận vào {new Date(c.created_at).toLocaleString()}</span>
+                            <span className="comment-time">
+                                Bình Luận vào {new Date(c.created_at).toLocaleString()}
+                            </span>
                         </div>
-                        
                         <div className="comment-body">
-                        <strong>{c.content}</strong>
+                            <strong>{c.content}</strong>
                         </div>
-                        {/* reply inh luan*/}
+                        {/* Nút trả lời cho comment cha */}
+                        {userId && (
+                            <button className="reply-toggle-btn" onClick={() => handleReplyClick(c)}>
+                                {activeReplyId === c.id ? "Ẩn trả lời" : "Trả lời"}
+                            </button>
+                        )}
+                        {/* Form trả lời cho comment cha */}
+                        {userId && activeReplyId === c.id && (
+                            <div className="reply-form">
+                                <textarea
+                                    value={replyContents[c.id] || ""}
+                                    onChange={(e) => handleReplyChange(c.id, e.target.value)}
+                                    placeholder={`Trả lời @${c.userName}`}
+                                />
+                                <button type="button" onClick={() => handleReplySubmit(c.id)}>
+                                    Gửi trả lời
+                                </button>
+                            </div>
+                        )}
+                        {/* Render tất cả các reply (làm phẳng) */}
                         {c.replies && c.replies.length > 0 && (
                             <ul className="reply-list">
-                                {c.replies.map((r) => (
+                                {flattenReplies(c.replies).map((r) => (
                                     <li key={r.id}>
                                         <div className="reply-header">
-                                            <strong className="reply-user">{r.displayName || r.userName}</strong>
+                                            <strong className="reply-user">{r.userName}</strong>
                                             <span className="reply-time">
-                                                {new Date(r.createdAt).toLocaleString()}
+                                                {new Date(r.created_at).toLocaleString()}
                                             </span>
-
                                         </div>
                                         <div className="reply-body">{r.content}</div>
+                                        {/* Nút trả lời cho mỗi reply (trả lời của reply) */}
+                                        {userId && (
+                                            <button
+                                                className="reply-toggle-btn"
+                                                onClick={() => handleReplyClick(r)}
+                                            >
+                                                {activeReplyId === r.id ? "Ẩn trả lời" : "Trả lời"}
+                                            </button>
+                                        )}
+                                        {userId && activeReplyId === r.id && (
+                                            <div className="reply-form">
+                                                <textarea
+                                                    value={replyContents[r.id] || ""}
+                                                    onChange={(e) => handleReplyChange(r.id, e.target.value)}
+                                                    placeholder={`Trả lời @${r.userName}`}
+                                                />
+                                                <button type="button" onClick={() => handleReplySubmit(r.id)}>
+                                                    Gửi trả lời
+                                                </button>
+                                            </div>
+                                        )}
                                     </li>
                                 ))}
                             </ul>
                         )}
-                        {userId && (
-                            <>
-                                <button
-                                    className="reply-toggle-btn"
-                                    onClick={() =>
-                                        setActiveReplyId((prev) => (prev === c.id ? null : c.id))
-                                    }
-                                >
-                                    {activeReplyId === c.id ? "Ẩn trả lời" : "Trả lời"}
-                                </button>
-
-                                {activeReplyId === c.id && (
-                                    <div className="reply-form">
-                                        <textarea
-                                            value={replyContents[c.id] || ""}
-                                            onChange={(e) => handleReplyChange(c.id, e.target.value)}
-                                            placeholder="Trả lời bình luận này..."
-                                        />
-                                        <button type="button" onClick={() => handleReplySubmit(c.id)}>
-                                            Gửi trả lời
-                                        </button>
-                                    </div>
-                                )}
-                            </>
-                        )}
-
-
                     </li>
                 ))}
             </ul>
@@ -143,6 +185,3 @@ const CommentSection = ({ productId, userId }) => {
 };
 
 export default CommentSection;
-
-
-
