@@ -285,7 +285,14 @@ const ProductPage = ({ cart, setCart }) => {
                     </div>
                 </div>
             </div>
-            <CommentSection productId={product.id} userId={JSON.parse(localStorage.getItem("user")).id} />
+            <CommentSection 
+    productId={product.id} 
+    userId={
+        localStorage.getItem("user") 
+            ? JSON.parse(localStorage.getItem("user")).id 
+            : null
+    } 
+/>
 
         </div>
         

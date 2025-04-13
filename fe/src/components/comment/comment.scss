@@ -107,3 +107,26 @@ $font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         font-style: italic;
     }
 }
+.reply-list {
+    margin-left: 30px;
+    padding-left: 10px;
+    border-left: 2px solid #ccc;
+    margin-top: 10px;
+  }
+  
+  .reply-btn {
+    margin-top: 5px;
+    font-size: 0.9rem;
+    color: blue;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .reply-form {
+    margin-top: 10px;
+  }
+  
+  .reply-item {
+    margin-bottom: 10px;
+  }
