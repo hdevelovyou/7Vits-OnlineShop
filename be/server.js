@@ -10,7 +10,12 @@ const { getBestAnswer, searchFaq } = require('./utils/faqUtils');
 const productRoutes = require('./routes/productRoutes');
 const bodyParser = require("body-parser");
 const commentRoutes = require("./routes/comments");
+const ratingRoutes = require('./routes/rating');
+const nodemailer = require('nodemailer');
+const router = express.Router();
+const crypto = require('crypto');
 const app = express();
+const otpStore = {};
 
 // Middleware
 app.use(express.json());
@@ -46,6 +51,8 @@ app.use(passport.session());
 app.use('/api/auth', require('./routes/auth'));
 // Other routes...
 app.use("/api/comments", commentRoutes);
+//rating
+app.use('/api/ratings', ratingRoutes);
 // Routes products
 app.use('/api', productRoutes);
 app.get('/api/test', (req, res) => {
@@ -109,5 +116,3 @@ app.listen(PORT, () => {
   console.log(`Static files served at: http://localhost:${PORT}/images`);
   console.log(`FAQ system loaded and active`);
 });
-
-
