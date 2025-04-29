@@ -13,7 +13,7 @@ const ProductPage = ({ cart, setCart }) => {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
+    const [selectedRating, setSelectedRating] = useState(0);
     useEffect(() => {
         const fetchProduct = async () => {
             try {
@@ -49,7 +49,28 @@ const ProductPage = ({ cart, setCart }) => {
     const formatPrice = (price) => {
         return price ? price.toLocaleString('vi-VN') : '0';
     };
+    const userId = localStorage.getItem("user")
+        ? JSON.parse(localStorage.getItem("user")).id
+        : null;
 
+    const submitRating = async () => {
+        if (!selectedRating) {
+            alert("Vui lòng chọn số sao để đánh giá!");
+            return;
+        }
+
+        try {
+            await axios.post('/api/ratings', {
+                product_id: product.id,
+                user_id: userId,
+                rating: selectedRating
+            });
+            alert("Đã gửi đánh giá! Cảm ơn bạn ❤️");
+        } catch (error) {
+            console.error("Lỗi gửi đánh giá:", error);
+            alert("Đã xảy ra lỗi khi gửi đánh giá.");
+        }
+    };
     // Xử lý đường dẫn hình ảnh
     const getImageUrl = (imageUrl) => {
         if (!imageUrl) {
@@ -202,13 +223,23 @@ const ProductPage = ({ cart, setCart }) => {
 
                             <div className="product-meta">
                                 <div className="product-rating">
-                                    <div className="stars">
-                                        {[...Array(5)].map((_, idx) => (
-                                            <i
-                                                key={idx}
-                                                className={`fa-solid fa-star ${idx < Math.floor(product.rating) ? 'active' : ''}`}
-                                            ></i>
-                                        ))}
+                                    <div className="rating-section">
+                                        <h3>Đánh giá sản phẩm</h3>
+                                        {userId ? (
+                                            <div className="rating-form">
+                                                {[...Array(5)].map((_, idx) => (
+                                                    <i
+                                                        key={idx}
+                                                        className={`fa-star ${idx < selectedRating ? 'fas active' : 'far'}`}
+                                                        onClick={() => setSelectedRating(idx + 1)}
+                                                        style={{ fontSize: '24px', cursor: 'pointer', color: idx < selectedRating ? '#ffc107' : '#ccc' }}
+                                                    ></i>
+                                                ))}
+                                                <button onClick={submitRating} className="submit-rating-btn">Gửi đánh giá</button>
+                                            </div>
+                                        ) : (
+                                            <p>Vui lòng đăng nhập để đánh giá sản phẩm.</p>
+                                        )}
                                     </div>
                                     <span className="rating-number">{product.rating}/5</span>
                                     <span className="divider">|</span>
@@ -218,8 +249,8 @@ const ProductPage = ({ cart, setCart }) => {
 
                             <div className="product-price">
                                 <div className="price-info">
-                                    <span className="new-price">{formatPrice(product.price)}đ</span>
                                     <span className="old-price">{formatPrice(product.originalPrice)}đ</span>
+                                    <span className="new-price">{formatPrice(product.price)}đ</span>
                                 </div>
                                 {discount > 0 && (
                                     <span className="discount">{discount}% GIẢM</span>
@@ -293,6 +324,7 @@ const ProductPage = ({ cart, setCart }) => {
                             : null
                     }
                 />
+
 
             </div>
 

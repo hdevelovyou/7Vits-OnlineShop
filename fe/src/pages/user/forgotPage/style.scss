@@ -8,71 +8,77 @@
     background: url(../../../assets/images/loginbg.png) no-repeat center center/cover;  
 }
 
-.form-otp{
+.form-otp {
     width: 40rem;
     background: rgb(39, 39, 39);
     border-radius: 4rem;
     box-shadow: 0 0 1rem 0.5rem rgba(0, 0, 0, 0.5);
-    padding-top: 3rem;
-    .title{
+    padding: 3rem 2rem;
+
+    .title {
         color: white;
-        font-size: 1.4rem;
+        font-size: 1.8rem;
         font-weight: bold;
         text-align: center;
-        padding: 2rem 0;
+        margin-bottom: 2rem;
     }
-    .input-group{
-        position: relative;
-        width: 100%; 
-        height: 5rem;
+
+    .error-message {
+        color: rgb(255, 85, 85);
+        font-size: 1.4rem;
+        text-align: center;
         margin: 1rem 0;
-        padding: 0 2rem;
+        background: rgba(255, 0, 0, 0.2);
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+    }
+
+    .input-group {
+        position: relative;
+        width: 100%;
+        height: 5rem;
+        margin: 1.5rem 0;
         display: flex;
-        justify-content: space-between;
-        gap: 1rem;
-        input{
+        align-items: center;
+
+        input {
             background: rgb(90, 90, 90);
             width: 100%;
             height: 100%;
             border-radius: 2rem;
-            border: none;
-            outline: none;
-            padding-left: 4rem;
             border: 0.2rem solid #ffffff;
-            box-sizing: border-box;
-        }
-        input::placeholder{
+            outline: none;
+            padding: 0 2rem;
             color: white;
             font-size: 1.4rem;
+        }
+
+        input::placeholder {
+            color: white;
+            opacity: 0.7;
         }
     }
 
-    .btn{
-        position: relative;
-        width: 100%; 
-        margin: 1rem 0;
-        display: flex;  
+    .btn {
+        display: flex;
         justify-content: center;
-        }
-        .cf-btn{
-            text-align: center;
-            padding-bottom: 4rem;
-            padding-top: 4rem;
-        }
-        .cf-btn button{
-            padding: 0 15rem;
-            width: 100%;
-            height: 5rem;
+        margin-top: 2rem;
+
+        button {
             background: #ff0000;
             color: white;
-            font-size: 1.4rem;
+            font-size: 1.6rem;
             font-weight: bold;
             border: none;
             border-radius: 2rem;
+            padding: 1.2rem 5rem;
+            margin-top:1rem;
             cursor: pointer;
-            transition: all 0.3s;
-            &:hover{
+            transition: background 0.3s;
+
+            &:hover {
                 background: #810000;
             }
         }
     }
+}

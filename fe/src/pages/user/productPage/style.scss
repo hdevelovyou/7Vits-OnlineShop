@@ -234,7 +234,7 @@ $border-radius: 8px;
   width: 100%;
   
   .price-info {
-    @include flex($direction: column, $align: flex-start);
+    @include flex($direction: row, $align: flex-start ,$gap: 10px);
     
     .new-price {
       font-size: 28px;
@@ -315,7 +315,10 @@ $border-radius: 8px;
 // Product Actions
 .product-actions {
   width: 100%;
-  @include flex($direction: column, $gap: 25px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 25px;
   margin-top: 10px;
 }
 
