@@ -5,26 +5,46 @@ const db = require('../config/connectDB');
 // Đăng ký tài khoản
 exports.register = async (req, res) => {
   try {
+    console.log('Register request received:', req.body);
     const { firstName, lastName, userName, email, password } = req.body;
 
-    const [results] = await db.query(
-      'SELECT * FROM users WHERE userName = ? OR email = ?',
-      [userName, email]
-    );
-
-    if (results.length > 0) {
-      return res.status(400).json({ error: 'Username hoặc Email/SĐT đã tồn tại' });
+    // Validate required fields
+    if (!firstName || !lastName || !userName || !email || !password) {
+      console.log('Missing required fields:', { firstName, lastName, userName, email, password: !!password });
+      return res.status(400).json({ error: 'Vui lòng điền đầy đủ thông tin' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    await db.promise().query(
-      'INSERT INTO users (firstName, lastName, userName, email, password) VALUES (?, ?, ?, ?, ?)',
-      [firstName, lastName, userName, email, hashedPassword]
-    );
+    console.log('Checking for existing user...');
+    try {
+      // The db exported from connectDB.js is already a promise pool
+      const [results] = await db.query(
+        'SELECT * FROM users WHERE userName = ? OR email = ?',
+        [userName, email]
+      );
 
-    res.json({ message: 'Đăng ký thành công' });
+      if (results.length > 0) {
+        console.log('User already exists');
+        return res.status(400).json({ error: 'Username hoặc Email/SĐT đã tồn tại' });
+      }
+
+      console.log('Hashing password...');
+      const hashedPassword = await bcrypt.hash(password, 10);
+      
+      console.log('Inserting new user...');
+      await db.query(
+        'INSERT INTO users (firstName, lastName, userName, email, password) VALUES (?, ?, ?, ?, ?)',
+        [firstName, lastName, userName, email, hashedPassword]
+      );
+      
+      console.log('User registered successfully');
+      res.json({ message: 'Đăng ký thành công' });
+    } catch (dbErr) {
+      console.error('Database error:', dbErr);
+      return res.status(500).json({ error: 'Lỗi cơ sở dữ liệu: ' + dbErr.message });
+    }
   } catch (err) {
-    res.status(500).json({ error: 'Lỗi máy chủ' });
+    console.error('Unexpected error during registration:', err);
+    res.status(500).json({ error: 'Lỗi máy chủ khi đăng ký' });
   }
 };
 
