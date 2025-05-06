@@ -15,9 +15,20 @@ const nodemailer = require('nodemailer');
 const router = express.Router();
 const crypto = require('crypto');
 const authRouter = require('./routes/authRouter');
+const messageController = require('./controllers/messageController');
 const { bodyParserMiddleware, urlEncodedMiddleware } = require('./middleware/bodyParser');
 const app = express();
-const otpStore = {};
+
+// --- SOCKET.IO SETUP ---
+const http = require('http');
+const socketIO = require('socket.io');
+const server = http.createServer(app);
+const io = socketIO(server, {
+  cors: {
+    origin: ['http://localhost:3000', 'http://localhost:5000'],
+    credentials: true
+  }
+});
 
 // Middleware
 app.use(express.json());
@@ -48,6 +59,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use('/api/auth', require('./routes/auth'));
+
 // Routes
 app.use("/api/auth", authRouter);
 app.use("/api/comments", commentRoutes);
@@ -56,28 +68,26 @@ app.use('/api', productRoutes);
 
 // Test route for checking if the API is working
 app.get('/api/test', (req, res) => {
-  res.json({ 
-    message: 'API is working', 
-    env: process.env.GOOGLE_CLIENT_ID ? 'OAuth configured' : 'OAuth not configured' 
+  res.json({
+    message: 'API is working',
+    env: process.env.GOOGLE_CLIENT_ID ? 'OAuth configured' : 'OAuth not configured'
   });
 });
 
 // Chat route for handling FAQ and messages
 app.post('/api/chat', async (req, res) => {
   const { message } = req.body;
-  
-  // Check if there's a matching FAQ
+
   const faqResults = searchFaq(message);
-  
+
   if (faqResults && faqResults.length > 0) {
     const bestMatch = faqResults[0];
-    return res.json({ 
-      reply: `Em xin phép trả lời câu hỏi của anh/chị: "${bestMatch.question}"\n\n${bestMatch.answer}\n\nAnh/chị có cần em hỗ trợ thêm thông tin gì không ạ?` 
+    return res.json({
+      reply: `Em xin phép trả lời câu hỏi của anh/chị: "${bestMatch.question}"\n\n${bestMatch.answer}\n\nAnh/chị có cần em hỗ trợ thêm thông tin gì không ạ?`
     });
   }
 
-  // If no match, suggest contacting directly
-  return res.json({ 
+  return res.json({
     reply: "Em xin lỗi, em chưa được đào tạo để trả lời câu hỏi này. Để được hỗ trợ tốt nhất, anh/chị vui lòng liên hệ trực tiếp với chúng tôi qua:\n\n- Hotline: 0839171005\n- Facebook: https://www.facebook.com/caPta1ntynn\n\nCảm ơn anh/chị đã sử dụng dịch vụ của 7VITS."
   });
 });
@@ -88,7 +98,6 @@ app.get('/api/faq/search', (req, res) => {
   if (!query) {
     return res.status(400).json({ error: 'Query parameter is required' });
   }
-  
   const results = searchFaq(query);
   res.json({ results });
 });
@@ -97,7 +106,7 @@ app.get('/api/faq/search', (req, res) => {
 app.get('/test-image/:filename', (req, res) => {
   const { filename } = req.params;
   const filePath = path.join(__dirname, 'public/images/products', filename);
-  
+
   res.sendFile(filePath, (err) => {
     if (err) {
       console.error('Error sending file:', err);
@@ -133,17 +142,69 @@ const sendEmail = (email, otp) => {
   });
 };
 
-// Server initialization
+// --- SOCKET.IO LOGIC FOR 1-1 CHAT ---
+const users = {}; // userId -> socket.id
+
+io.on('connection', (socket) => {
+  console.log('New client connected:', socket.id);
+
+  socket.on('register', (userId) => {
+    users[userId] = socket.id;
+    console.log(`User ${userId} registered with socket ${socket.id}`);
+  });
+
+  socket.on('private_message', async ({ sender_id, receiver_id, message }) => {
+    console.log(`${sender_id} → ${receiver_id}: ${message}`);
+
+    const receiverSocketId = users[receiver_id];
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit('private_message', {
+        sender_id,
+        message,
+        created_at: new Date().toISOString()
+      });
+    }
+    // Gọi hàm lưu tin nhắn vào cơ sở dữ liệu
+    await messageController.saveSocketMessage(sender_id, receiver_id, message);
+    try {
+      await db.query(
+        'INSERT INTO messages (sender_id, receiver_id, message) VALUES (?, ?, ?)',
+        [sender_id, receiver_id, message]
+      );
+      console.log('Message saved to database');
+    } catch (err) {
+      console.error('Error saving message:', err);
+    }
+  });
+
+  socket.on('disconnect', () => {
+    for (const [userId, sockId] of Object.entries(users)) {
+      if (sockId === socket.id) {
+        delete users[userId];
+        console.log(`User ${userId} disconnected`);
+        break;
+      }
+    }
+  });
+});
+
+// Route gửi tin nhắn
+app.post('/api/messages', messageController.sendMessage);
+
+// Route lấy tin nhắn giữa hai người dùng
+app.get('/api/messages/:sender_id/:receiver_id', messageController.getMessages);
+
+// Server start
 const PORT = process.env.PORT || 5000;
 console.log('--- Các route đang được khai báo ---');
-app._router.stack.forEach(function(r){
-  if (r.route && r.route.path){
+app._router.stack.forEach(function (r) {
+  if (r.route && r.route.path) {
     console.log(r.route.stack[0].method.toUpperCase(), r.route.path);
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+server.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
   console.log(`Static files served at: http://localhost:${PORT}/images`);
   console.log(`FAQ system loaded and active`);
 });
