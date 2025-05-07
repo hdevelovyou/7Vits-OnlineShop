@@ -10,7 +10,8 @@ const SellProductPage = () => {
         description: '',
         price: '',
         category: '',
-        stock: 1
+        stock: 1,
+        notes: ''
     });
     const [image, setImage] = useState(null);
     const [previewUrl, setPreviewUrl] = useState('');
@@ -68,6 +69,7 @@ const SellProductPage = () => {
             productData.append('price', parseFloat(formData.price));
             productData.append('category', formData.category);
             productData.append('stock', parseInt(formData.stock));
+            productData.append('notes', formData.notes);
             
             // Thêm ảnh vào form data nếu có
             if (image) {
@@ -174,6 +176,19 @@ const SellProductPage = () => {
                         min="1"
                     />
                 </div>
+                
+                <div className="form-group">
+                    <label htmlFor="notes">Ghi chú (Key, thông tin đăng nhập)</label>
+                    <textarea
+                        id="notes"
+                        name="notes"
+                        value={formData.notes}
+                        onChange={handleChange}
+                        placeholder="Nhập key, thông tin đăng nhập hoặc các thông tin khác cho sản phẩm"
+                        rows={3}
+                    />
+                    <small className="notes-helper">Thông tin này sẽ được hiển thị cho người mua sau khi họ mua hàng</small>
+                </div>
 
                 <div className="form-group">
                     <label htmlFor="image">Ảnh sản phẩm</label>
@@ -191,11 +206,7 @@ const SellProductPage = () => {
                     )}
                 </div>
 
-                <button 
-                    type="submit" 
-                    className="submit-button" 
-                    disabled={loading}
-                >
+                <button type="submit" className="submit-button" disabled={loading}>
                     {loading ? 'Đang xử lý...' : 'Đăng bán'}
                 </button>
             </form>

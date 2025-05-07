@@ -6,8 +6,8 @@ const path = require('path');
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
-    password: 'root',
-    database: 'sevenvits'
+    password: 'tintin1710',
+    database: '7vits'
 });
 
 // Tạo promise pool

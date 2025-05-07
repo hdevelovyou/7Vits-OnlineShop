@@ -12,7 +12,8 @@ const EditProductPage = () => {
         price: '',
         category: '',
         stock: 1,
-        status: 'active'
+        status: 'active',
+        notes: ''
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
@@ -39,7 +40,8 @@ const EditProductPage = () => {
                     price: response.data.price,
                     category: response.data.category,
                     stock: response.data.stock,
-                    status: response.data.status
+                    status: response.data.status,
+                    notes: response.data.notes || ''
                 });
             } catch (err) {
                 setError('Không thể tải thông tin sản phẩm');
@@ -98,9 +100,7 @@ const EditProductPage = () => {
     };
 
     const categories = [
-        'Điện tử', 'Thời trang', 'Sức khỏe & Làm đẹp', 
-        'Thể thao & Dã ngoại', 'Đồ gia dụng', 'Thực phẩm', 
-        'Sách & Văn phòng phẩm', 'Khác'
+        'Game','Key','Tài khoản game'
     ];
 
     if (loading) return <div className="loading">Đang tải...</div>;
@@ -183,6 +183,19 @@ const EditProductPage = () => {
                         min="1"
                     />
                 </div>
+                
+                <div className="form-group">
+                    <label htmlFor="notes">Ghi chú (Key, thông tin đăng nhập)</label>
+                    <textarea
+                        id="notes"
+                        name="notes"
+                        value={formData.notes}
+                        onChange={handleChange}
+                        placeholder="Nhập key, thông tin đăng nhập hoặc các thông tin khác cho sản phẩm"
+                        rows={3}
+                    />
+                    <small className="notes-helper">Thông tin này sẽ được hiển thị cho người mua sau khi họ mua hàng</small>
+                </div>
 
                 <div className="form-group">
                     <label htmlFor="status">Trạng thái *</label>
@@ -199,12 +212,8 @@ const EditProductPage = () => {
                     </select>
                 </div>
 
-                <button 
-                    type="submit" 
-                    className="submit-button" 
-                    disabled={submitting}
-                >
-                    {submitting ? 'Đang xử lý...' : 'Cập nhật sản phẩm'}
+                <button type="submit" className="submit-button" disabled={submitting}>
+                    {submitting ? 'Đang cập nhật...' : 'Cập nhật sản phẩm'}
                 </button>
             </form>
         </div>

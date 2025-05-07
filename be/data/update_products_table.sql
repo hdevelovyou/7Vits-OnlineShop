@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS products (
     status ENUM('active', 'inactive', 'sold_out') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    notes TEXT,
     FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -62,4 +63,18 @@ SET @query = IF(@exists = 0,
 
 PREPARE stmt FROM @query;
 EXECUTE stmt;
-DEALLOCATE PREPARE stmt; 
+DEALLOCATE PREPARE stmt;
+
+-- Kiểm tra xem cột notes đã tồn tại trong bảng products chưa
+SET @notesExists = 0;
+SELECT COUNT(*) INTO @notesExists FROM information_schema.columns 
+WHERE table_schema = DATABASE() AND table_name = 'products' AND column_name = 'notes';
+
+-- Nếu cột notes chưa tồn tại, thêm cột mới
+SET @notesQuery = IF(@notesExists = 0, 
+    'ALTER TABLE products ADD COLUMN notes TEXT COMMENT "Ghi chú của người bán như key, thông tin đăng nhập cho sản phẩm"',
+    'SELECT "Column notes already exists"');
+
+PREPARE notesStmt FROM @notesQuery;
+EXECUTE notesStmt;
+DEALLOCATE PREPARE notesStmt; 

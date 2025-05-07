@@ -42,7 +42,7 @@ exports.uploadProductImage = upload.single('image');
 // Create a new product
 exports.createProduct = async (req, res) => {
     try {
-        const { name, description, price, category, stock } = req.body;
+        const { name, description, price, category, stock, notes } = req.body;
         const seller_id = req.user.id;
         
         let imagePath = null;
@@ -50,10 +50,10 @@ exports.createProduct = async (req, res) => {
             imagePath = `/images/products/${req.file.filename}`;
         }
         
-        const sql = `INSERT INTO products (name, description, price, category, stock, seller_id, image_url) 
-                     VALUES (?, ?, ?, ?, ?, ?, ?)`;
+        const sql = `INSERT INTO products (name, description, price, category, stock, seller_id, image_url, notes) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
         
-        const [result] = await db.query(sql, [name, description, price, category, stock, seller_id, imagePath]);
+        const [result] = await db.query(sql, [name, description, price, category, stock, seller_id, imagePath, notes]);
         
         res.status(201).json({ 
             message: 'Product created successfully', 
@@ -68,7 +68,7 @@ exports.createProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, description, price, category, stock, status } = req.body;
+        const { name, description, price, category, stock, status, notes } = req.body;
         const seller_id = req.user.id;
         
         // Check if product belongs to the user
@@ -87,10 +87,10 @@ exports.updateProduct = async (req, res) => {
         
         const updateSQL = `UPDATE products 
                            SET name = ?, description = ?, price = ?, 
-                               category = ?, stock = ?, status = ?, image_url = ? 
+                               category = ?, stock = ?, status = ?, image_url = ?, notes = ? 
                            WHERE id = ?`;
         
-        await db.query(updateSQL, [name, description, price, category, stock, status, imagePath, id]);
+        await db.query(updateSQL, [name, description, price, category, stock, status, imagePath, notes, id]);
         
         res.json({ message: 'Product updated successfully' });
     } catch (err) {

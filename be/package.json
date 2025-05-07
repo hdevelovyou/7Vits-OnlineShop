@@ -35,7 +35,9 @@
         "passport-google-oauth20": "^2.0.0",
         "react-app": "^1.1.2",
         "redis": "^4.7.0",
-        "sequelize": "^6.37.6"
+        "sequelize": "^6.37.6",
+        "socket": "^0.14.155",
+        "socket.io": "^4.8.1"
     },
     "devDependencies": {
         "@babel/core": "^7.12.10",
