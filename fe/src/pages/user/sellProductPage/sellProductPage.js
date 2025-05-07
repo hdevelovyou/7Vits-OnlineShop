@@ -18,12 +18,28 @@ const SellProductPage = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
+    const formatPrice = (value) => {
+        // Remove all non-digit characters
+        const number = value.replace(/\D/g, '');
+        // Add dots as thousand separators
+        return number.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
+        if (name === 'price') {
+            // Format price with dots
+            const formattedPrice = formatPrice(value);
+            setFormData({
+                ...formData,
+                [name]: formattedPrice
+            });
+        } else {
+            setFormData({
+                ...formData,
+                [name]: value
+            });
+        }
     };
 
     const handleImageChange = (e) => {
@@ -62,11 +78,13 @@ const SellProductPage = () => {
                 return;
             }
 
-            // Format price as number
+            // Format price as number (remove dots and convert to number)
+            const priceValue = parseFloat(formData.price.replace(/\./g, ''));
+            
             const productData = new FormData();
             productData.append('name', formData.name);
             productData.append('description', formData.description);
-            productData.append('price', parseFloat(formData.price));
+            productData.append('price', priceValue);
             productData.append('category', formData.category);
             productData.append('stock', parseInt(formData.stock));
             productData.append('notes', formData.notes);
@@ -134,15 +152,14 @@ const SellProductPage = () => {
                 <div className="form-group">
                     <label htmlFor="price">Giá (VND) *</label>
                     <input
-                        type="number"
+                        type="text"
                         id="price"
                         name="price"
                         value={formData.price}
                         onChange={handleChange}
                         required
-                        placeholder="Nhập giá sản phẩm"
-                        min="0"
-                        step="1000"
+                        placeholder="Nhập giá sản phẩm (VD: 99.000)"
+                        pattern="[0-9.]*"
                     />
                 </div>
 

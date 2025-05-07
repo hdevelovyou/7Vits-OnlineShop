@@ -47,7 +47,8 @@ const ProductPage = ({ cart, setCart }) => {
     }, [id, navigate]);
 
     const formatPrice = (price) => {
-        return price ? price.toLocaleString('vi-VN') : '0';
+        if (!price) return '0';
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     };
     const userId = localStorage.getItem("user")
         ? JSON.parse(localStorage.getItem("user")).id
@@ -222,6 +223,10 @@ const ProductPage = ({ cart, setCart }) => {
                             <h1 className="product-title">{product.name}</h1>
 
                             <div className="product-meta">
+                                <div className="product-seller">
+                                    <i className="fa-solid fa-store"></i>
+                                    <span>Người bán: {product.seller_name || "Unknown Seller"}</span>
+                                </div>
                                 <div className="product-rating">
                                     <div className="rating-section">
                                         <h3>Đánh giá sản phẩm</h3>

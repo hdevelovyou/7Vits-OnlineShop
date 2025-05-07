@@ -125,7 +125,8 @@ const StorePage = () => {
     };
 
     const formatPrice = (price) => {
-        return price.toLocaleString('vi-VN');
+        if (!price) return '0';
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     };
 
     const calculateDiscount = (originalPrice, currentPrice) => {

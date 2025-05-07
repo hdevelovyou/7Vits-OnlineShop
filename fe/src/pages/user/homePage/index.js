@@ -113,6 +113,9 @@ const Homepage = () => {
                                                     <div className="mota">
                                                         <p className="mota-name home-product-item_name">{product.name}</p>
                                                         <p className="mota-name home-product-item_desc">{product.description ? product.description.substring(0, 50) + "..." : ""}</p>
+                                                        <p className="mota-name home-product-item_seller">
+                                                            <i className="fa-solid fa-store"></i> {product.seller_name || "Unknown Seller"}
+                                                        </p>
                                                         <p className="mota-name home-product-item_rating">
                                                             <i className="fa-solid fa-star active"></i>
                                                             <i className="fa-solid fa-star active"></i>
@@ -123,10 +126,10 @@ const Homepage = () => {
                                                         </p>
                                                         <div className="home-product-item_price">
                                                             <span className="mota-name home-product-item_price-old">
-                                                                <s>{(product.price * 1.2).toLocaleString()}đ</s>
+                                                                <s>{(product.price * 1.2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ</s>
                                                             </span>
                                                             <span className="mota-name home-product-item_price-new">
-                                                                {product.price.toLocaleString()}đ
+                                                                {product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ
                                                             </span>
                                                         </div>
                                                     </div>

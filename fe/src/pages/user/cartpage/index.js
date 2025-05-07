@@ -54,9 +54,9 @@ const CartPage = ({ cart, setCart }) => {
 
   const formatPrice = (price) => {
     if (price === undefined || price === null) {
-      return '0 ₫';
+      return '0';
     }
-    return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ";
   };
 
   const handleCheckout = async () => {
