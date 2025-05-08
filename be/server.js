@@ -29,19 +29,14 @@ const io = socketIO(server, {
   }
 });
 
-app.use(cors({
-  origin: 'https://seventvits-onlineshop.onrender.com',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
-}));
-
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // CORS Configuration
 app.use(cors({
-  origin: process.env.FRONTEND_URL || ['http://localhost:3000', 'http://localhost:5000'],
+  origin: ['https://sevenvits-onlineshop.onrender.com', 'https://seventvits-onlineshop.onrender.com', 'http://localhost:3000', 'http://localhost:5000'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
 
