@@ -51,7 +51,7 @@ const GoogleAuthCompletionPage = () => {
         }
         
         try {
-            const res = await axios.post("http://localhost:5000/api/auth/complete-google-signup", formData);
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/complete-google-signup`, formData);
             alert("Hoàn tất đăng ký thành công!");
             
             // Get the token from URL parameters

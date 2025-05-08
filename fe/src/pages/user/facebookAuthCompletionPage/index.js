@@ -80,7 +80,7 @@ const FacebookAuthCompletionPage = () => {
         setLoading(true);
         try {
             // Gửi đúng các trường mà server cần
-            const res = await axios.post("http://localhost:5000/api/auth/complete-facebook-signup", {
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/complete-facebook-signup`, {
                 userName: formData.userName,
                 password: formData.password,
                 facebookId: formData.facebookId,

@@ -146,7 +146,7 @@ const StorePage = () => {
         }
         // Nếu có đường dẫn nhưng không phải là URL đầy đủ, thêm domain
         else if (imageUrl) {
-            return `http://localhost:5000${imageUrl}`;
+            return `${process.env.REACT_APP_API_URL}${imageUrl}`;
         }
         // Nếu không có đường dẫn, trả về ảnh mặc định
         return "https://via.placeholder.com/300x300?text=No+Image";

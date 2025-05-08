@@ -47,7 +47,7 @@ const Homepage = () => {
             return imageUrl;
         }
         
-        return `http://localhost:5000${imageUrl}`;
+        return `${process.env.REACT_APP_API_URL}${imageUrl}`;
     };
 
     return (

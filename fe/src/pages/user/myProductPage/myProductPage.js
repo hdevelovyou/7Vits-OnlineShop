@@ -151,7 +151,7 @@ const MyProductsPage = () => {
                                     <td>
                                         {product.image_url ? (
                                             <img 
-                                                src={`http://localhost:5000${product.image_url}`} 
+                                                src={`${process.env.REACT_APP_API_URL}${product.image_url}`} 
                                                 alt={product.name}
                                                 className="product-thumbnail" 
                                             />

@@ -3,6 +3,9 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import RouterCustom from './router';
 import "./style/style.scss";
+// Import cấu hình Axios
+import './utils/axiosConfig';
+
 const root = createRoot(document.getElementById('root'));
 root.render(
    <div>

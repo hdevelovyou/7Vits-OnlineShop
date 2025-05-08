@@ -20,7 +20,7 @@ const RegisterPage = () => {
     const [error, setError] = useState("");
 
     const handleGoogleSignup = () => {
-        window.location.href = 'http://localhost:5000/api/auth/google';
+        window.location.href = `${process.env.REACT_APP_API_URL}/api/auth/google`;
         // For production: window.location.href = 'https://your-domain.com/api/auth/google';
       };
 
@@ -38,7 +38,7 @@ const RegisterPage = () => {
         }
         
         try {
-            const res = await axios.post("http://localhost:5000/api/auth/register", formData);
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, formData);
             alert("Đăng ký thành công!");
             navigate("/otp-for-signup");
         } catch (err) {

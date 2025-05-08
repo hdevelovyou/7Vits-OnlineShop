@@ -85,7 +85,7 @@ const ProductPage = ({ cart, setCart }) => {
         }
 
         // Nếu có đường dẫn nhưng không phải là URL đầy đủ, thêm domain
-        const fullUrl = `http://localhost:5000${imageUrl}`;
+        const fullUrl = `${process.env.REACT_APP_API_URL}${imageUrl}`;
         console.log("URL hình ảnh đầy đủ:", fullUrl);
         return fullUrl;
     };

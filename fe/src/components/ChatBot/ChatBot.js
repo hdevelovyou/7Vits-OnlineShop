@@ -90,7 +90,7 @@ Anh/chị có thể hỏi em bất kỳ câu hỏi nào liên quan đến các c
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/chat', {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/chat`, {
         message: cleanedInput
       });
 

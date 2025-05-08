@@ -15,13 +15,13 @@ const LoginPage = ({ setIsLoggedIn }) => {
     const navigate = useNavigate();
 
     const handleGoogleLogin = () => {
-        window.location.href = 'http://localhost:5000/api/auth/google';
+        window.location.href = `${process.env.REACT_APP_API_URL}/api/auth/google`;
         // For production: window.location.href = 'https://your-domain.com/api/auth/google';
       };
 
      // Add Facebook login handler
      const handleFacebookLogin = () => {
-        window.location.href = 'http://localhost:5000/api/auth/facebook';
+        window.location.href = `${process.env.REACT_APP_API_URL}/api/auth/facebook`;
         // For production: window.location.href = 'https://your-domain.com/api/auth/facebook';
     };
 
@@ -49,7 +49,7 @@ const LoginPage = ({ setIsLoggedIn }) => {
         setError("");
 
         try {
-            const response = await fetch("http://localhost:5000/api/auth/login", {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ userName, password })
