@@ -1,0 +1,262 @@
+.deposit-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: 'Roboto', sans-serif;
+    
+    .deposit-container {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+        
+        h1 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 2rem;
+            color: #333;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+        
+        .deposit-methods {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            
+            .payment-method {
+                width: 180px;
+                height: 120px;
+                border: 2px solid #e0e0e0;
+                border-radius: 10px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 1rem;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                
+                &.active {
+                    border-color: #3494e6;
+                    background-color: rgba(52, 148, 230, 0.05);
+                }
+                
+                img {
+                    height: 60px;
+                    width: auto;
+                    margin-bottom: 10px;
+                }
+                
+                p {
+                    margin: 0;
+                    font-size: 0.9rem;
+                    color: #555;
+                    text-align: center;
+                }
+            }
+        }
+        
+        .deposit-form {
+            margin-bottom: 2rem;
+            
+            .form-group {
+                margin-bottom: 1.5rem;
+                
+                label {
+                    display: block;
+                    margin-bottom: 0.5rem;
+                    font-weight: 500;
+                    color: #444;
+                }
+                
+                .amount-input {
+                    position: relative;
+                    
+                    input {
+                        width: 100%;
+                        padding: 12px 15px;
+                        font-size: 1.1rem;
+                        border: 2px solid #e0e0e0;
+                        border-radius: 6px;
+                        transition: border-color 0.2s;
+                        padding-right: 50px;
+                        
+                        &:focus {
+                            outline: none;
+                            border-color: #3494e6;
+                        }
+                        
+                        &:disabled {
+                            background-color: #f9f9f9;
+                            cursor: not-allowed;
+                        }
+                    }
+                    
+                    .currency {
+                        position: absolute;
+                        right: 15px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        color: #777;
+                        font-weight: 500;
+                    }
+                }
+                
+                .amount-display {
+                    margin-top: 10px;
+                    font-size: 1.3rem;
+                    font-weight: 600;
+                    color: #3494e6;
+                }
+            }
+            
+            .predefined-amounts {
+                margin-bottom: 2rem;
+                
+                p {
+                    margin-bottom: 0.5rem;
+                    color: #555;
+                    font-weight: 500;
+                }
+                
+                .amount-buttons {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                    gap: 10px;
+                    
+                    button {
+                        background-color: white;
+                        border: 2px solid #e0e0e0;
+                        border-radius: 6px;
+                        padding: 10px;
+                        font-size: 0.9rem;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                        
+                        &:hover {
+                            border-color: #3494e6;
+                            background-color: rgba(52, 148, 230, 0.05);
+                        }
+                        
+                        &.active {
+                            border-color: #3494e6;
+                            background-color: rgba(52, 148, 230, 0.1);
+                            font-weight: 600;
+                        }
+                        
+                        &:disabled {
+                            opacity: 0.6;
+                            cursor: not-allowed;
+                        }
+                    }
+                }
+            }
+            
+            .error-message {
+                padding: 10px 15px;
+                background-color: #fff3f3;
+                border-left: 4px solid #dc3545;
+                color: #dc3545;
+                margin-bottom: 1.5rem;
+                border-radius: 4px;
+            }
+            
+            .form-actions {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 2rem;
+                
+                button {
+                    padding: 12px 25px;
+                    border-radius: 6px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    
+                    &:disabled {
+                        opacity: 0.6;
+                        cursor: not-allowed;
+                    }
+                }
+                
+                .cancel-button {
+                    background-color: white;
+                    border: 2px solid #e0e0e0;
+                    color: #555;
+                    
+                    &:hover:not(:disabled) {
+                        background-color: #f0f0f0;
+                    }
+                }
+                
+                .submit-button {
+                    background-color: #3494e6;
+                    border: 2px solid #3494e6;
+                    color: white;
+                    
+                    &:hover:not(:disabled) {
+                        background-color: #2a80c7;
+                        border-color: #2a80c7;
+                    }
+                }
+            }
+        }
+        
+        .deposit-info {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 1.5rem;
+            
+            h3 {
+                margin-top: 0;
+                margin-bottom: 1rem;
+                color: #333;
+                font-size: 1.2rem;
+                font-weight: 600;
+            }
+            
+            ul {
+                margin: 0;
+                padding-left: 20px;
+                
+                li {
+                    margin-bottom: 0.5rem;
+                    color: #555;
+                    
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .deposit-page {
+        padding: 1rem;
+        
+        .deposit-container {
+            padding: 1.5rem;
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .predefined-amounts .amount-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .form-actions {
+                flex-direction: column-reverse;
+                gap: 15px;
+                
+                button {
+                    width: 100%;
+                }
+            }
+        }
+    }
+} 

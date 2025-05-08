@@ -1,7 +1,7 @@
 import { memo, useState, useEffect } from "react";
 import "./style.scss";
 import { CiFacebook } from "react-icons/ci";
-import { FaInstagram, FaShoppingCart } from "react-icons/fa";
+import { FaInstagram, FaShoppingCart, FaWallet } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import logo from "../../../../assets/images/logo.png";
 import { ROUTES } from "../../../../utils/router.js";
@@ -202,6 +202,13 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
                         <span>{sluong}</span>
                       </Link>
                     </li>
+                    {isLoggedIn && (
+                      <li>
+                        <Link to="/vi-tien" onClick={() => window.scrollTo(0, 0)} style={{ textDecoration: "none" }}>
+                          <FaWallet />
+                        </Link>
+                      </li>
+                    )}
                   </ul>
                   {isLoggedIn ? (
                     <>

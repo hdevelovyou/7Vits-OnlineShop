@@ -1,0 +1,197 @@
+.vnpay-return-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 3rem 1rem;
+    font-family: 'Roboto', sans-serif;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    .return-container {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+        width: 100%;
+        padding: 3rem 2rem;
+        text-align: center;
+        
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 3rem 1rem;
+            
+            .spinner {
+                width: 60px;
+                height: 60px;
+                border: 5px solid rgba(52, 148, 230, 0.2);
+                border-radius: 50%;
+                border-top-color: #3494e6;
+                animation: spin 1s ease-in-out infinite;
+                margin-bottom: 1.5rem;
+            }
+            
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+            
+            p {
+                font-size: 1.1rem;
+                color: #555;
+                margin: 0;
+            }
+        }
+        
+        .success-state, .failed-state {
+            padding: 1.5rem;
+            
+            .icon-container {
+                font-size: 5rem;
+                margin-bottom: 1.5rem;
+                
+                i {
+                    &.fa-check-circle {
+                        color: #28a745;
+                    }
+                    
+                    &.fa-times-circle {
+                        color: #dc3545;
+                    }
+                }
+            }
+            
+            h2 {
+                font-size: 2rem;
+                font-weight: 600;
+                margin-bottom: 1rem;
+                
+                color: #28a745;
+            }
+            
+            .message {
+                font-size: 1.1rem;
+                color: #555;
+                margin-bottom: 2rem;
+            }
+            
+            .transaction-details {
+                background-color: #f9f9f9;
+                border-radius: 8px;
+                padding: 1.5rem;
+                margin-bottom: 2rem;
+                text-align: left;
+                max-width: 450px;
+                margin-left: auto;
+                margin-right: auto;
+                
+                .detail-item {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 1rem;
+                    
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+                    
+                    .label {
+                        font-weight: 500;
+                        color: #555;
+                    }
+                    
+                    .value {
+                        font-weight: 600;
+                        color: #333;
+                    }
+                }
+            }
+        }
+        
+        .failed-state {
+            h2 {
+                color: #dc3545;
+            }
+        }
+        
+        .action-button {
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 1rem;
+            
+            &.success {
+                background-color: #28a745;
+                color: white;
+                
+                &:hover {
+                    background-color: #218838;
+                }
+            }
+            
+            &.retry {
+                background-color: #3494e6;
+                color: white;
+                margin-right: 10px;
+                
+                &:hover {
+                    background-color: #2a80c7;
+                }
+            }
+            
+            &.secondary {
+                background-color: #f0f0f0;
+                color: #555;
+                
+                &:hover {
+                    background-color: #e0e0e0;
+                }
+            }
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+        }
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .vnpay-return-page {
+        padding: 2rem 1rem;
+        
+        .return-container {
+            padding: 2rem 1rem;
+            
+            .success-state, .failed-state {
+                padding: 1rem 0;
+                
+                .icon-container {
+                    font-size: 4rem;
+                    margin-bottom: 1rem;
+                }
+                
+                h2 {
+                    font-size: 1.8rem;
+                }
+                
+                .transaction-details {
+                    padding: 1rem;
+                }
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 10px;
+                
+                .action-button {
+                    margin-right: 0;
+                    width: 100%;
+                }
+            }
+        }
+    }
+} 

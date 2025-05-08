@@ -21,6 +21,11 @@ import SellProductPage from "./pages/user/sellProductPage/sellProductPage";
 import MyProductsPage from "./pages/user/myProductPage/myProductPage";
 import EditProductPage from "./pages/user/editProductPage/editProductPage";
 
+// Import wallet pages
+import WalletPage from "./pages/user/walletPage";
+import DepositPage from "./pages/user/depositPage";
+import VNPayReturnPage from "./pages/user/vnpayReturn";
+
 const renderUserRoutes = () => {
     return (
         <MasterLayout>
@@ -45,6 +50,11 @@ const renderUserRoutes = () => {
                     <Route path={ROUTES.USER.SELL_PRODUCT} element={<SellProductPage />} />
                     <Route path={ROUTES.USER.MY_PRODUCTS} element={<MyProductsPage />} />
                     <Route path={ROUTES.USER.EDIT_PRODUCT} element={<EditProductPage />} />
+                    
+                    {/* Wallet routes */}
+                    <Route path={ROUTES.USER.WALLET} element={<WalletPage />} />
+                    <Route path={ROUTES.USER.WALLET_DEPOSIT} element={<DepositPage />} />
+                    <Route path={ROUTES.USER.WALLET_RETURN} element={<VNPayReturnPage />} />
                 </Routes>
             )}
         </MasterLayout>

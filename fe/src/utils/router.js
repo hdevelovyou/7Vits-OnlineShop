@@ -18,5 +18,9 @@ export const ROUTES = {
         SELL_PRODUCT: '/sell-product',
         MY_PRODUCTS: '/my-products',
         EDIT_PRODUCT: '/edit-product/:id',
+        // Wallet routes
+        WALLET: '/vi-tien',
+        WALLET_DEPOSIT: '/nap-tien',
+        WALLET_RETURN: '/wallet/vnpay-return'
     }
 }

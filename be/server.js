@@ -17,6 +17,7 @@ const crypto = require('crypto');
 const authRouter = require('./routes/authRouter');
 const messageController = require('./controllers/messageController');
 const { bodyParserMiddleware, urlEncodedMiddleware } = require('./middleware/bodyParser');
+const walletRoutes = require('./routes/walletRoutes');
 
 const app = express();
 
@@ -97,6 +98,7 @@ app.use("/api/comments", commentRoutes);
 app.use('/api/ratings', ratingRoutes);
 app.use('/api', productRoutes);
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/wallet', walletRoutes);
 
 // Test route for checking if the API is working
 app.get('/api/test', (req, res) => {
@@ -247,5 +249,3 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something went wrong!');
 });
-
-//push

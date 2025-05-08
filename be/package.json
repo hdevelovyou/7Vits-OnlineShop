@@ -38,7 +38,10 @@
         "redis": "^4.7.0",
         "sequelize": "^6.37.6",
         "socket": "^0.14.155",
-        "socket.io": "^4.8.1"
+        "socket.io": "^4.8.1",
+        "vnpay": "^1.1.0",
+        "querystring": "^0.2.1",
+        "moment": "^2.30.1"
     },
     "devDependencies": {
         "@babel/core": "^7.12.10",

@@ -1,47 +1,71 @@
 import axios from 'axios';
 
-// Thiết lập baseURL with fallback to the proxy in package.json
-axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'https://seventvits-be.onrender.com';
+// Create an axios instance with default config
+const API = axios.create({
+    baseURL: process.env.REACT_APP_API_URL || 'https://seventvits-be.onrender.com',
+    timeout: 20000,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
 
-// Thêm request interceptor để tự động thêm token vào header
-axios.interceptors.request.use(
-  config => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+// Add a request interceptor
+API.interceptors.request.use(
+    (config) => {
+        // Get token from localStorage
+        const token = localStorage.getItem('token');
+        // If token exists, add to headers
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
     }
-    return config;
-  },
-  error => {
-    return Promise.reject(error);
-  }
 );
 
-// Thêm interceptor để xử lý lỗi chung và token hết hạn
-axios.interceptors.response.use(
-  response => response,
-  error => {
-    console.error('Axios Error:', error);
-    
-    // Kiểm tra nếu lỗi do token không hợp lệ hoặc hết hạn
-    if (error.response && 
-        (error.response.status === 401 || 
-         (error.response.status === 400 && 
-          error.response.data && 
-          error.response.data.error === 'Token không hợp lệ'))) {
-      
-      console.log('Token hết hạn, tự động đăng xuất');
-      
-      // Xóa token và thông tin người dùng
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      
-      // Chuyển hướng đến trang đăng nhập
-      window.location.href = '/login?expired=true';
+// Add a response interceptor
+API.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        // Handle 401 (Unauthorized) errors - redirect to login
+        if (error.response && error.response.status === 401) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+        }
+        return Promise.reject(error);
     }
-    
-    return Promise.reject(error);
-  }
 );
 
-export default axios; 
+// Auth API
+export const authAPI = {
+    login: (data) => API.post('/api/auth/login', data),
+    register: (data) => API.post('/api/auth/register', data),
+    getProfile: () => API.get('/api/auth/profile'),
+    updateProfile: (data) => API.put('/api/auth/profile', data),
+    forgotPassword: (email) => API.post('/api/auth/forgot-password', { email }),
+    resetPassword: (data) => API.post('/api/auth/reset-password', data),
+};
+
+// Product API
+export const productAPI = {
+    getProducts: () => API.get('/api/products'),
+    getProduct: (id) => API.get(`/api/products/${id}`),
+    createProduct: (data) => API.post('/api/products', data),
+    updateProduct: (id, data) => API.put(`/api/products/${id}`, data),
+    deleteProduct: (id) => API.delete(`/api/products/${id}`),
+    searchProducts: (query) => API.get(`/api/products/search?q=${query}`),
+};
+
+// Wallet API
+export const walletAPI = {
+    getBalance: () => API.get('/api/wallet/balance'),
+    getTransactions: () => API.get('/api/wallet/transactions'),
+    createDeposit: (amount) => API.post('/api/wallet/deposit', { amount }),
+};
+
+export default API; 
