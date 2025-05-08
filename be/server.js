@@ -18,7 +18,6 @@ const authRouter = require('./routes/authRouter');
 const messageController = require('./controllers/messageController');
 const { bodyParserMiddleware, urlEncodedMiddleware } = require('./middleware/bodyParser');
 const app = express();
-const cors = require('cors');
 // --- SOCKET.IO SETUP ---
 const http = require('http');
 const socketIO = require('socket.io');
