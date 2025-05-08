@@ -27,34 +27,66 @@ const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
     origin: [
-      'http://localhost:3000',
-      'http://localhost:5000',
       'https://sevenvits-onlineshop.onrender.com',
-      'https://seventvits-onlineshop.onrender.com'
+      'https://seventvits-onlineshop.onrender.com',
+      'http://localhost:3000',
+      'http://localhost:5000'
     ],
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
   }
 });
 
-// ✅ Sử dụng middleware CORS đúng cách
+// Enhanced CORS Configuration
+const allowedOrigins = [
+  'https://sevenvits-onlineshop.onrender.com',
+  'https://seventvits-onlineshop.onrender.com',
+  'http://localhost:3000',
+  'http://localhost:5000'
+];
+
 app.use(cors({
-  origin: [
-    'https://sevenvits-onlineshop.onrender.com',
-    'https://seventvits-onlineshop.onrender.com',
-    'http://localhost:3000',
-    'http://localhost:5000'
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  credentials: true,
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
+
+// Handle preflight requests
+app.options('*', cors());
+
+// Additional CORS headers middleware
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Static file serving
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
-console.log('Serving static files from:', path.join(__dirname, 'public/images')));
+console.log('Serving static files from:', path.join(__dirname, 'public/images'));
 
 // Session configuration
 app.use(session({
@@ -62,23 +94,24 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 24 * 60 * 60 * 1000
+    secure: process.env.NODE_ENV === 'production', // Set to true in production
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
 }));
 
 // Initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
-app.use('/api/auth', require('./routes/auth'));
 
 // Routes
 app.use("/api/auth", authRouter);
 app.use("/api/comments", commentRoutes);
 app.use('/api/ratings', ratingRoutes);
 app.use('/api', productRoutes);
+app.use('/api/auth', require('./routes/auth'));
 
-// Test API route
+// Test route for checking if the API is working
 app.get('/api/test', (req, res) => {
   res.json({
     message: 'API is working',
@@ -86,7 +119,7 @@ app.get('/api/test', (req, res) => {
   });
 });
 
-// Chat/FAQ route
+// Chat route for handling FAQ and messages
 app.post('/api/chat', async (req, res) => {
   const { message } = req.body;
 
@@ -104,7 +137,7 @@ app.post('/api/chat', async (req, res) => {
   });
 });
 
-// FAQ search
+// API endpoint for FAQ search
 app.get('/api/faq/search', (req, res) => {
   const { query } = req.query;
   if (!query) {
@@ -114,7 +147,7 @@ app.get('/api/faq/search', (req, res) => {
   res.json({ results });
 });
 
-// Static file test
+// Test image route for static files
 app.get('/test-image/:filename', (req, res) => {
   const { filename } = req.params;
   const filePath = path.join(__dirname, 'public/images/products', filename);
@@ -127,7 +160,7 @@ app.get('/test-image/:filename', (req, res) => {
   });
 });
 
-// Email logic
+// Email sending logic with nodemailer
 const sendEmail = (email, otp) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -154,8 +187,8 @@ const sendEmail = (email, otp) => {
   });
 };
 
-// --- SOCKET.IO LOGIC ---
-const users = {};
+// --- SOCKET.IO LOGIC FOR 1-1 CHAT ---
+const users = {}; // userId -> socket.id
 
 io.on('connection', (socket) => {
   console.log('New client connected:', socket.id);
@@ -176,7 +209,8 @@ io.on('connection', (socket) => {
         created_at: new Date().toISOString()
       });
     }
-
+    
+    // Save message to database
     await messageController.saveSocketMessage(sender_id, receiver_id, message);
     try {
       await db.query(
@@ -200,8 +234,10 @@ io.on('connection', (socket) => {
   });
 });
 
-// Chat message routes
+// Route gửi tin nhắn
 app.post('/api/messages', messageController.sendMessage);
+
+// Route lấy tin nhắn giữa hai người dùng
 app.get('/api/messages/:sender_id/:receiver_id', messageController.getMessages);
 
 // Server start
@@ -219,7 +255,7 @@ server.listen(PORT, () => {
   console.log(`FAQ system loaded and active`);
 });
 
-// Global error handler
+// Global error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something went wrong!');
