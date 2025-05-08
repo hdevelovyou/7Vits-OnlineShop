@@ -18,7 +18,7 @@ const authRouter = require('./routes/authRouter');
 const messageController = require('./controllers/messageController');
 const { bodyParserMiddleware, urlEncodedMiddleware } = require('./middleware/bodyParser');
 const app = express();
-
+const cors = require('cors');
 // --- SOCKET.IO SETUP ---
 const http = require('http');
 const socketIO = require('socket.io');
@@ -29,6 +29,12 @@ const io = socketIO(server, {
     credentials: true
   }
 });
+
+app.use(cors({
+  origin: 'https://seventvits-onlineshop.onrender.com',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 
 // Middleware
 app.use(express.json());
