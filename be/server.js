@@ -17,42 +17,44 @@ const crypto = require('crypto');
 const authRouter = require('./routes/authRouter');
 const messageController = require('./controllers/messageController');
 const { bodyParserMiddleware, urlEncodedMiddleware } = require('./middleware/bodyParser');
+
 const app = express();
+
 // --- SOCKET.IO SETUP ---
 const http = require('http');
 const socketIO = require('socket.io');
 const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
-    origin: ['http://localhost:3000', 'http://localhost:5000'],
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:5000',
+      'https://sevenvits-onlineshop.onrender.com',
+      'https://seventvits-onlineshop.onrender.com'
+    ],
     credentials: true
   }
 });
 
-app.use((req, res, next) => {
-  res.header(
-    "Access-Control-Allow-Origin",
-    "React app URL"
-  );
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
-  next();
-});
+// ✅ Sử dụng middleware CORS đúng cách
+app.use(cors({
+  origin: [
+    'https://sevenvits-onlineshop.onrender.com',
+    'https://seventvits-onlineshop.onrender.com',
+    'http://localhost:3000',
+    'http://localhost:5000'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// CORS Configuration
-app.use(cors({
-  origin: ['https://sevenvits-onlineshop.onrender.com', 'https://seventvits-onlineshop.onrender.com', 'http://localhost:3000', 'http://localhost:5000'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
-}));
-
 // Static file serving
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
-console.log('Serving static files from:', path.join(__dirname, 'public/images'));
+console.log('Serving static files from:', path.join(__dirname, 'public/images')));
 
 // Session configuration
 app.use(session({
@@ -60,8 +62,8 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production', // Set to true in production
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 24 * 60 * 60 * 1000
   }
 }));
 
@@ -76,7 +78,7 @@ app.use("/api/comments", commentRoutes);
 app.use('/api/ratings', ratingRoutes);
 app.use('/api', productRoutes);
 
-// Test route for checking if the API is working
+// Test API route
 app.get('/api/test', (req, res) => {
   res.json({
     message: 'API is working',
@@ -84,7 +86,7 @@ app.get('/api/test', (req, res) => {
   });
 });
 
-// Chat route for handling FAQ and messages
+// Chat/FAQ route
 app.post('/api/chat', async (req, res) => {
   const { message } = req.body;
 
@@ -102,7 +104,7 @@ app.post('/api/chat', async (req, res) => {
   });
 });
 
-// API endpoint for FAQ search
+// FAQ search
 app.get('/api/faq/search', (req, res) => {
   const { query } = req.query;
   if (!query) {
@@ -112,7 +114,7 @@ app.get('/api/faq/search', (req, res) => {
   res.json({ results });
 });
 
-// Test image route for static files
+// Static file test
 app.get('/test-image/:filename', (req, res) => {
   const { filename } = req.params;
   const filePath = path.join(__dirname, 'public/images/products', filename);
@@ -125,7 +127,7 @@ app.get('/test-image/:filename', (req, res) => {
   });
 });
 
-// Email sending logic with nodemailer
+// Email logic
 const sendEmail = (email, otp) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -152,8 +154,8 @@ const sendEmail = (email, otp) => {
   });
 };
 
-// --- SOCKET.IO LOGIC FOR 1-1 CHAT ---
-const users = {}; // userId -> socket.id
+// --- SOCKET.IO LOGIC ---
+const users = {};
 
 io.on('connection', (socket) => {
   console.log('New client connected:', socket.id);
@@ -174,7 +176,7 @@ io.on('connection', (socket) => {
         created_at: new Date().toISOString()
       });
     }
-    // Gọi hàm lưu tin nhắn vào cơ sở dữ liệu
+
     await messageController.saveSocketMessage(sender_id, receiver_id, message);
     try {
       await db.query(
@@ -198,10 +200,8 @@ io.on('connection', (socket) => {
   });
 });
 
-// Route gửi tin nhắn
+// Chat message routes
 app.post('/api/messages', messageController.sendMessage);
-
-// Route lấy tin nhắn giữa hai người dùng
 app.get('/api/messages/:sender_id/:receiver_id', messageController.getMessages);
 
 // Server start
@@ -219,7 +219,7 @@ server.listen(PORT, () => {
   console.log(`FAQ system loaded and active`);
 });
 
-// Global error handling middleware
+// Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something went wrong!');
