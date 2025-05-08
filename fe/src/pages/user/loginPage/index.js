@@ -1,6 +1,6 @@
 import { memo, useState, useEffect } from "react";
 import "./style.scss";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaFacebook } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { FaCircleUser } from "react-icons/fa6";
@@ -13,6 +13,7 @@ const LoginPage = ({ setIsLoggedIn }) => {
     const [remember, setRemember] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleGoogleLogin = () => {
         window.location.href = `${process.env.REACT_APP_API_URL}/api/auth/google`;
@@ -42,7 +43,13 @@ const LoginPage = ({ setIsLoggedIn }) => {
             setPassword(savedPassword);
             setRemember(true);
         }
-    }, []);
+        
+        // Kiểm tra xem người dùng có bị đá ra do token hết hạn không
+        const params = new URLSearchParams(location.search);
+        if (params.get('expired') === 'true') {
+            setError("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+        }
+    }, [location.search]);
 
     const handleLogin = async (e) => {
         e.preventDefault();

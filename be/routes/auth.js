@@ -24,7 +24,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
       const token = jwt.sign(
         { id: req.user.id, userName: req.user.userName },
         process.env.JWT_SECRET || 'default_secret',
-        { expiresIn: '1h' }
+        { expiresIn: '24h' }
       );
 
       // Kiểm tra xem người dùng đã có userName và password chưa
@@ -83,7 +83,7 @@ if (process.env.FACEBOOK_APP_ID && process.env.FACEBOOK_APP_SECRET) {
       const token = jwt.sign(
         { id: req.user.id, userName: req.user.userName },
         process.env.JWT_SECRET || 'default_secret',
-        { expiresIn: '1h' }
+        { expiresIn: '24h' }
       );
 
       // Kiểm tra xem người dùng đã có userName và password chưa
