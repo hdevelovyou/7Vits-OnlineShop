@@ -30,7 +30,8 @@ const io = socketIO(server, {
       'https://sevenvits-onlineshop.onrender.com',
       'https://seventvits-onlineshop.onrender.com',
       'http://localhost:3000',
-      'http://localhost:5000'
+      'http://localhost:5000',
+      'https://7-vits-online-shop-frontend.vercel.app'
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE']
@@ -42,7 +43,8 @@ const allowedOrigins = [
   'https://sevenvits-onlineshop.onrender.com',
   'https://seventvits-onlineshop.onrender.com',
   'http://localhost:3000',
-  'http://localhost:5000'
+  'http://localhost:5000',
+  'https://7-vits-online-shop-frontend.vercel.app'
 ];
 
 app.use(cors({
