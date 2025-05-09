@@ -4,7 +4,7 @@ import axios from "axios";
 import CommentSection from "../../../components/comment/comment";
 import "./style.scss";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-
+import { formatVND } from "../../../utils/formatprice"; 
 const ProductPage = ({ cart, setCart }) => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -48,7 +48,7 @@ const ProductPage = ({ cart, setCart }) => {
 
     const formatPrice = (price) => {
         if (!price) return '0';
-        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        return formatVND(price);
     };
     const userId = localStorage.getItem("user")
         ? JSON.parse(localStorage.getItem("user")).id
@@ -254,8 +254,8 @@ const ProductPage = ({ cart, setCart }) => {
 
                             <div className="product-price">
                                 <div className="price-info">
-                                    <span className="old-price">{formatPrice(product.originalPrice)}đ</span>
-                                    <span className="new-price">{formatPrice(product.price)}đ</span>
+                                    <span className="old-price">{formatPrice(product.originalPrice)}</span>
+                                    <span className="new-price">{formatPrice(product.price)}</span>
                                 </div>
                                 {discount > 0 && (
                                     <span className="discount">{discount}% GIẢM</span>

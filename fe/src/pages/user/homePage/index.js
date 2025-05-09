@@ -7,7 +7,7 @@ import League_of_Legends_2019_vector from '../../../assets/images/League_of_Lege
 import steam_logo from '../../../assets/images/steam_logo.png';
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { Link } from "react-router-dom";
-
+import { formatVND } from "../../../utils/formatprice"; 
 // Danh sách các danh mục
 const categories = ["New Arrivals", "Best Sellers", "Discounted Items"];
 
@@ -126,10 +126,10 @@ const Homepage = () => {
                                                         </p>
                                                         <div className="home-product-item_price">
                                                             <span className="mota-name home-product-item_price-old">
-                                                                <s>{(product.price * 1.2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ</s>
+                                                                <s>{formatVND(product.price)}</s>
                                                             </span>
                                                             <span className="mota-name home-product-item_price-new">
-                                                                {product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ
+                                                                {formatVND(product.price)}
                                                             </span>
                                                         </div>
                                                     </div>
