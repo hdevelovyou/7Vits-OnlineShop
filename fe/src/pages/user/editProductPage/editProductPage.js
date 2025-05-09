@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../sellProductPage/sellProductPage.scss'; // Reuse the same styles
-
+import '../../../utils/formatprice'; // Assuming you have a formatVND function for formatting prices
+import { formatVND } from '../../../utils/formatprice';
 const EditProductPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -100,7 +101,7 @@ const EditProductPage = () => {
     };
 
     const categories = [
-        'Game','Key','Tài khoản game'
+        'Game', 'Key', 'Tài khoản game'
     ];
 
     if (loading) return <div className="loading">Đang tải...</div>;
@@ -141,16 +142,24 @@ const EditProductPage = () => {
                 <div className="form-group">
                     <label htmlFor="price">Giá (VND) *</label>
                     <input
-                        type="number"
+                        type="text" // Đổi từ number sang text
                         id="price"
                         name="price"
-                        value={formData.price}
-                        onChange={handleChange}
+                        value={formatVND(formData.price).replace('đ', '')} // Hiển thị đã định dạng
+                        onChange={(e) => {
+                            // Lọc chỉ giữ lại số và convert sang number
+                            const rawValue = e.target.value.replace(/\D/g, '');
+                            setFormData({ ...formData, price: Number(rawValue) });
+                        }}
+                        onBlur={() => {
+                
+                            if (formData.price < 0) setFormData({ ...formData, price: 0 });
+                        }}
                         required
                         placeholder="Nhập giá sản phẩm"
-                        min="0"
-                        step="1000"
+                        inputMode="numeric" // Hiện bàn phím số trên mobile
                     />
+               
                 </div>
 
                 <div className="form-group">
@@ -183,7 +192,7 @@ const EditProductPage = () => {
                         min="1"
                     />
                 </div>
-                
+
                 <div className="form-group">
                     <label htmlFor="notes">Ghi chú (Key, thông tin đăng nhập)</label>
                     <textarea
