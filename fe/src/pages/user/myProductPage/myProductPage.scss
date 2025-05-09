@@ -102,11 +102,13 @@
         margin-top: 2rem;
         color: #fff;
         font-size: 1.1rem;
-        
+        tr {
+          border-bottom: 1px solid #444;
+        }
         th, td {
           padding: 1.2rem 1.5rem;
           text-align: left;
-          border-bottom: 2px solid #444;
+  
           font-size: 1.1rem;
           vertical-align: middle;
         }
