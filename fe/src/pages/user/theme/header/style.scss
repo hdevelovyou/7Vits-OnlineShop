@@ -129,7 +129,8 @@
     font-weight: bold;
     gap: 10px;
 
-    .login-btn {
+    .login-btn,
+    .login-btn-header {
         margin: 3rem 0 3rem 1rem;
         background: #ff0000;
         color: white;
@@ -240,7 +241,9 @@ html {
     .header-menu,
     .header-top,
     .login-btn-mobile,
-    .input-search {
+    .input-search,
+    .sig-btn-mobile,
+    .logout-mobile {
         display: none;
     }
 
@@ -269,7 +272,7 @@ html {
         height: 100%;
         overflow-y: auto;
         z-index: -999;
-        top:81px;
+        top: 81px;
         opacity: 0;
         display: block;
         background-color: #000000;
@@ -312,11 +315,11 @@ html {
     .header__menu_navbar {
         height: 100%;
         padding: 0 20px 10px;
-       
+
         li {
             padding: 20px 0;
             border-bottom: 1px solid #fff;
-            
+
         }
 
         a {
@@ -341,18 +344,25 @@ html {
 
         .show__submenu {
             display: block;
-            
+
             li {
-                
+
                 &:last-child {
                     border-bottom: unset;
-                    
+
                 }
             }
         }
     }
 }
 
+@include Responsive($DESKTOP) {
+
+    .sig-btn-mobile,
+    .logout-mobile {
+        display: none;
+    }
+}
 
 @include Responsive($SMALL) {
     .form-group .sig-btn button {
@@ -363,8 +373,17 @@ html {
     .header-top,
     .search,
     .signup-btn,
-    .login-btn {
+    .sig-btn,
+    .login-btn-header,
+    .profile-btn,
+    .logout-btn {
         display: none;
+    }
+
+    .sig-btn-mobile {
+        text-align: center;
+        margin: 1rem 0;
+        font-size: 1.2rem;
     }
 
     .login-btn-mobile {
@@ -411,7 +430,7 @@ html {
         height: 100%;
         overflow-y: auto;
         z-index: -999;
-        top:81px;
+        top: 81px;
         opacity: 0;
         display: block;
         background-color: #000000;
@@ -455,10 +474,23 @@ html {
 
         height: 100%;
         padding: 0 20px 10px;
-        
+
+        ul {
+            svg {
+                font-size: 24px;
+                position: relative;
+                bottom: -5px;
+            }
+        }
+
+        span {
+            font-size: 1.6rem;
+            margin-left: 10px;
+        }
+
         li {
-            padding: 20px 0;
-            border-bottom: 1px solid #fff;
+            padding: 20px 0 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         a {
@@ -485,9 +517,10 @@ html {
             display: block;
 
             li {
-                a{
+                a {
                     font-size: 1.6rem;
                 }
+
                 &:last-child {
                     border-bottom: unset;
                 }
@@ -510,6 +543,7 @@ html {
             justify-content: center;
             align-items: center;
             border-radius: 5px;
+
             .header-search {
                 font-size: 40px;
                 color: #fff;

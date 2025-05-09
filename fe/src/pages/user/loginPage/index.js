@@ -152,6 +152,13 @@ const LoginPage = ({ setIsLoggedIn }) => {
                     <div className="sig-btn">
                         <Link to="/register" onClick={()=>window.scroll(0,0)}><button type="button">Đăng ký</button></Link>
                     </div>
+                    <div className="sig-btn-mobile">
+                    <p>Chưa có tài khoản?
+                        <Link to="/register" onClick={()=>window.scroll(0,0)}>
+                         Đăng ký ngay
+                        </Link>
+                    </p>
+                    </div>
                 </form>
             </div>
         </div>

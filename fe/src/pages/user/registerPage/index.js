@@ -82,7 +82,7 @@ const RegisterPage = () => {
                     <FaFacebook className="icon" />
                     <FcGoogle className="icon-gg" onClick={handleGoogleSignup} style={{ cursor: 'pointer' }} />
                 </div>
-                    <div className="sig-btn">
+                    <div className="sig-btn-rs">
                         <button type="submit">Đăng ký</button>
                     </div>
                 </div>
