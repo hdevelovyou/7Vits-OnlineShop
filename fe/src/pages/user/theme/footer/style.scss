@@ -1,36 +1,45 @@
-#footer{
+@use "sass:map";
+@import "../../../../style/pages/all";
+
+#footer {
     background-color: black;
     font-size: 1.6rem;
 }
 
-.footer-top{
+.footer-top {
     background-color: #810000;
+
     ul {
         padding: 1rem 0;
         display: flex;
         column-gap: 1rem;
         list-style: none;
     }
-    .footer-top-left{
-        img{
+
+    .footer-top-left {
+        img {
             width: 2rem;
         }
     }
-    .footer-top-right{
-        p{
+
+    .footer-top-right {
+        p {
             padding-top: 1rem;
         }
     }
 }
-.footer-bottom{
+
+.footer-bottom {
     padding: 2rem 0;
     background: #000000;
     width: 100%;
     font-weight: bold;
-    p{
+
+    p {
         padding-top: 1rem;
         font-weight: normal;
     }
+
     ul {
         padding: 1rem 0;
         display: flex;
@@ -38,11 +47,30 @@
         list-style: none;
     }
 }
-
-.footer-logo{
+.container-footer {
     display: flex;
-    justify-content: center;
-    img{
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 0 24px;
+}
+.footer-logo {
+    img {
         width: 15rem;
     }
+}
+.footer-top-right-mobile {
+    display: none;
+}
+
+@include Responsive($SMALL) {
+  .footer-top-right{
+    display:none;
+  }
+  .footer-logo {
+    img {
+        position: relative;
+        left:-20px;
+        width: 10rem;
+    }
+}
 }

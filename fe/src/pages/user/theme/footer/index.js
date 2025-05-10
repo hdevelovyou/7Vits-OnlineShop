@@ -12,7 +12,7 @@ const Footer = () => {
         <div id="footer">
             <div className="footer-top">
                 <div className="container">
-                    <div className="row">
+                    <div className="container-footer">
                         <div className="col-lg-3 col-xl-6 footer-top-left">
                             <ul>
                                 <li><img src={momo} alt="momo"/></li>
@@ -22,19 +22,19 @@ const Footer = () => {
 
                             </ul>
                         </div>
-                        <div className="col-lg-3 col-xl-3 footer-top-left"></div>
+                        
                         <div className="col-lg-3 col-xl-3 footer-top-right"><p>© 2025 7VITS. All Rights Reserved.</p></div>
                     </div>
                 </div>
             </div>
             <div className="footer-bottom">
                 <div className="container">
-                    <div className="row">
-                        <div className="col-lg-3 col-xl-3 footer-bottom-left">
+                    <div className="container-footer">
+                        <div className="col-md-6 col-sm-12 col-lg-3 col-xl-3 footer-bottom-left">
                             <h3>Liên hệ</h3>
                             <p>Địa chỉ: Hàn Thuyên, khu phố 6 P, Thủ Đức, Hồ Chí Minh</p>
                             <p>Điện thoại: 0123456789</p>
-                            <p>7vits.shop@gmail.com</p>
+                            <p>7vits.shop@gmail.com</p> 
                             <ul>
                                 <li>
                                     <Link to={"https://www.facebook.com/7vits.shop"} style={{ textDecoration: 'none' }}>
@@ -48,12 +48,14 @@ const Footer = () => {
                                 </li>
                             </ul>
                         </div>
-                        <div className="col-lg-3 col-xl-6 footer-bottom-center">
-                           <div className="footer-logo"><img src={logo} alt="7vits-logo" /></div>
-                        </div>
-                        <div className="col-lg-3 col-xl-3 footer-bottom-right">
+                        
+                        <div className="col-md-6 footer-logo"><img src={logo} alt="7vits-logo" /></div>
+                       
+                        <div className="col-md-12 col-sm-12 col-lg-3 col-xl-3 footer-bottom-right">
                             <h3>7VITS là ai?</h3>
                             <p>7VITS là nơi những giao dịch của bạn luôn được đảm bảo an toàn, tin cậy</p>
+                           <p>© 2025 7VITS. All Rights Reserved.</p>
+                        
                         </div>
                     </div>
                 </div>
