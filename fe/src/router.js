@@ -15,6 +15,7 @@ import StorePage from "./pages/user/storePage";
 import CartPage from "./pages/user/cartpage";
 import FacebookAuthCompletionPage from './pages/user/facebookAuthCompletionPage';
 import ResetPassword from "./pages/auth/ResetPassword";
+import ChatPage from "./pages/user/chatPage";
 
 // Import new components
 import SellProductPage from "./pages/user/sellProductPage/sellProductPage";
@@ -40,6 +41,7 @@ const renderUserRoutes = () => {
                     <Route path={ROUTES.USER.CART} element={<CartPage cart={cart} setCart={setCart} />} />
                     <Route path={ROUTES.USER.COMPLETE_FACEBOOK_SIGNUP} element={<FacebookAuthCompletionPage />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
+                    <Route path="/chat" element={<ChatPage />} />
 
                     {/* New routes for selling products */}
                     <Route path={ROUTES.USER.SELL_PRODUCT} element={<SellProductPage />} />

@@ -1,3 +1,7 @@
 @import "pages/_all.scss";
 @import "pages/_theme.scss";
 @import "pages/_responsive.scss";
+
+body.chat-page-active #footer {
+    display: none !important;
+}

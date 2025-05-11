@@ -34,7 +34,12 @@ async function getMessages(req, res) {
     try {
         // Lấy tin nhắn giữa hai người dùng từ cơ sở dữ liệu
         const [rows] = await db.query(
-            'SELECT * FROM messages WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?) ORDER BY created_at ASC',
+            'SELECT m.id, m.sender_id, m.receiver_id, m.message, m.created_at, u.userName as senderUserName, u2.userName as receiverUserName ' +
+            'FROM messages m ' +
+            'JOIN users u ON m.sender_id = u.id ' +
+            'JOIN users u2 ON m.receiver_id = u2.id ' +
+            'WHERE (m.sender_id = ? AND m.receiver_id = ?) OR (m.sender_id = ? AND m.receiver_id = ?) ' +
+            'ORDER BY m.created_at ASC',
             [sender_id, receiver_id, receiver_id, sender_id]
         );
 
@@ -42,6 +47,52 @@ async function getMessages(req, res) {
         return res.status(200).json({ messages: rows });
     } catch (err) {
         console.error('Lỗi khi lấy tin nhắn:', err);
+        return res.status(500).json({ error: 'Lỗi hệ thống. Vui lòng thử lại sau!' });
+    }
+}
+
+// Hàm lấy danh sách các cuộc trò chuyện
+async function getConversations(req, res) {
+    const { userId } = req.params;
+
+    if (!userId) {
+        return res.status(400).json({ error: 'Thiếu thông tin người dùng!' });
+    }
+
+    try {
+        // Lấy danh sách người dùng đã chat với và tin nhắn cuối cùng
+        const [rows] = await db.query(
+            `SELECT DISTINCT 
+                u.id,
+                u.userName,  
+                (
+                    SELECT message 
+                    FROM messages 
+                    WHERE (sender_id = ? AND receiver_id = u.id) 
+                    OR (sender_id = u.id AND receiver_id = ?)
+                    ORDER BY created_at DESC 
+                    LIMIT 1
+                ) as lastMessage,
+                (
+                    SELECT created_at 
+                    FROM messages 
+                    WHERE (sender_id = ? AND receiver_id = u.id) 
+                    OR (sender_id = u.id AND receiver_id = ?)
+                    ORDER BY created_at DESC 
+                    LIMIT 1
+                ) as lastMessageTime
+            FROM users u
+            INNER JOIN messages m ON (m.sender_id = ? AND m.receiver_id = u.id) 
+            OR (m.sender_id = u.id AND m.receiver_id = ?)
+            WHERE u.id != ?
+            GROUP BY u.id
+            ORDER BY lastMessageTime DESC`,
+            [userId, userId, userId, userId, userId, userId, userId]
+        );
+
+        return res.status(200).json({ conversations: rows });
+    } catch (err) {
+        console.error('Lỗi khi lấy danh sách cuộc trò chuyện:', err);
         return res.status(500).json({ error: 'Lỗi hệ thống. Vui lòng thử lại sau!' });
     }
 }
@@ -63,5 +114,6 @@ async function saveSocketMessage(sender_id, receiver_id, message) {
 module.exports = {
     sendMessage,
     getMessages,
+    getConversations,
     saveSocketMessage
 };

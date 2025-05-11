@@ -129,4 +129,11 @@ if (process.env.FACEBOOK_APP_ID && process.env.FACEBOOK_APP_SECRET) {
   });
 }
 
+const { authMiddleware } = require('../controllers/authController');
+
+// Route xác minh user dựa trên JWT
+router.get('/me', authMiddleware, (req, res) => {
+  res.json({ user: req.user });
+});
+
 module.exports = router;
