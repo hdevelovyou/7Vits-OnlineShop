@@ -1,4 +1,4 @@
-import { memo, useState, useEffect } from "react";
+import { memo, useState, useEffect, useRef } from "react";
 import "./style.scss";
 import { FaUser, FaCheck } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -6,23 +6,65 @@ import { Link } from "react-router-dom";
 const ProfilePage = () => {
     const [user, setUser] = useState({
         userName: "",
+        firstName: "",
+        lastName: "",
+        email: "",
+        createdAt: "",
     });
     const [isEditing, setIsEditing] = useState(false);
     const [newUserName, setNewUserName] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
+    const [avatarUrl, setAvatarUrl] = useState("");
+    const [showAvatarOptions, setShowAvatarOptions] = useState(false);
     
+    const fileInputRef = useRef(null);
+
+    const handleChooseFile = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click(); // Kích hoạt input file
+        }
+    };
+
     // URL của ảnh mặc định - thay thế bằng URL thật của bạn
-    const defaultAvatarUrl = "https://sv1.anhsieuviet.com/2025/04/10/7VITS-9.png"; 
+    const defaultAvatarUrl = "https://sv1.anhsieuviet.com/2025/04/10/7VITS-9.png";
+    const handleAvaterChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const imageUrl = reader.result;
+                setAvatarUrl(imageUrl);
+
+                // Cập nhật ảnh đại diện trong localStorage
+                const userData = localStorage.getItem("user");
+                if (userData) {
+                    const parsedUser = JSON.parse(userData);
+                    parsedUser.avatarUrl = imageUrl;
+                    localStorage.setItem("user", JSON.stringify(parsedUser));
+                }
+        };
+        reader.readAsDataURL(file);
+    } 
+};
 
     useEffect(() => {
         // Get user data from localStorage
         const userData = localStorage.getItem("user");
         if (userData) {
             const parsedUser = JSON.parse(userData);
+            console.log("Parsed user data:", parsedUser);
             setUser({
                 userName: parsedUser.userName || "",
+                firstName: parsedUser.firstName || "",
+                lastName: parsedUser.lastName || "",
+                email: parsedUser.email || "",
+                createdAt: parsedUser.createdAt || "",
             });
             setNewUserName(parsedUser.userName || "");
+
+            if (parsedUser.avatarUrl) {
+                setAvatarUrl(parsedUser.avatarUrl);
+            }
         }
     }, []);
 
@@ -66,6 +108,25 @@ const ProfilePage = () => {
         setIsEditing(false);
     };
 
+    const handleRemoveAvatar = () => {
+        const confirmRemove = window.confirm("Bạn có chắc chắn muốn gỡ ảnh đại diện không?");
+        if (confirmRemove) {
+            setAvatarUrl(defaultAvatarUrl);
+
+            // Cập nhật lại localStorage
+            const userData = localStorage.getItem("user");
+            if (userData) {
+                const parsedUser = JSON.parse(userData);
+                parsedUser.avatarUrl = defaultAvatarUrl;
+                localStorage.setItem("user", JSON.stringify(parsedUser));
+            }
+        }
+    };
+
+    const toggleAvatarOptions = () => {
+        setShowAvatarOptions((prev) => !prev);
+    };
+
     return (
         <div className="profile-page">
             <div className="profile-container">
@@ -81,13 +142,11 @@ const ProfilePage = () => {
                 <div className="profile-section">
                     <div className="avatar-section">
                         <div className="avatar-container">
-                            {/* Hiển thị ảnh mặc định */}
                             <img 
-                                src={defaultAvatarUrl} 
-                                alt="Default Avatar" 
+                                src={avatarUrl || defaultAvatarUrl} 
+                                alt="User Avatar" 
                                 className="user-avatar" 
                                 onError={(e) => {
-                                    // Fallback nếu URL ảnh lỗi
                                     e.target.style.display = 'none';
                                     e.target.nextSibling.style.display = 'flex';
                                 }}
@@ -96,6 +155,38 @@ const ProfilePage = () => {
                                 <FaUser className="avatar-icon" />
                             </div>
                         </div>
+                        <button 
+                            type="button" 
+                            className="change-avatar-button" 
+                            onClick={toggleAvatarOptions}
+                        >
+                            Thay đổi ảnh đại diện
+                        </button>
+                        {showAvatarOptions && (
+                            <div className="avatar-options">
+                                <button 
+                                    type="button" 
+                                    className="avatar-option" 
+                                    onClick={handleChooseFile}
+                                >
+                                    Chọn ảnh từ máy
+                                </button>
+                                <input 
+                                    type="file" 
+                                    accept="image/*" 
+                                    ref={fileInputRef} 
+                                    onChange={handleAvaterChange} 
+                                    style={{ display: 'none' }} // Ẩn input file
+                                />
+                                <button 
+                                    type="button" 
+                                    className="avatar-option" 
+                                    onClick={handleRemoveAvatar}
+                                >
+                                    Gỡ ảnh
+                                </button>
+                            </div>
+                        )}
                     </div>
                     
                     <div className="user-info">
@@ -103,7 +194,25 @@ const ProfilePage = () => {
                             <label>Tên người dùng:</label>
                             <div className="info-value">
                                 <span>{user.userName}</span>
-                            </div>
+                            </div>                         
+                        </div>
+                        <div className="info-row">
+                            <label>Họ và tên:</label>
+                            <div className="info-value">
+                                <span>{`${user.firstName} ${user.lastName}`}</span>
+                            </div>                         
+                        </div>
+                        <div className="info-row">
+                            <label>Email:</label>
+                            <div className="info-value">
+                                <span>{user.email}</span>
+                            </div>                         
+                        </div>
+                        <div className="info-row">
+                            <label>Ngày tham gia:</label>
+                            <div className="info-value">
+                                <span>{user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : ''}</span>
+                            </div>                         
                         </div>
                         <div className="profile-action-buttons">
                             <Link to="/sell-product" className="nav-link sell-product-button">

@@ -77,7 +77,14 @@ exports.login = async (req, res) => {
 
     res.json({
       message: 'Đăng nhập thành công',
-      user: { id: user.id, userName: user.userName, email: user.email },
+      user: {
+        id: user.id,
+        userName: user.userName,
+        firstName: user.firstName, // Thêm firstName
+        lastName: user.lastName,   // Thêm lastName
+        email: user.email,
+        createdAt: user.createdAt,
+      },
       token
     });
   } catch (err) {

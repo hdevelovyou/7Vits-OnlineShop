@@ -43,33 +43,26 @@ const allowedOrigins = [
   'https://sevenvits-onlineshop.onrender.com',
   'https://seventvits-onlineshop.onrender.com',
   'http://localhost:3000',
+  'http://localhost:3001', // Thêm origin này
   'http://localhost:5000',
   'https://7-vits-online-shop-frontend.vercel.app'
 ];
 
 app.use(cors({
-  origin: function (origin, callback) {
-    // allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
+  origin: '*', // Cho phép tất cả các origin
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-  credentials: true,
-  preflightContinue: false,
-  optionsSuccessStatus: 204
+  credentials: true
 }));
+
+app.options('*', cors()); // Đáp ứng tất cả các yêu cầu OPTIONS
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 
 // Static file serving
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
@@ -97,11 +90,6 @@ app.use("/api/comments", commentRoutes);
 app.use('/api/ratings', ratingRoutes);
 app.use('/api', productRoutes);
 app.use('/api/auth', require('./routes/auth'));
-
-// Message routes
-app.post('/api/messages', messageController.sendMessage);
-app.get('/api/messages/:sender_id/:receiver_id', messageController.getMessages);
-app.get('/api/conversations/:userId', messageController.getConversations);
 
 // Test route for checking if the API is working
 app.get('/api/test', (req, res) => {
@@ -201,7 +189,7 @@ io.on('connection', (socket) => {
         created_at: new Date().toISOString()
       });
     }
-
+    
     // Save message to database
     await messageController.saveSocketMessage(sender_id, receiver_id, message);
     try {
@@ -213,7 +201,6 @@ io.on('connection', (socket) => {
     } catch (err) {
       console.error('Error saving message:', err);
     }
-    io.emit('online_users', Object.keys(users));
   });
 
   socket.on('disconnect', () => {
@@ -224,9 +211,14 @@ io.on('connection', (socket) => {
         break;
       }
     }
-    io.emit('online_users', Object.keys(users));
   });
 });
+
+// Route gửi tin nhắn
+app.post('/api/messages', messageController.sendMessage);
+
+// Route lấy tin nhắn giữa hai người dùng
+app.get('/api/messages/:sender_id/:receiver_id', messageController.getMessages);
 
 // Server start
 const PORT = process.env.PORT || 5000;
