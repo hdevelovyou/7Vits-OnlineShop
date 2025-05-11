@@ -1,204 +1,177 @@
+/* MyProductsPage.jsx */
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './myProductPage.scss';
+import {
+  SwipeableList,
+  SwipeableListItem,
+  TrailingActions,
+  SwipeAction,
+  Type as ListType
+} from 'react-swipeable-list';
+import 'react-swipeable-list/dist/styles.css';
 
 const MyProductsPage = () => {
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
-    const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchMyProducts = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    navigate('/login');
-                    return;
-                }
-
-                const response = await axios.get('/api/my-products', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                setProducts(response.data);
-            } catch (err) {
-                setError('Không thể tải danh sách sản phẩm');
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchMyProducts();
-    }, [navigate]);
-
-    const handleDelete = async (id) => {
-        if (window.confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
-            try {
-                const token = localStorage.getItem('token');
-                await axios.delete(`/api/products/${id}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                setProducts(products.filter(product => product.id !== id));
-            } catch (err) {
-                setError('Không thể xóa sản phẩm');
-                console.error(err);
-            }
+  useEffect(() => {
+    const fetchMyProducts = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          navigate('/login');
+          return;
         }
+        const { data } = await axios.get('/api/my-products', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setProducts(data);
+      } catch {
+        setError('Không thể tải danh sách sản phẩm');
+      } finally {
+        setLoading(false);
+      }
     };
+    fetchMyProducts();
+  }, [navigate]);
 
-    const handleStatusChange = async (id, newStatus) => {
-        try {
-            const token = localStorage.getItem('token');
-            const product = products.find(p => p.id === id);
-            
-            await axios.put(`/api/products/${id}`, 
-                { 
-                    ...product,
-                    status: newStatus 
-                }, 
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                }
-            );
-            
-            // Update local state
-            setProducts(products.map(p => 
-                p.id === id ? {...p, status: newStatus} : p
-            ));
-        } catch (err) {
-            setError('Không thể cập nhật trạng thái sản phẩm');
-            console.error(err);
-        }
-    };
-
-    const formatPrice = (price) => {
-        return new Intl.NumberFormat('vi-VN', {
-            style: 'currency',
-            currency: 'VND'
-        }).format(price);
-    };
-
-    const getStatusLabel = (status) => {
-        switch (status) {
-            case 'active':
-                return 'Đang bán';
-            case 'inactive':
-                return 'Đã ẩn';
-            case 'sold_out':
-                return 'Đã bán hết';
-            default:
-                return 'Không xác định';
-        }
-    };
-
-    const getStatusClass = (status) => {
-        switch (status) {
-            case 'active':
-                return 'status-active';
-            case 'inactive':
-                return 'status-inactive';
-            case 'sold_out':
-                return 'status-soldout';
-            default:
-                return '';
-        }
-    };
-
-    if (loading) {
-        return <div className="loading">Đang tải...</div>;
+  const handleDelete = async (id) => {
+    if (window.confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
+      try {
+        const token = localStorage.getItem('token');
+        await axios.delete(`/api/products/${id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setProducts(prev => prev.filter(p => p.id !== id));
+      } catch {
+        setError('Không thể xóa sản phẩm');
+      }
     }
+  };
 
-    return (
-        <div className="my-products-container">
-            <div className="header-section">
-                <h1>Sản phẩm của tôi</h1>
-                <Link to="/sell-product" className="add-product-btn">+ Thêm sản phẩm mới</Link>
-            </div>
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      const token = localStorage.getItem('token');
+      const prod = products.find(p => p.id === id);
+      await axios.put(`/api/products/${id}`, { ...prod, status: newStatus }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setProducts(prev => prev.map(p => p.id === id ? { ...p, status: newStatus } : p));
+    } catch {
+      setError('Không thể cập nhật trạng thái sản phẩm');
+    }
+  };
 
-            {error && <div className="error-message">{error}</div>}
+  const trailingActions = (product) => (
+    <TrailingActions style={{ width: 120 }}>
+      <SwipeAction onClick={() =>navigate(`/edit-product/${product.id}`)}>
+        <button className="change">Thay đổi</button>
+      </SwipeAction>
+      <SwipeAction destructive onClick={() => handleDelete(product.id)}>
+       <button className="delete">Xóa</button>
+      </SwipeAction>
+    </TrailingActions>
+  );
 
-            {products.length === 0 ? (
-                <div className="no-products">
-                    <p>Bạn chưa có sản phẩm nào.</p>
-                    <Link to="/sell-product" className="add-first-product-btn">Đăng bán sản phẩm đầu tiên</Link>
-                </div>
-            ) : (
-                <div className="products-table-container">
-                    <table className="products-table">
-                        <thead>
-                            <tr>
-                                <th>Hình ảnh</th>
-                                <th>Tên sản phẩm</th>
-                                <th>Giá</th>
-                                <th>Danh mục</th>
-                                <th>Tồn kho</th>
-                                <th>Trạng thái</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {products.map((product) => (
-                                <tr key={product.id}>
-                                    <td>
-                                        {product.image_url ? (
-                                            <img 
-                                                src={`${process.env.REACT_APP_API_URL}${product.image_url}`} 
-                                                alt={product.name}
-                                                className="product-thumbnail" 
-                                            />
-                                        ) : (
-                                            <div className="no-image">Không có ảnh</div>
-                                        )}
-                                    </td>
-                                    <td>
-                                        <Link to={`/product/${product.id}`}>{product.name}</Link>
-                                    </td>
-                                    <td>{formatPrice(product.price)}</td>
-                                    <td>{product.category}</td>
-                                    <td>{product.stock}</td>
-                                    <td>
-                                        <span className={`status-badge ${getStatusClass(product.status)}`}>
-                                            {getStatusLabel(product.status)}
-                                        </span>
-                                    </td>
-                                    <td className="actions">
-                                        <div className="dropdown">
-                                            <button className="change-status-btn">
-                                                Thay đổi trạng thái
-                                            </button>
-                                            <div className="dropdown-content">
-                                                <button onClick={() => handleStatusChange(product.id, 'active')}>Đang bán</button>
-                                                <button onClick={() => handleStatusChange(product.id, 'inactive')}>Ẩn sản phẩm</button>
-                                                <button onClick={() => handleStatusChange(product.id, 'sold_out')}>Đã bán hết</button>
-                                            </div>
-                                        </div>
-                                        <Link to={`/edit-product/${product.id}`} className="edit-btn">
-                                            <i className="fas fa-edit"></i>
-                                        </Link>
-                                        <button 
-                                            className="delete-btn" 
-                                            onClick={() => handleDelete(product.id)}
-                                        >
-                                            <i className="fas fa-trash-alt"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
+  const formatPrice = price => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+  const getStatusLabel = status => ({ active: 'Đang bán', inactive: 'Đã ẩn', sold_out: 'Đã bán hết' }[status] || 'Không xác định');
+  const getStatusClass = status => ({ active: 'status-active', inactive: 'status-inactive', sold_out: 'status-soldout' }[status] || '');
+
+  if (loading) return <div className="loading">Đang tải...</div>;
+
+  return (
+    <div className="my-products-container">
+      <div className="header-section">
+        <h1>Sản phẩm của tôi</h1>
+        <Link to="/sell-product" className="add-product-btn">+ Thêm sản phẩm mới</Link>
+      </div>
+      {error && <div className="error-message">{error}</div>}
+
+      {products.length === 0 ? (
+        <div className="no-products">
+          <p>Bạn chưa có sản phẩm nào.</p>
+          <Link to="/sell-product" className="add-first-product-btn">Đăng bán sản phẩm đầu tiên</Link>
         </div>
-    );
+      ) : (
+        <div className="products-table-container">
+     
+          <div className="desktop-only">
+            <table className="products-table">
+              <thead>
+                <tr>
+                  <th>Hình ảnh</th>
+                  <th>Tên SP</th>
+                  <th>Giá</th>
+                  <th>Danh mục</th>
+                  <th>Tồn kho</th>
+                  <th>Trạng thái</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.map(p => (
+                  <tr key={p.id}>
+                    <td>{p.image_url ? <img src={`${process.env.REACT_APP_API_URL}${p.image_url}`} alt="" className="product-thumbnail"/> : '—'}</td>
+                    <td><Link to={`/product/${p.id}`}>{p.name}</Link></td>
+                    <td>{formatPrice(p.price)}</td>
+                    <td>{p.category}</td>
+                    <td>{p.stock}</td>
+                    <td><span className={`status-badge ${getStatusClass(p.status)}`}>{getStatusLabel(p.status)}</span></td>
+                    <td className="actions">
+                      <div className="dropdown">
+                        <button className="change-status-btn">Thay đổi trạng thái</button>
+                        <div className="dropdown-content">
+                          <button onClick={() => handleStatusChange(p.id, 'active')}>Đang bán</button>
+                          <button onClick={() => handleStatusChange(p.id, 'inactive')}>Ẩn sản phẩm</button>
+                          <button onClick={() => handleStatusChange(p.id, 'sold_out')}>Đã bán hết</button>
+                        </div>
+                      </div>
+                      <Link to={`/edit-product/${p.id}`} className="edit-btn"><i className="fas fa-edit"/></Link>
+                      <button className="delete-btn" onClick={() => handleDelete(p.id)}><i className="fas fa-trash-alt"/></button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+      
+          <div className="mobile-only">
+            <div className="mobile-table-header">
+              <div className="cell image">Hình ảnh</div>
+              <div className="cell name">Tên SP</div>
+              <div className="cell price">Giá</div>
+              <div className="cell category">Danh mục</div>
+              <div className="cell stock">Tồn kho</div>
+              <div className="cell status">Trạng thái</div>
+            </div>
+            <SwipeableList threshold={0.2} type={ListType.IOS}>
+              {products.map(p => (
+                <SwipeableListItem
+                  key={p.id}
+                  trailingActions={trailingActions(p)}
+                  fullSwipe={false}
+                >
+                  <div className="mobile-table-row">
+                    <div className="cell image">{p.image_url ? <img src={`${process.env.REACT_APP_API_URL}${p.image_url}`} alt=""/> : '—'}</div>
+                    <div className="cell name"><Link to={`/product/${p.id}`}>{p.name}</Link></div>
+                    <div className="cell price">{formatPrice(p.price)}</div>
+                    <div className="cell category">{p.category}</div>
+                    <div className="cell stock">{p.stock}</div>
+                    <div className="cell status"><span className={`status-badge ${getStatusClass(p.status)}`}>{getStatusLabel(p.status)}</span></div>
+                  </div>
+                </SwipeableListItem>
+              ))}
+            </SwipeableList>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default MyProductsPage;
