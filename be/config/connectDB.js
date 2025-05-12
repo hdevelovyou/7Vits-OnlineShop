@@ -21,17 +21,17 @@ applyMigrations();
 // Hàm chạy migration
 async function applyMigrations() {
     try {
-       const migrationPath = path.join(__dirname, '../data/update_products_table.sql');
-const migrationSQL = fs.readFileSync(migrationPath, 'utf8');
-const queries = migrationSQL
-  .split(';')
-  .map(q => q.trim())
-  .filter(q => q && !/^NULL$/i.test(q));
+        const migrationPath = path.join(__dirname, '../data/update_products_table.sql');
+        const migrationSQL = fs.readFileSync(migrationPath, 'utf8');
+        const queries = migrationSQL
+            .split(';')
+            .map(q => q.trim())
+            .filter(q => q && !/^NULL$/i.test(q));
 
-for (const query of queries) {
-  console.log('Running migration:', query);
-  await db.query(query);
-}
+        for (const query of queries) {
+            console.log('Running migration:', query);
+            await db.query(query);
+        }
 
         console.log('Database migrations applied successfully');
     } catch (error) {

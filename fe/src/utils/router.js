@@ -18,6 +18,6 @@ export const ROUTES = {
         SELL_PRODUCT: '/sell-product',
         MY_PRODUCTS: '/my-products',
         EDIT_PRODUCT: '/edit-product/:id',
-        CHAT: '/chat',
+        CHAT: '/chat/:receiverId',
     }
 }

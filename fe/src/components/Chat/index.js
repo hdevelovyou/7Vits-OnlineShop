@@ -141,7 +141,7 @@ export default function Chat({ receiverId, receiverName }) {
                 <div className="chat-main">
                     {selectedUser ? (
                         <div className="chat-window">
-                            <h3>Chat với {selectedUser.userName}</h3>
+                           
                             <div className="messages">
                                 {messages.map((m, i) => (
                                     <div key={i} className={m.sender_id === user.id ? 'mine' : 'theirs'}>

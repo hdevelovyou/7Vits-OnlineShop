@@ -16,7 +16,7 @@ import CartPage from "./pages/user/cartpage";
 import FacebookAuthCompletionPage from './pages/user/facebookAuthCompletionPage';
 import ResetPassword from "./pages/auth/ResetPassword";
 import ChatPage from "./pages/user/chatPage";
-
+import Chat from "./components/Chat"; // Đường dẫn tới component Chat của bạn
 // Import new components
 import SellProductPage from "./pages/user/sellProductPage/sellProductPage";
 import MyProductsPage from "./pages/user/myProductPage/myProductPage";
@@ -42,6 +42,7 @@ const renderUserRoutes = () => {
                     <Route path={ROUTES.USER.COMPLETE_FACEBOOK_SIGNUP} element={<FacebookAuthCompletionPage />} />
                     <Route path="/reset-password" element={<ResetPassword />} />                    
                     <Route path="/chat/:id" element={<ChatPage />} />
+                    <Route path="/chat" element={<Chat />} />
                     {/* New routes for selling products */}
                     <Route path={ROUTES.USER.SELL_PRODUCT} element={<SellProductPage />} />
                     <Route path={ROUTES.USER.MY_PRODUCTS} element={<MyProductsPage />} />

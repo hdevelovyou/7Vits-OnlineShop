@@ -16,7 +16,7 @@ const ProductPage = ({ cart, setCart }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedRating, setSelectedRating] = useState(0);
-    
+
     useEffect(() => {
         const fetchProduct = async () => {
             try {
@@ -49,17 +49,17 @@ const ProductPage = ({ cart, setCart }) => {
         fetchProduct();
     }, [id, navigate]);
     const handleChatClick = () => {
-    if (user && user.id) {
-      // Đã đăng nhập → tới chat với seller
-      navigate(
-        `/chat/${product.seller_id}` +
-          `?receiverName=${encodeURIComponent(product.seller_name)}`
-      );
-    } else {
-      // Chưa đăng nhập → đưa về trang login
-      navigate('/login', { state: { from: `/product/${product.id}` } });
-    }
-  };
+        if (user && user.id) {
+            // Đã đăng nhập → tới chat với seller
+            navigate(
+                `/chat/${product.seller_id}` +
+                `?receiverName=${encodeURIComponent(product.seller_name)}`
+            );
+        } else {
+            // Chưa đăng nhập → đưa về trang login
+            navigate('/login', { state: { from: `/product/${product.id}` } });
+        }
+    };
 
     const formatPrice = (price) => {
         if (!price) return '0';
