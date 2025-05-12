@@ -40,9 +40,8 @@ const renderUserRoutes = () => {
                     <Route path={ROUTES.USER.STORE} element={<StorePage />} />
                     <Route path={ROUTES.USER.CART} element={<CartPage cart={cart} setCart={setCart} />} />
                     <Route path={ROUTES.USER.COMPLETE_FACEBOOK_SIGNUP} element={<FacebookAuthCompletionPage />} />
-                    <Route path="/reset-password" element={<ResetPassword />} />
-                    <Route path="/chat" element={<ChatPage />} />
-
+                    <Route path="/reset-password" element={<ResetPassword />} />                    
+                    <Route path="/chat/:id" element={<ChatPage />} />
                     {/* New routes for selling products */}
                     <Route path={ROUTES.USER.SELL_PRODUCT} element={<SellProductPage />} />
                     <Route path={ROUTES.USER.MY_PRODUCTS} element={<MyProductsPage />} />

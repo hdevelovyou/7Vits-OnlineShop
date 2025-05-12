@@ -201,9 +201,17 @@ io.on('connection', (socket) => {
         created_at: new Date().toISOString()
       });
     }
+    const senderSocketId = users[sender_id];
+    if (senderSocketId) {
+      io.to(senderSocketId).emit('private_message', {
+        sender_id,
+        message,
+        created_at: new Date().toISOString()
+      });
+    }
 
     // Save message to database
-    await messageController.saveSocketMessage(sender_id, receiver_id, message);
+   
     try {
       await db.query(
         'INSERT INTO messages (sender_id, receiver_id, message) VALUES (?, ?, ?)',

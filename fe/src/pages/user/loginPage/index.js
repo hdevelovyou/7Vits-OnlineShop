@@ -84,7 +84,9 @@ const LoginPage = ({ setIsLoggedIn }) => {
                 console.error('setIsLoggedIn không phải là hàm:', setIsLoggedIn);
             }
             
-            navigate("/");
+            
+            window.location.href = "/";
+             
         } catch (err) {
             setError(err.message);
         }
