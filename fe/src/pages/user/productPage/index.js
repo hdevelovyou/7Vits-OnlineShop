@@ -1,12 +1,14 @@
 import { useState, memo, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import { useAuth } from '../../../contexts/AuthContext';
 import CommentSection from "../../../components/comment/comment";
 import "./style.scss";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import { formatVND } from "../../../utils/formatprice"; 
+import { formatVND } from "../../../utils/formatprice";
 const ProductPage = ({ cart, setCart }) => {
     const { id } = useParams();
+    const { user } = useAuth();
     const navigate = useNavigate();
     const [quantity, setQuantity] = useState(1);
     const [selectedImage, setSelectedImage] = useState(0);
@@ -14,6 +16,7 @@ const ProductPage = ({ cart, setCart }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedRating, setSelectedRating] = useState(0);
+
     useEffect(() => {
         const fetchProduct = async () => {
             try {
@@ -45,6 +48,18 @@ const ProductPage = ({ cart, setCart }) => {
 
         fetchProduct();
     }, [id, navigate]);
+    const handleChatClick = () => {
+        if (user && user.id) {
+            // Đã đăng nhập → tới chat với seller
+            navigate(
+                `/chat/${product.seller_id}` +
+                `?receiverName=${encodeURIComponent(product.seller_name)}`
+            );
+        } else {
+            // Chưa đăng nhập → đưa về trang login
+            navigate('/login', { state: { from: `/product/${product.id}` } });
+        }
+    };
 
     const formatPrice = (price) => {
         if (!price) return '0';
@@ -226,6 +241,10 @@ const ProductPage = ({ cart, setCart }) => {
                                 <div className="product-seller">
                                     <i className="fa-solid fa-store"></i>
                                     <span>Người bán: {product.seller_name || "Unknown Seller"}</span>
+
+                                    <button onClick={handleChatClick} className="chat-link">
+                                        <i className="fa-solid fa-comment-dots"></i> Nhắn tin
+                                    </button>
                                 </div>
                                 <div className="product-rating">
                                     <div className="rating-section">

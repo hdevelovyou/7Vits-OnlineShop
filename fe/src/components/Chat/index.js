@@ -1,130 +1,171 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { io } from 'socket.io-client';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
-import { format } from 'date-fns';
-import { vi } from 'date-fns/locale';
+import { useSocket } from '../../contexts/SocketContext';
 import './style.scss';
 
-const Chat = ({ receiverId, receiverName, receiverAvatar }) => {
-    const [messages, setMessages] = useState([]);
-    const [newMessage, setNewMessage] = useState('');
-    const [socket, setSocket] = useState(null);
-    const messagesEndRef = useRef(null);
+export default function Chat({ receiverId, receiverName }) {
     const { user } = useAuth();
+    const { socket } = useSocket();
+    const [conversations, setConversations] = useState([]);
+    const [selectedUser, setSelectedUser] = useState(
+        receiverId ? { id: receiverId, userName: receiverName || 'Người nhận' } : null
+    );
+    const [messages, setMessages] = useState([]);
+    const [input, setInput] = useState('');
+    const messagesEndRef = useRef(null);
+    const inputRef = useRef(null);
 
-    // Kết nối Socket.IO
+    // Fetch conversations
     useEffect(() => {
-        const newSocket = io('http://localhost:5000', {
-            withCredentials: true
-        });
-
-        newSocket.on('connect', () => {
-            console.log('Connected to socket server');
-            if (user?.id) {
-                newSocket.emit('register', user.id);
-            }
-        });
-
-        newSocket.on('private_message', (data) => {
-            setMessages(prev => [...prev, data]);
-        });
-
-        setSocket(newSocket);
-
-        return () => {
-            newSocket.disconnect();
-        };
-    }, [user]);
-
-    // Lấy lịch sử tin nhắn
-    useEffect(() => {
-        const fetchMessages = async () => {
+        if (!user?.id) return;
+        const fetchConversations = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/api/messages/${user.id}/${receiverId}`);
-                setMessages(response.data.messages);
-            } catch (error) {
-                console.error('Error fetching messages:', error);
+                const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/conversations/${user.id}`);
+                setConversations(res.data.conversations);
+            } catch (err) {
+                console.error('Error fetching conversations:', err);
             }
         };
+        fetchConversations();
+    }, [user?.id]);
 
-        if (user?.id && receiverId) {
-            fetchMessages();
-        }
-    }, [user?.id, receiverId]);
-
-    // Tự động cuộn xuống tin nhắn mới nhất
+    // If passed receiverId, set selectedUser once conversations load
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [messages]);
-
-    const sendMessage = async (e) => {
-        e.preventDefault();
-        if (!newMessage.trim()) return;
-
-        try {
-            // Gửi tin nhắn qua Socket.IO
-            socket.emit('private_message', {
-                sender_id: user.id,
-                receiver_id: receiverId,
-                message: newMessage
-            });
-
-            // Thêm tin nhắn vào state ngay lập tức
-            setMessages(prev => [...prev, {
-                sender_id: user.id,
-                message: newMessage,
-                created_at: new Date().toISOString()
-            }]);
-
-            setNewMessage('');
-        } catch (error) {
-            console.error('Error sending message:', error);
+        if (receiverId && conversations.length > 0) {
+            const target = conversations.find((conv) => conv.id === receiverId);
+            setSelectedUser(target || { id: receiverId, userName: receiverName || 'Người nhận' });
         }
+    }, [receiverId, receiverName, conversations]);
+
+    // Listen for incoming messages
+    useEffect(() => {
+        if (!socket) return;
+        const handler = (msg) => {
+            if (
+                (msg.sender_id === selectedUser?.id && msg.receiver_id === user?.id) ||
+                (msg.sender_id === user?.id && msg.receiver_id === selectedUser?.id)
+            ) {
+                setMessages((prev) => [...prev, msg]);
+                // update sidebar
+                updateSidebar(msg);
+            }
+        };
+        socket.on('private_message', handler);
+        return () => socket.off('private_message', handler);
+    }, [socket, selectedUser, user.id]);
+
+    // Fetch message history on select
+    useEffect(() => {
+        if (!user?.id || !selectedUser?.id) return;
+        axios
+            .get(`/api/messages/${user.id}/${selectedUser.id}`)
+            .then((res) => setMessages(res.data.messages))
+            .catch((err) => console.error('Error fetching messages:', err));
+    }, [user?.id, selectedUser?.id]);
+
+    // Scroll to bottom
+  
+    // Focus input
+    useEffect(() => {
+        inputRef.current?.focus();
+    }, [selectedUser]);
+
+    // Update sidebar conversations with new message
+    const updateSidebar = (msg) => {
+        setConversations((prev) => {
+            const exists = prev.some((conv) => conv.id === msg.sender_id || conv.id === msg.receiver_id);
+            const otherId = msg.sender_id === user.id ? msg.receiver_id : msg.sender_id;
+            const userName = selectedUser?.userName;
+            const newConv = { id: otherId, userName: userName, lastMessage: msg.message };
+            // if exists, map and move to top
+            let updated = prev.map((conv) =>
+                conv.id === newConv.id ? { ...conv, lastMessage: newConv.lastMessage } : conv
+            );
+            // filter out existing then unshift
+            if (!exists) {
+                updated = [newConv, ...prev];
+            } else {
+                // move to top
+                updated = [
+                    updated.find((c) => c.id === newConv.id),
+                    ...updated.filter((c) => c.id !== newConv.id)
+                ];
+            }
+            return updated;
+        });
+    };
+
+    // Send message
+    const send = (e) => {
+        e.preventDefault();
+        if (!input.trim() || !user || !socket || !selectedUser) return;
+        const payload = {
+            sender_id: user.id,
+            receiver_id: selectedUser.id,
+            message: input.trim(),
+        };
+        socket.emit('private_message', payload);
+        const localMsg = { ...payload, created_at: new Date().toISOString() };
+        setMessages((prev) => [...prev, localMsg]);
+        updateSidebar(localMsg);
+        setInput('');
     };
 
     return (
-        <div className="chat-component">
-            {/* Header */}
-            <div className="chat-header">
-                {receiverAvatar && (
-                    <img src={receiverAvatar} alt={receiverName} className="chat-avatar" />
-                )}
-                <h2>{receiverName ? `Chat với ${receiverName}` : 'Chat'}</h2>
-            </div>
-
-            {/* Messages */}
-            <div className="messages-container">
-                {messages.map((msg, index) => (
-                    <div
-                        key={index}
-                        className={`message ${msg.sender_id === user.id ? 'sent' : 'received'}`}
-                    >
-                        <div className="message-content">
-                            <p>{msg.message}</p>
-                            <span className="message-time">
-                                {format(new Date(msg.created_at), 'HH:mm', { locale: vi })}
-                            </span>
-                        </div>
+        <div className="chat-page">
+            <div className="chat-container">
+                <div className="chat-sidebar">
+                    <div className="sidebar-header">
+                        <h2>Tin nhắn</h2>
                     </div>
-                ))}
-                <div ref={messagesEndRef} />
+                    <div className="conversations-list">
+                        {conversations.map((conv) => (
+                            <div
+                                key={conv.id}
+                                onClick={() => setSelectedUser(conv)}
+                                className={`conversation-item ${selectedUser?.id === conv.id ? 'active' : ''}`}
+                            >
+                                <div className="user-avatar">
+                                    <span>{conv.userName.charAt(0).toUpperCase()}</span>
+                                    <span className="online-dot"></span>
+                                </div>
+                                <div className="conversation-info">
+                                    <h3>{conv.userName}</h3>
+                                    <p>{conv.lastMessage || 'Chưa có tin nhắn'}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className="chat-main">
+                    {selectedUser ? (
+                        <div className="chat-window">
+                           
+                            <div className="messages">
+                                {messages.map((m, i) => (
+                                    <div key={i} className={m.sender_id === user.id ? 'mine' : 'theirs'}>
+                                        <span>{m.message}</span>
+                                        <small>{new Date(m.created_at).toLocaleTimeString()}</small>
+                                    </div>
+                                ))}
+                                <div ref={messagesEndRef} />
+                            </div>
+                            <form onSubmit={send} className="chat-input">
+                                <input
+                                    ref={inputRef}
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    placeholder="Nhập tin nhắn..."
+                                />
+                                <button type="submit">Gửi</button>
+                            </form>
+                        </div>
+                    ) : (
+                        <div className="no-chat-selected">Chọn một cuộc trò chuyện để bắt đầu</div>
+                    )}
+                </div>
             </div>
-
-            {/* Input */}
-            <form onSubmit={sendMessage} className="message-input">
-                <input
-                    type="text"
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder="Nhập tin nhắn..."
-                />
-                <button type="submit">
-                    Gửi
-                </button>
-            </form>
         </div>
     );
-};
-
-export default Chat; 
+}

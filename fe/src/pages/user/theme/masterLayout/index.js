@@ -3,6 +3,8 @@ import Header from "../header";
 import Footer from "../footer";
 import { useNavigate, useLocation } from "react-router-dom";
 import ChatbotComponent from "../../../../components/ChatBot/ChatBot";
+import chat from "../../../../components/logochat"
+import ChatButton from "../../../../components/logochat";
 
 const MasterLayout = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -60,6 +62,21 @@ const MasterLayout = ({ children }) => {
                 ? children({ isLoggedIn, setIsLoggedIn, cart, setCart, updateCart,  })
                 : children}
             <Footer />
+            <div style={{
+                position: 'fixed',
+                right: '20px',
+                top: '660px',
+                zIndex: 1000,
+                width: '50px',
+                height: '50px',
+                backgroundColor: 'red',
+                borderRadius: '50%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}>
+                <ChatButton />
+            </div>
             <div style={{
                 position: 'fixed',
                 right: '20px',

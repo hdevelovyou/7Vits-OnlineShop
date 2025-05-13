@@ -61,6 +61,7 @@ export const AuthProvider = ({ children }) => {
             });
             setUser(null);
             return { success: true };
+            window.location.reload();
         } catch (error) {
             return {
                 success: false,

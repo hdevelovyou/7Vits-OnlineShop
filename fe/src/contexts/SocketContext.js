@@ -1,47 +1,33 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
-import { useAuth } from "./AuthContext";
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
+import { useAuth } from './AuthContext';
 
-const SocketContext = createContext(null);
+const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
-    const { user } = useAuth();
-    const socketRef = useRef(null);
-    const [onlineUsers, setOnlineUsers] = useState([]);
+  const { user } = useAuth();
+  const [socket, setSocket] = useState(null);
 
-    useEffect(() => {
-        if (user?.id) {
-            console.log('Connecting to socket server...');
-            socketRef.current = io('http://localhost:5000', { withCredentials: true });
+  useEffect(() => {
+    if (user?.id) {
+      const newSocket = io('http://localhost:5000', {
+        query: { userId: user.id }, // nếu backend cần userId
+        transports: ['websocket'],
+      });
 
-            socketRef.current.on('connect', () => {
-                console.log('Socket connected successfully');
-                console.log('Registering user:', user.id);
-                socketRef.current.emit('register', user.id);
-            });
+      setSocket(newSocket);
 
-            socketRef.current.on('connect_error', (error) => {
-                console.error('Socket connection error:', error);
-            });
+      return () => {
+        newSocket.disconnect();
+      };
+    }
+  }, [user?.id]);
 
-            socketRef.current.on('online_users', (userIds) => {
-                console.log('Received online users:', userIds);
-                setOnlineUsers(userIds.map(String));
-            });
-        }
-        return () => {
-            if (socketRef.current) {
-                console.log('Disconnecting socket...');
-                socketRef.current.disconnect();
-            }
-        };
-    }, [user?.id]);
-
-    return (
-        <SocketContext.Provider value={{ socket: socketRef.current, onlineUsers }}>
-            {children}
-        </SocketContext.Provider>
-    );
+  return (
+    <SocketContext.Provider value={{ socket }}>
+      {children}
+    </SocketContext.Provider>
+  );
 };
 
-export const useSocket = () => useContext(SocketContext); 
+export const useSocket = () => useContext(SocketContext);
