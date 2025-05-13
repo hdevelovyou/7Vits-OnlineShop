@@ -65,8 +65,6 @@ const LoginPage = ({ setIsLoggedIn }) => {
             const data = await response.json();
             if (!response.ok) throw new Error(data.error);
 
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("user", JSON.stringify(data.user));
 
             // Nếu checkbox "Ghi nhớ đăng nhập" được chọn, lưu username và password vào localStorage
             if (remember) {
@@ -76,6 +74,14 @@ const LoginPage = ({ setIsLoggedIn }) => {
                 localStorage.removeItem("rememberedUser");
                 localStorage.removeItem("rememberedPassword");
             }
+            const oldUser = JSON.parse(localStorage.getItem("user"));
+            const avatarUrl = oldUser?.avatarUrl || "";
+            const mergedUser = {
+                ...data.user,
+                avatarUrl,
+            };
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(mergedUser));
 
             // Kiểm tra setIsLoggedIn trước khi gọi
             if (setIsLoggedIn && typeof setIsLoggedIn === 'function') {

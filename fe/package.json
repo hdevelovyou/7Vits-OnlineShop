@@ -26,6 +26,7 @@
     "react-modal": "^3.16.3",
     "react-router-dom": "^7.4.0",
     "react-scripts": "^5.0.1",
+    "react-swipeable-list": "^1.10.0",
     "redis": "^4.7.0",
     "sass": "^1.86.3",
     "socket.io-client": "^4.8.1",

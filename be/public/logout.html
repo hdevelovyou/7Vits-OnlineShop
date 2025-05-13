@@ -12,6 +12,12 @@
     <button id="logoutButton">Logout</button>
 
     <script>
+        const handleLogout = () => {
+            localStorage.removeItem("token"); // Chỉ xóa token
+            // Không xóa dữ liệu người dùng
+            navigate("/login");
+        };
+
         document.getElementById("logoutButton").addEventListener("click", async function () {
             const response = await fetch("/logout", {
                 method: "POST",

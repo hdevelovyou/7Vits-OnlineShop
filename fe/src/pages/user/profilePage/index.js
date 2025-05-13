@@ -35,24 +35,23 @@ const ProfilePage = () => {
                 const imageUrl = reader.result;
                 setAvatarUrl(imageUrl);
 
-                // Cập nhật ảnh đại diện trong localStorage
+                // Lưu URL ảnh vào localStorage
                 const userData = localStorage.getItem("user");
                 if (userData) {
                     const parsedUser = JSON.parse(userData);
                     parsedUser.avatarUrl = imageUrl;
                     localStorage.setItem("user", JSON.stringify(parsedUser));
                 }
-        };
-        reader.readAsDataURL(file);
-    } 
-};
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     useEffect(() => {
-        // Get user data from localStorage
+        // Lấy dữ liệu người dùng từ localStorage
         const userData = localStorage.getItem("user");
         if (userData) {
             const parsedUser = JSON.parse(userData);
-            console.log("Parsed user data:", parsedUser);
             setUser({
                 userName: parsedUser.userName || "",
                 firstName: parsedUser.firstName || "",
@@ -62,8 +61,11 @@ const ProfilePage = () => {
             });
             setNewUserName(parsedUser.userName || "");
 
+            // Kiểm tra và đặt URL ảnh đại diện
             if (parsedUser.avatarUrl) {
                 setAvatarUrl(parsedUser.avatarUrl);
+            } else {
+                setAvatarUrl(defaultAvatarUrl); // Đặt ảnh mặc định nếu không có
             }
         }
     }, []);
@@ -143,7 +145,7 @@ const ProfilePage = () => {
                     <div className="avatar-section">
                         <div className="avatar-container">
                             <img 
-                                src={avatarUrl || defaultAvatarUrl} 
+                                src={avatarUrl} 
                                 alt="User Avatar" 
                                 className="user-avatar" 
                                 onError={(e) => {
