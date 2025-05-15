@@ -10,6 +10,7 @@ const ProfilePage = () => {
         lastName: "",
         email: "",
         createdAt: "",
+        avatarUrl: "",
     });
     const [isEditing, setIsEditing] = useState(false);
     const [newUserName, setNewUserName] = useState("");
@@ -58,6 +59,7 @@ const ProfilePage = () => {
                 lastName: parsedUser.lastName || "",
                 email: parsedUser.email || "",
                 createdAt: parsedUser.createdAt || "",
+                avatarUrl: parsedUser.avatarUrl || "",
             });
             setNewUserName(parsedUser.userName || "");
 

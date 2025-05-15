@@ -11,6 +11,7 @@ import { AiOutlineMenu, AiOutlineSearch, AiOutlineUser } from "react-icons/ai";
 import { AiOutlineDown } from "react-icons/ai";
 import { FaHouse } from "react-icons/fa6";
 import { MdEmojiEvents, MdLogout } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 const menuItems = [
   {
     name: "Trang chủ",
@@ -63,6 +64,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHumbergerMenuOpen, setIsHumbergerMenuOpen] = useState(false);
   const [isShowSubmenu, setIsShowSubmenu] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -76,8 +78,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
   const handleLogout = () => {
     setIsLoggedIn(false); // Gọi setIsLoggedIn để cập nhật trạng thái đăng nhập về false khi logout
     localStorage.removeItem("token"); // Xóa token
-    localStorage.removeItem("user"); // Xóa thông tin user
-    window.location.href='/'; // Tải lại trang để cập nhật giao diện
+    navigate('/') // Tải lại trang để cập nhật giao diện
   };
 
   return (

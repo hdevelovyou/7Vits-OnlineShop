@@ -51,7 +51,7 @@ const MasterLayout = ({ children }) => {
     useEffect(() => {
         if (!isLoggedIn) {
             localStorage.removeItem("token");
-            localStorage.removeItem("user");
+            //localStorage.removeItem("user");
         }
     }, [isLoggedIn]);
 

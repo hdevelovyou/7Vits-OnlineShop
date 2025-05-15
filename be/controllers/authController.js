@@ -84,6 +84,7 @@ exports.login = async (req, res) => {
         lastName: user.lastName,   // Thêm lastName
         email: user.email,
         createdAt: user.createdAt,
+        avatarUrl: user.avatarUrl || '', // Thêm avatarUrl
       },
       token
     });

@@ -75,10 +75,10 @@ const LoginPage = ({ setIsLoggedIn }) => {
                 localStorage.removeItem("rememberedPassword");
             }
             const oldUser = JSON.parse(localStorage.getItem("user"));
-            const avatarUrl = oldUser?.avatarUrl || "";
+            const existingAvatarUrl = oldUser ? oldUser.avatarUrl : "https://sv1.anhsieuviet.com/2025/04/10/7VITS-9.png";
             const mergedUser = {
                 ...data.user,
-                avatarUrl,
+                avatarUrl: existingAvatarUrl, // Giữ nguyên avatarUrl cũ nếu có
             };
             localStorage.setItem("token", data.token);
             localStorage.setItem("user", JSON.stringify(mergedUser));

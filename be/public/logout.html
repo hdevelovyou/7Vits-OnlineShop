@@ -15,7 +15,6 @@
         const handleLogout = () => {
             localStorage.removeItem("token"); // Chỉ xóa token
             // Không xóa dữ liệu người dùng
-            navigate("/login");
         };
 
         document.getElementById("logoutButton").addEventListener("click", async function () {
@@ -26,6 +25,9 @@
 
             const result = await response.json();
             alert(result.message || result.error);
+
+            handleLogout();
+            window.location.href = "/login.html"; // Chuyển hướng về trang đăng nhập
         });
     </script>
 </body>
