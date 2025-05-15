@@ -8,7 +8,7 @@ const db = require('./config/connectDB');
 const axios = require('axios');
 const { getBestAnswer, searchFaq } = require('./utils/faqUtils');
 const productRoutes = require('./routes/productRoutes');
-const bodyParser = require("body-parser");
+//const bodyParser = require("body-parser");
 const commentRoutes = require("./routes/comments");
 const ratingRoutes = require('./routes/rating');
 const nodemailer = require('nodemailer');
@@ -63,8 +63,6 @@ app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 app.options('*', cors()); // Đáp ứng tất cả các yêu cầu OPTIONS
 
 // Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());

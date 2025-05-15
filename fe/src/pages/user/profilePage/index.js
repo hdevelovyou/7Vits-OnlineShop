@@ -32,16 +32,35 @@ const ProfilePage = () => {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = () => {
+            reader.onload = async () => {
                 const imageUrl = reader.result;
                 setAvatarUrl(imageUrl);
 
-                // Lưu URL ảnh vào localStorage
+                // Lưu vào localStorage (tạm thời)
                 const userData = localStorage.getItem("user");
                 if (userData) {
                     const parsedUser = JSON.parse(userData);
                     parsedUser.avatarUrl = imageUrl;
                     localStorage.setItem("user", JSON.stringify(parsedUser));
+                }
+
+                // Gửi lên server để lưu vào database
+                const token = localStorage.getItem("token");
+                try {
+                    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/update-avatar`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ avatarUrl: imageUrl })
+                    });
+                    const resData = await response.json();
+                    if (!response.ok) {
+                        throw new Error(resData.error || "Lỗi khi cập nhật avatar");
+                    }
+                } catch (err) {
+                    alert("Lỗi khi lưu avatar xuống database: " + err.message);
                 }
             };
             reader.readAsDataURL(file);
@@ -70,6 +89,28 @@ const ProfilePage = () => {
                 setAvatarUrl(defaultAvatarUrl); // Đặt ảnh mặc định nếu không có
             }
         }
+    }, []);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const token = localStorage.getItem("token");
+            if (!token) return;
+            try {
+                const res = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/get-avatar`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.avatarUrl) {
+                    setAvatarUrl(data.avatarUrl);
+                } else {
+                    setAvatarUrl(defaultAvatarUrl);
+                }
+                setUser(data);
+            } catch (err) {
+                setAvatarUrl(defaultAvatarUrl);
+            }
+        };
+        fetchUser();
     }, []);
 
     const handleEditUserName = () => {

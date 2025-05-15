@@ -98,6 +98,7 @@ const resetPasswordController = async (req, res) => {
 
 // API cập nhật avatar
 router.put('/update-avatar', authMiddleware, async (req, res) => {
+    console.log('Body nhận được:', req.body);
     const userId = req.user.id;
     const { avatarUrl } = req.body;
     if (!avatarUrl) {
