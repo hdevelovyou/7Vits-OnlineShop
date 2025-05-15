@@ -3,6 +3,8 @@ const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const db = require('../config/connectDB');
+const { authMiddleware } = require('../controllers/authController');
+const { profile } = require('console');
 const router = express.Router();
 
 const otpStore = {}; // vẫn giữ tạm thời
@@ -94,10 +96,41 @@ const resetPasswordController = async (req, res) => {
     }
 };
 
+// API cập nhật avatar
+router.put('/update-avatar', authMiddleware, async (req, res) => {
+    const userId = req.user.id;
+    const { avatarUrl } = req.body;
+    if (!avatarUrl) {
+        return res.status(400).json({ error: 'Thiếu avatarUrl' });
+    }
+    try {
+        await db.query('UPDATE users SET avatarUrl = ? WHERE id = ?', [avatarUrl, userId]);
+        res.json({ success: true, avatarUrl });
+    } catch (err) {
+        res.status(500).json({ error: 'Lỗi server' });
+    }
+});
+
+//API lấy avatar
+router.get('/get-avatar', authMiddleware, async (req, res) => {
+    const userId = req.user.id;
+
+    try {
+        const [rows] = await db.query('SELECT userName, firstName, lastName, email, createdAt, avatarUrl FROM users WHERE id = ?', [userId]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Không tìm thấy người dùng' });
+        }
+
+        // Trả về toàn bộ thông tin user cần thiết
+        res.json(rows[0]);
+    } catch (err) {
+        console.error('Lỗi khi lấy avatar từ DB:', err);
+        res.status(500).json({ error: 'Lỗi server' });
+    }
+});
 router.post("/forgot-password", forgotPasswordController);
 router.post("/verify-otp", verifyOtpController);
 router.post("/reset-password", resetPasswordController);
-
-
 
 module.exports = router;

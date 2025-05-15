@@ -55,6 +55,11 @@ app.use(cors({
   credentials: true
 }));
 
+app.use(express.json({limit: '10mb'}));
+const bodyParser = require('body-parser');
+app.use(bodyParser.json({limit: '10mb'}));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+
 app.options('*', cors()); // Đáp ứng tất cả các yêu cầu OPTIONS
 
 // Middleware
