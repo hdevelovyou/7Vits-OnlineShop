@@ -13,6 +13,12 @@ import { FaHouse } from "react-icons/fa6";
 import { MdEmojiEvents, MdLogout } from "react-icons/md";
 const menuItems = [
   {
+    name: "Ví",
+    icon: <FaWallet />,
+    path: ROUTES.USER.TOPUP,
+    isWallet: true,
+  },
+  {
     name: "Trang chủ",
     icon: <FaHouse />,
     path: ROUTES.USER.HOME,
@@ -32,6 +38,7 @@ const menuItems = [
     icon: <MdLogout />,
     path: "/",
   },
+  
 ];
 
 const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLoggedIn và setIsLoggedIn
@@ -95,7 +102,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
     setIsLoggedIn(false); // Gọi setIsLoggedIn để cập nhật trạng thái đăng nhập về false khi logout
     localStorage.removeItem("token"); // Xóa token
     localStorage.removeItem("userId"); // Xóa userId
-    window.location.href = "/"; // Tải lại trang để cập nhật giao diện
+    window.location.href = "/"; 
   };
 
   return (
@@ -248,6 +255,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
                                       menu.name !=="Key Bản quyền" &&
                                       menu.name !=="Key Game" &&
                                       menu.name !=="Tài khoản Game" 
+                                      && menu.name !=="Ví"
                       ) 
                       .map((menu, menuKey) => (
                         <li key={menuKey}>

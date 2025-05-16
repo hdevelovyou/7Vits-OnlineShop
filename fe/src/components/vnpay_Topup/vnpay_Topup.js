@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './vnpay_Topup.css';
+import './vnpay_Topup.scss';
 
 const VnpayTopup = () => {
     const [amount, setAmount] = useState('');

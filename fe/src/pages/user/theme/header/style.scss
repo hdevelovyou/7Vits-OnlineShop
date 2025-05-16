@@ -356,6 +356,46 @@ html {
     }
 }
 
+
+.login-btn-header,
+.signup-btn,
+.topup-btn,
+.logout-btn {
+    font-size: 15px;
+    color: #ffffff;
+    padding: 8px 15px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    margin-left: 10px;
+    font-weight: 500;
+    min-width: 105px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    text-decoration: none;
+}
+
+.login-btn-header:hover,
+.signup-btn:hover,
+.topup-btn:hover,
+.logout-btn:hover {
+    background-color: #353535;
+    color: #fff;
+}
+
+.topup-btn {
+    margin: 3rem 0;
+    background-color: #ff0000;
+    box-shadow: 0 0 1rem 0.5rem rgba(0, 0, 0, 0.5);
+    color: #fff;
+}
+
+.topup-btn:hover {
+    background-color: #6b0000;
+}
+
 @include Responsive($SMALL) {
     .form-group .sig-btn button {
         background-color: #ff4500;
@@ -368,7 +408,8 @@ html {
     .sig-btn,
     .login-btn-header,
     .profile-btn,
-    .logout-btn {
+    .logout-btn,
+    .topup-btn {
         display: none;
     }
 
@@ -547,43 +588,4 @@ html {
             }
         }
     }
-}
-
-.login-btn-header,
-.signup-btn,
-.topup-btn,
-.logout-btn {
-    font-size: 15px;
-    color: #ffffff;
-    padding: 8px 15px;
-    border: 1px solid #000;
-    border-radius: 5px;
-    margin-left: 10px;
-    font-weight: 500;
-    min-width: 105px;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s;
-    text-decoration: none;
-}
-
-.login-btn-header:hover,
-.signup-btn:hover,
-.topup-btn:hover,
-.logout-btn:hover {
-    background-color: #353535;
-    color: #fff;
-}
-
-.topup-btn {
-    margin: 3rem 0;
-    background-color: #ff0000;
-    box-shadow: 0 0 1rem 0.5rem rgba(0, 0, 0, 0.5);
-    color: #fff;
-}
-
-.topup-btn:hover {
-    background-color: #6b0000;
 }

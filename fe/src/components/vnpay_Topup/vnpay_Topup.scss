@@ -1,6 +1,8 @@
+@use "sass:map";
+@import "../../style/pages/all";
+
 .topup-container {
-  padding: 200px;
-  height: 100vh;
+  padding: 15rem 0;
 }
 
 .payment-container {
