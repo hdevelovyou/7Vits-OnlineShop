@@ -81,7 +81,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
   const handleLogout = () => {
     setIsLoggedIn(false); // Gọi setIsLoggedIn để cập nhật trạng thái đăng nhập về false khi logout
     localStorage.removeItem("token"); // Xóa token
-    window.location.href = "/login.html"; // Tải lại trang để cập nhật giao diện
+    window.location.href = "/"; // Tải lại trang để cập nhật giao diện
   };
 
   return (

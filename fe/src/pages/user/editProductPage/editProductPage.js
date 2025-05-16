@@ -4,6 +4,7 @@ import axios from 'axios';
 import '../sellProductPage/sellProductPage.scss'; // Reuse the same styles
 import '../../../utils/formatprice'; // Assuming you have a formatVND function for formatting prices
 import { formatVND } from '../../../utils/formatprice';
+
 const EditProductPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -16,6 +17,8 @@ const EditProductPage = () => {
         status: 'active',
         notes: ''
     });
+    const [image, setImage] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
@@ -30,23 +33,26 @@ const EditProductPage = () => {
                 }
 
                 const response = await axios.get(`/api/products/${id}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    headers: { Authorization: `Bearer ${token}` }
                 });
 
+                const product = response.data;
                 setFormData({
-                    name: response.data.name,
-                    description: response.data.description,
-                    price: response.data.price,
-                    category: response.data.category,
-                    stock: response.data.stock,
-                    status: response.data.status,
-                    notes: response.data.notes || ''
+                    name: product.name,
+                    description: product.description,
+                    price: product.price.toString(),
+                    category: product.category,
+                    stock: product.stock,
+                    status: product.status,
+                    notes: product.notes || ''
                 });
+
+                if (product.image_url) {
+                    setImage(product.image_url);
+                    setPreviewUrl(product.image_url);
+                }
             } catch (err) {
                 setError('Không thể tải thông tin sản phẩm');
-                console.error(err);
             } finally {
                 setLoading(false);
             }
@@ -57,10 +63,37 @@ const EditProductPage = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
+        setFormData(prev => ({
+            ...prev,
             [name]: value
-        });
+        }));
+    };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Kiểm tra kích thước file (giới hạn 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                setError('Kích thước ảnh không được vượt quá 5MB');
+                return;
+            }
+            
+            // Kiểm tra định dạng file
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+            if (!allowedTypes.includes(file.type)) {
+                setError('Chỉ chấp nhận file ảnh (JPG, JPEG, PNG, GIF, WEBP)');
+                return;
+            }
+
+            // Convert to base64
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImage(reader.result);
+                setPreviewUrl(reader.result);
+            };
+            reader.readAsDataURL(file);
+            setError('');
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -76,17 +109,18 @@ const EditProductPage = () => {
                 return;
             }
 
-            // Format price as number
             const productData = {
                 ...formData,
                 price: parseFloat(formData.price),
-                stock: parseInt(formData.stock)
+                stock: parseInt(formData.stock),
+                image: image
             };
 
             // Send request to update product
             await axios.put(`/api/products/${id}`, productData, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
             });
 
@@ -219,6 +253,22 @@ const EditProductPage = () => {
                         <option value="inactive">Đã ẩn</option>
                         <option value="sold_out">Đã bán hết</option>
                     </select>
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="image">Ảnh sản phẩm</label>
+                    <input
+                        type="file"
+                        id="image"
+                        name="image"
+                        onChange={handleImageChange}
+                        accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
+                    />
+                    {previewUrl && (
+                        <div className="image-preview">
+                            <img src={previewUrl} alt="Preview" />
+                        </div>
+                    )}
                 </div>
 
                 <button type="submit" className="submit-button" disabled={submitting}>

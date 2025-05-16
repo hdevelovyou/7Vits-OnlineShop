@@ -58,8 +58,8 @@ WHERE table_schema = DATABASE() AND table_name = 'products' AND column_name = 'i
 
 -- Nếu cột chưa tồn tại, thêm cột mới
 SET @query = IF(@exists = 0, 
-    'ALTER TABLE products ADD COLUMN image_url VARCHAR(255) DEFAULT NULL',
-    'SELECT "Column image_url already exists"');
+    'ALTER TABLE products ADD COLUMN image_url LONGTEXT DEFAULT NULL COMMENT "Base64 encoded image data"',
+    'ALTER TABLE products MODIFY COLUMN image_url LONGTEXT DEFAULT NULL COMMENT "Base64 encoded image data"');
 
 PREPARE stmt FROM @query;
 EXECUTE stmt;

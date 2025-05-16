@@ -81,6 +81,26 @@ const MyProductsPage = () => {
   const getStatusLabel = status => ({ active: 'Đang bán', inactive: 'Đã ẩn', sold_out: 'Đã bán hết' }[status] || 'Không xác định');
   const getStatusClass = status => ({ active: 'status-active', inactive: 'status-inactive', sold_out: 'status-soldout' }[status] || '');
 
+  // Xử lý đường dẫn hình ảnh
+  const getImageUrl = (imageUrl) => {
+    if (!imageUrl) {
+        return "https://via.placeholder.com/300x300?text=No+Image";
+    }
+
+    // Nếu là base64 image thì trả về trực tiếp
+    if (imageUrl.startsWith('data:image')) {
+        return imageUrl;
+    }
+
+    // Kiểm tra nếu đường dẫn bắt đầu bằng http hoặc https thì giữ nguyên
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+        return imageUrl;
+    }
+
+    // Nếu có đường dẫn nhưng không phải là URL đầy đủ, thêm domain
+    return `${process.env.REACT_APP_API_URL}${imageUrl}`;
+  };
+
   if (loading) return <div className="loading">Đang tải...</div>;
 
   return (
@@ -115,7 +135,7 @@ const MyProductsPage = () => {
               <tbody>
                 {products.map(p => (
                   <tr key={p.id}>
-                    <td>{p.image_url ? <img src={`${process.env.REACT_APP_API_URL}${p.image_url}`} alt="" className="product-thumbnail"/> : '—'}</td>
+                    <td>{p.image_url ? <img src={getImageUrl(p.image_url)} alt="" className="product-thumbnail"/> : '—'}</td>
                     <td><Link to={`/product/${p.id}`}>{p.name}</Link></td>
                     <td>{formatPrice(p.price)}</td>
                     <td>{p.category}</td>
@@ -157,7 +177,7 @@ const MyProductsPage = () => {
                   fullSwipe={false}
                 >
                   <div className="mobile-table-row">
-                    <div className="cell image">{p.image_url ? <img src={`${process.env.REACT_APP_API_URL}${p.image_url}`} alt=""/> : '—'}</div>
+                    <div className="cell image">{p.image_url ? <img src={getImageUrl(p.image_url)} alt=""/> : '—'}</div>
                     <div className="cell name"><Link to={`/product/${p.id}`}>{p.name}</Link></div>
                     <div className="cell price">{formatPrice(p.price)}</div>
                     <div className="cell category">{p.category}</div>

@@ -140,16 +140,22 @@ const StorePage = () => {
     
     // Xử lý đường dẫn hình ảnh
     const getImageUrl = (imageUrl) => {
-        // Kiểm tra nếu đường dẫn bắt đầu bằng http hoặc https thì giữ nguyên
-        if (imageUrl && (imageUrl.startsWith('http://') || imageUrl.startsWith('https://'))) {
+        if (!imageUrl) {
+            return "https://via.placeholder.com/300x300?text=No+Image";
+        }
+
+        // Nếu là base64 image thì trả về trực tiếp
+        if (imageUrl.startsWith('data:image')) {
             return imageUrl;
         }
-        // Nếu có đường dẫn nhưng không phải là URL đầy đủ, thêm domain
-        else if (imageUrl) {
-            return `${process.env.REACT_APP_API_URL}${imageUrl}`;
+
+        // Kiểm tra nếu đường dẫn bắt đầu bằng http hoặc https thì giữ nguyên
+        if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+            return imageUrl;
         }
-        // Nếu không có đường dẫn, trả về ảnh mặc định
-        return "https://via.placeholder.com/300x300?text=No+Image";
+
+        // Nếu có đường dẫn nhưng không phải là URL đầy đủ, thêm domain
+        return `${process.env.REACT_APP_API_URL}${imageUrl}`;
     };
 
     return (

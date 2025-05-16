@@ -94,8 +94,13 @@ const ProductPage = ({ cart, setCart }) => {
             return "https://via.placeholder.com/300x300?text=No+Image";
         }
 
+        // Nếu là base64 image thì trả về trực tiếp
+        if (imageUrl.startsWith('data:image')) {
+            return imageUrl;
+        }
+
         // Kiểm tra nếu đường dẫn bắt đầu bằng http hoặc https thì giữ nguyên
-        if (imageUrl && (imageUrl.startsWith('http://') || imageUrl.startsWith('https://'))) {
+        if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
             return imageUrl;
         }
 

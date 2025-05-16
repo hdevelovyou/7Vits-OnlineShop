@@ -58,8 +58,13 @@ const SellProductPage = () => {
                 return;
             }
 
-            setImage(file);
-            setPreviewUrl(URL.createObjectURL(file));
+            // Convert to base64
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImage(reader.result);
+                setPreviewUrl(reader.result);
+            };
+            reader.readAsDataURL(file);
             setError('');
         }
     };
@@ -81,24 +86,21 @@ const SellProductPage = () => {
             // Format price as number (remove dots and convert to number)
             const priceValue = parseFloat(formData.price.replace(/\./g, ''));
             
-            const productData = new FormData();
-            productData.append('name', formData.name);
-            productData.append('description', formData.description);
-            productData.append('price', priceValue);
-            productData.append('category', formData.category);
-            productData.append('stock', parseInt(formData.stock));
-            productData.append('notes', formData.notes);
-            
-            // Thêm ảnh vào form data nếu có
-            if (image) {
-                productData.append('image', image);
-            }
+            const productData = {
+                name: formData.name,
+                description: formData.description,
+                price: priceValue,
+                category: formData.category,
+                stock: parseInt(formData.stock),
+                notes: formData.notes,
+                image: image
+            };
 
             // Send request to create product
             const response = await axios.post('/api/products', productData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'application/json'
                 }
             });
 
@@ -113,7 +115,7 @@ const SellProductPage = () => {
     };
 
     const categories = [
-       'Game','Key','Tài khoản game'
+        'Game', 'Key', 'Tài khoản game'
     ];
 
     return (
@@ -150,7 +152,7 @@ const SellProductPage = () => {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="price">Giá (VND) *</label>
+                    <label htmlFor="price">Giá sản phẩm (VNĐ) *</label>
                     <input
                         type="text"
                         id="price"
@@ -158,8 +160,7 @@ const SellProductPage = () => {
                         value={formData.price}
                         onChange={handleChange}
                         required
-                        placeholder="Nhập giá sản phẩm (VD: 99.000)"
-                        pattern="[0-9.]*"
+                        placeholder="Nhập giá sản phẩm"
                     />
                 </div>
 
@@ -172,9 +173,9 @@ const SellProductPage = () => {
                         onChange={handleChange}
                         required
                     >
-                        <option value="" disabled>Chọn danh mục</option>
-                        {categories.map((category) => (
-                            <option key={category} value={category}>
+                        <option value="">Chọn danh mục</option>
+                        {categories.map((category, index) => (
+                            <option key={index} value={category}>
                                 {category}
                             </option>
                         ))}
@@ -191,20 +192,21 @@ const SellProductPage = () => {
                         onChange={handleChange}
                         required
                         min="1"
+                        placeholder="Nhập số lượng"
                     />
                 </div>
-                
+
                 <div className="form-group">
-                    <label htmlFor="notes">Ghi chú (Key, thông tin đăng nhập)</label>
+                    <label htmlFor="notes">Ghi chú</label>
                     <textarea
                         id="notes"
                         name="notes"
                         value={formData.notes}
                         onChange={handleChange}
-                        placeholder="Nhập key, thông tin đăng nhập hoặc các thông tin khác cho sản phẩm"
+                        placeholder="Nhập thông tin key, tài khoản, mật khẩu hoặc các thông tin khác"
                         rows={3}
                     />
-                    <small className="notes-helper">Thông tin này sẽ được hiển thị cho người mua sau khi họ mua hàng</small>
+                    <p className="notes-helper">Lưu ý: Thông tin này sẽ được hiển thị cho người mua sau khi thanh toán thành công</p>
                 </div>
 
                 <div className="form-group">

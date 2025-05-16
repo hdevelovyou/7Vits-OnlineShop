@@ -43,6 +43,11 @@ const Homepage = () => {
     const getImageUrl = (imageUrl) => {
         if (!imageUrl) return "https://via.placeholder.com/300x300?text=No+Image";
         
+        // Xử lý ảnh base64
+        if (imageUrl.startsWith('data:image')) {
+            return imageUrl;
+        }
+        
         if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
             return imageUrl;
         }
