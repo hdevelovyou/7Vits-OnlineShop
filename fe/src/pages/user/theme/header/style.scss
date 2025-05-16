@@ -207,7 +207,7 @@
 .logout-btn {
     margin: 3rem 0 3rem 1rem;
     border: none;
-    background: #ff0000;
+    background: #696969;
     color: white;
     padding: 1rem 1rem;
     box-shadow: 0 0 1rem 0.5rem rgba(0, 0, 0, 0.5);
@@ -554,7 +554,7 @@ html {
 .topup-btn,
 .logout-btn {
     font-size: 15px;
-    color: #222;
+    color: #ffffff;
     padding: 8px 15px;
     border: 1px solid #000;
     border-radius: 5px;
@@ -573,17 +573,17 @@ html {
 .signup-btn:hover,
 .topup-btn:hover,
 .logout-btn:hover {
-    background-color: #000;
+    background-color: #353535;
     color: #fff;
 }
 
 .topup-btn {
-    background-color: #3498db;
-    border-color: #3498db;
+    margin: 3rem 0;
+    background-color: #ff0000;
+    box-shadow: 0 0 1rem 0.5rem rgba(0, 0, 0, 0.5);
     color: #fff;
 }
 
 .topup-btn:hover {
-    background-color: #2980b9;
-    border-color: #2980b9;
+    background-color: #6b0000;
 }

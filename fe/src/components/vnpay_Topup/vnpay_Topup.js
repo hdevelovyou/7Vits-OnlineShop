@@ -88,31 +88,33 @@ const VnpayTopup = () => {
       };
 
       return(
-         <div className="payment-container">
-             <h1>Nạp tiền vào ví</h1>
-             {userName && <p className="user-greeting">Xin chào, {userName}!</p>}
-             <div className="payment-form">
-                <div className="amount-options">
-                    <h2>Chọn số tiền cần nạp:</h2>
-                    <div className="amount-buttons">
-                        <button onClick={() => handleAmountSelect(50000)}>50.000đ</button>
-                        <button onClick={() => handleAmountSelect(100000)}>100.000đ</button>
-                        <button onClick={() => handleAmountSelect(200000)}>200.000đ</button>
-                        <button onClick={() => handleAmountSelect(500000)}>500.000đ</button>
+         <div className='topup-container'>
+             <div className="payment-container">
+                 <h1>Nạp tiền vào ví</h1>
+                 {userName && <p className="user-greeting">Xin chào, {userName}!</p>}
+                 <div className="payment-form">
+                    <div className="amount-options">
+                        <h2>Chọn số tiền cần nạp:</h2>
+                        <div className="amount-buttons">
+                            <button onClick={() => handleAmountSelect(50000)}>50.000đ</button>
+                            <button onClick={() => handleAmountSelect(100000)}>100.000đ</button>
+                            <button onClick={() => handleAmountSelect(200000)}>200.000đ</button>
+                            <button onClick={() => handleAmountSelect(500000)}>500.000đ</button>
+                        </div>
+                        <div className="selected-amount">
+                            {amount ? `Số tiền đã chọn: ${amount.toLocaleString()}đ` : 'Vui lòng chọn số tiền'}
+                        </div>
+                        <button 
+                            className="pay-button"
+                            onClick={handlePayment}
+                            disabled={loading || !amount}
+                        >
+                            {loading ? 'Đang xử lý...' : 'Thanh toán ngay'}
+                        </button>
                     </div>
-                    <div className="selected-amount">
-                        {amount ? `Số tiền đã chọn: ${amount.toLocaleString()}đ` : 'Vui lòng chọn số tiền'}
-                    </div>
-                    <button 
-                        className="pay-button"
-                        onClick={handlePayment}
-                        disabled={loading || !amount}
-                    >
-                        {loading ? 'Đang xử lý...' : 'Thanh toán ngay'}
-                    </button>
-                </div>
-             </div>
-          </div>
+                 </div>
+              </div>
+         </div>
        );
 };
 

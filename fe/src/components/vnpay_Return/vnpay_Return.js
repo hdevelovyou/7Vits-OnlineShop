@@ -103,7 +103,7 @@ const VnpayReturn = () => {
 
   if (paymentResult.loading) {
     return (
-      <div className="payment-return-container loading">
+      <div className="loading-container">
         <div className="payment-loading">
           <div className="loading-spinner"></div>
           <p>Đang xử lý kết quả thanh toán...</p>
@@ -113,68 +113,72 @@ const VnpayReturn = () => {
   }
 
   return (
-    <div className={`payment-return-container ${paymentResult.success ? 'success' : 'failed'}`}>
-      <div className="payment-status-icon">
-        {paymentResult.success ? (
-          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-          </svg>
-        ) : (
-          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="15" y1="9" x2="9" y2="15"></line>
-            <line x1="9" y1="9" x2="15" y2="15"></line>
-          </svg>
-        )}
-      </div>
-      
-      <h1 className="payment-status">{paymentResult.message}</h1>
-      
-      {paymentResult.success && paymentResult.transactionId && (
-        <div className="payment-details">
-          <div className="detail-item">
-            <span className="detail-label">Mã giao dịch:</span>
-            <span className="detail-value">{paymentResult.transactionId}</span>
-          </div>
-          
-          {paymentResult.amount && (
-            <div className="detail-item">
-              <span className="detail-label">Số tiền:</span>
-              <span className="detail-value">{paymentResult.amount} VNĐ</span>
-            </div>
-          )}
-          
-          {paymentResult.orderInfo && (
-            <div className="detail-item">
-              <span className="detail-label">Nội dung thanh toán:</span>
-              <span className="detail-value">{paymentResult.orderInfo}</span>
-            </div>
-          )}
-          
-          {paymentResult.paymentTime && (
-            <div className="detail-item">
-              <span className="detail-label">Thời gian thanh toán:</span>
-              <span className="detail-value">{paymentResult.paymentTime}</span>
-            </div>
-          )}
-          
-          {paymentResult.transactionNo && (
-            <div className="detail-item">
-              <span className="detail-label">Mã giao dịch VNPay:</span>
-              <span className="detail-value">{paymentResult.transactionNo}</span>
-            </div>
+    <div className='payment-return-container-main'>
+      <div className={`payment-return-container ${paymentResult.success ? 'success' : 'failed'}`}>
+        <div className="payment-status-icon">
+          {paymentResult.success ? (
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="15" y1="9" x2="9" y2="15"></line>
+              <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
           )}
         </div>
-      )}
-      
-      <button className="continue-topup-button" onClick={handleBackToPayment}>
-        Tiếp tục nạp tiền
-      </button>
-      <button className="back-button" onClick={handleBackToHome}>
-        Quay lại trang mua hàng
-      </button>
-
+        
+        <h1 className="payment-status">{paymentResult.message}</h1>
+        
+        {paymentResult.success && paymentResult.transactionId && (
+          <div className="payment-details">
+            <div className="detail-item">
+              <span className="detail-label">Mã giao dịch:</span>
+              <span className="detail-value">{paymentResult.transactionId}</span>
+            </div>
+            
+            {paymentResult.amount && (
+              <div className="detail-item">
+                <span className="detail-label">Số tiền:</span>
+                <span className="detail-value">{paymentResult.amount} VNĐ</span>
+              </div>
+            )}
+            
+            {paymentResult.orderInfo && (
+              <div className="detail-item">
+                <span className="detail-label">Nội dung thanh toán:</span>
+                <span className="detail-value">{paymentResult.orderInfo}</span>
+              </div>
+            )}
+            
+            {paymentResult.paymentTime && (
+              <div className="detail-item">
+                <span className="detail-label">Thời gian thanh toán:</span>
+                <span className="detail-value">{paymentResult.paymentTime}</span>
+              </div>
+            )}
+            
+            {paymentResult.transactionNo && (
+              <div className="detail-item">
+                <span className="detail-label">Mã giao dịch VNPay:</span>
+                <span className="detail-value">{paymentResult.transactionNo}</span>
+              </div>
+            )}
+          </div>
+        )}
+        
+      <div className='button-group'>
+          <button className="continue-topup-button" onClick={handleBackToPayment}>
+            Tiếp tục nạp tiền
+          </button>
+          <button className="back-button" onClick={handleBackToHome}>
+            Quay lại trang mua hàng
+          </button>
+      </div>
+  
+      </div>
     </div>
   );
 };

@@ -1,55 +1,62 @@
+.payment-return-container-main {
+  padding: 200px;
+  height: 100vh;
+}
+
 .payment-return-container {
   max-width: 800px;
   margin: 50px auto;
   padding: 40px;
   border-radius: 12px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  background-color: #212121;
   text-align: center;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   transition: all 0.3s ease;
 }
 
 .payment-return-container.success {
-  border-top: 5px solid #2ecc71;
+  border-top: 5px solid #ff0000;
 }
 
 .payment-return-container.failed {
-  border-top: 5px solid #e74c3c;
+  border-top: 5px solid #ff0000;
 }
 
 .payment-status-icon {
   margin-bottom: 20px;
+  color: #1eff00;
 }
 
 .payment-return-container.success .payment-status-icon {
-  color: #2ecc71;
+  color: #ff0000;
 }
 
 .payment-return-container.failed .payment-status-icon {
-  color: #e74c3c;
+  color: #ff0000;
 }
 
 .payment-status {
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 600;
   margin-bottom: 30px;
-  color: #2c3e50;
+  color: #1eff00;
 }
 
 .payment-details {
-  background-color: #f8f9fa;
+  background-color: #2c2c2c;
   padding: 25px;
   border-radius: 10px;
   margin-bottom: 30px;
   text-align: left;
+  font-size: 20px;
 }
 
 .detail-item {
   display: flex;
   justify-content: space-between;
   padding: 12px 0;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #444444;
 }
 
 .detail-item:last-child {
@@ -58,28 +65,34 @@
 
 .detail-label {
   font-weight: 600;
-  color: #7f8c8d;
+  color: #b0b0b0;
 }
 
 .detail-value {
   font-weight: 500;
-  color: #2c3e50;
+  color: #e0e0e0;
 }
 
 .back-button {
-  background-color: #3498db;
+  background-color: #ff0000;
   color: white;
   border: none;
   padding: 15px 30px;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 .back-button:hover {
-  background-color: #2980b9;
+  background-color: #cc0000;
+}
+
+
+.loading-container {
+  padding-top: 200px;
+  height: 100vh;
 }
 
 .payment-loading {
@@ -93,12 +106,35 @@
 .loading-spinner {
   width: 50px;
   height: 50px;
-  border: 5px solid #f3f3f3;
-  border-top: 5px solid #3498db;
+  border: 5px solid #333333;
+  border-top: 5px solid #ff0000;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 20px;
 }
+.continue-topup-button {
+  background-color: #868686;
+  color: white;
+  border: none;
+  padding: 15px 65px;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.continue-topup-button:hover {
+  background-color: #666666;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+}
+
+
 
 @keyframes spin {
   0% { transform: rotate(0deg); }

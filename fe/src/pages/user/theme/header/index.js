@@ -23,41 +23,11 @@ const menuItems = [
     path: ROUTES.USER.STORE,
   },
   {
-    name: "Danh mục",
-    isShowSubmenu: false,
-    child: [
-      { name: "Tài khoản Game", path: "/" },
-      { name: "Key Bản quyền", path: "/" },
-      { name: "Key Game", path: "/" },
-    ],
-  },
-
-  {
-    name: "Tài khoản Game",
-    icon: <FaGamepad />,
-    path: "/tai-khoan-game",
-  },
-  {
-    name: "Key Bản quyền",
-    icon: <FaKey />,
-    path: "/key-ban-quyen",
-  },
-  {
-    name: "Key Game",
-    icon: <FaKey />,
-    path: "/key-game",
-  },
-  {
-    name: "Sự kiện",
+    name: "Chính sách",
     icon: <MdEmojiEvents />,
     path: "/su-kien",
   },
-  {
-    name: "Nạp tiền",
-    icon: <FaWallet />,
-    path: ROUTES.USER.TOPUP,
-  },
-  {
+ {
     name: "Đăng xuất",
     icon: <MdLogout />,
     path: "/",
@@ -68,6 +38,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHumbergerMenuOpen, setIsHumbergerMenuOpen] = useState(false);
   const [isShowSubmenu, setIsShowSubmenu] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -78,9 +49,52 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    // Fetch wallet balance when user is logged in
+    if (isLoggedIn) {
+      fetchWalletBalance();
+      
+      // Refresh balance when tab becomes visible again
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+      
+      // Setup interval to refresh balance every minute when the app is active
+      const balanceInterval = setInterval(fetchWalletBalance, 60000);
+      
+      return () => {
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        clearInterval(balanceInterval);
+      };
+    }
+  }, [isLoggedIn]);
+  
+  const handleVisibilityChange = () => {
+    if (document.visibilityState === 'visible') {
+      fetchWalletBalance();
+    }
+  };
+
+  const fetchWalletBalance = async () => {
+    try {
+      const userId = localStorage.getItem("userId");
+      if (!userId) return;
+
+      const response = await fetch(`/api/auth/wallet-balance?userId=${userId}`);
+      const data = await response.json();
+      
+      if (response.ok) {
+        setWalletBalance(data.balance);
+      } else {
+        console.error("Failed to fetch wallet balance:", data.error);
+      }
+    } catch (error) {
+      console.error("Error fetching wallet balance:", error);
+    }
+  };
+
   const handleLogout = () => {
     setIsLoggedIn(false); // Gọi setIsLoggedIn để cập nhật trạng thái đăng nhập về false khi logout
     localStorage.removeItem("token"); // Xóa token
+    localStorage.removeItem("userId"); // Xóa userId
     window.location.href = "/"; // Tải lại trang để cập nhật giao diện
   };
 
@@ -97,7 +111,8 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
           </div>
           <ul>
             {menuItems.filter(menu=>menu.name!=="Danh mục").map((menu, menuKey) => {
-              if (menu.name === "Đăng xuất" && !isLoggedIn) return null; // Nếu không đăng nhập thì không hiển thị mục "Đăng xuất") {
+              if (menu.name === "Đăng xuất" && !isLoggedIn) return null; // Nếu không đăng nhập thì không hiển thị mục "Đăng xuất"
+              if (menu.name === "Ví" && !isLoggedIn) return null; // Không hiển thị mục "Ví" nếu chưa đăng nhập
 
               return (
                 <li key={menuKey}
@@ -134,6 +149,18 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
                       {menu.icon}
                       <span>{menu.name}</span>
                    
+                    </Link>
+                  ) : menu.isWallet ? (
+                    // Hiển thị số dư ví
+                    <Link
+                      to={menu.path}
+                      onClick={() => {
+                        window.scrollTo(0, 0);
+                        setIsHumbergerMenuOpen(false);
+                      }}
+                    >
+                      {menu.icon}
+                      <span>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(walletBalance)}</span>
                     </Link>
                   ) : (
                     // Các mục khác: đóng menu và chuyển hướng
@@ -282,7 +309,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
                     <>
                       <Link to={ROUTES.USER.TOPUP} onClick={() => window.scrollTo(0, 0)} className="topup-btn">
                         <FaWallet style={{ marginRight: '5px' }} />
-                        Nạp tiền
+                        {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(walletBalance)}
                       </Link>
                       <Link to="/" onClick={handleLogout} className="logout-btn">
                         Đăng xuất

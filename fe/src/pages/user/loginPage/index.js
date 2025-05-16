@@ -82,6 +82,7 @@ const LoginPage = ({ setIsLoggedIn }) => {
             };
             localStorage.setItem("token", data.token);
             localStorage.setItem("user", JSON.stringify(mergedUser));
+            localStorage.setItem("userId", data.user.id);
 
             // Kiểm tra setIsLoggedIn trước khi gọi
             if (setIsLoggedIn && typeof setIsLoggedIn === 'function') {

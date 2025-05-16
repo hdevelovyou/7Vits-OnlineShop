@@ -11,6 +11,7 @@ const ProfilePage = () => {
         email: "",
         createdAt: "",
         avatarUrl: "",
+        displayName: "",
     });
     const [isEditing, setIsEditing] = useState(false);
     const [newUserName, setNewUserName] = useState("");
@@ -79,6 +80,7 @@ const ProfilePage = () => {
                 email: parsedUser.email || "",
                 createdAt: parsedUser.createdAt || "",
                 avatarUrl: parsedUser.avatarUrl || "",
+                displayName: parsedUser.displayName || "",
             });
             setNewUserName(parsedUser.userName || "");
 
@@ -105,7 +107,18 @@ const ProfilePage = () => {
                 } else {
                     setAvatarUrl(defaultAvatarUrl);
                 }
-                setUser(data);
+                
+                // Kết hợp dữ liệu từ API với dữ liệu hiện tại, giữ lại các trường từ state hiện tại nếu API không trả về
+                setUser(prevUser => ({
+                    ...prevUser,
+                    userName: data.userName || prevUser.userName,
+                    firstName: data.firstName || prevUser.firstName,
+                    lastName: data.lastName || prevUser.lastName,
+                    email: data.email || prevUser.email,
+                    createdAt: data.createdAt || prevUser.createdAt, 
+                    avatarUrl: data.avatarUrl || prevUser.avatarUrl,
+                    displayName: data.displayName || prevUser.displayName
+                }));
             } catch (err) {
                 setAvatarUrl(defaultAvatarUrl);
             }
@@ -244,7 +257,11 @@ const ProfilePage = () => {
                         <div className="info-row">
                             <label>Họ và tên:</label>
                             <div className="info-value">
-                                <span>{`${user.firstName} ${user.lastName}`}</span>
+                                <span>
+                                    {user.firstName || user.lastName 
+                                        ? `${user.firstName || ''} ${user.lastName || ''}`.trim() 
+                                        : user.displayName || 'Chưa cập nhật'}
+                                </span>
                             </div>                         
                         </div>
                         <div className="info-row">
