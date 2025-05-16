@@ -31,12 +31,29 @@ exports.register = async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, 10);
       
       console.log('Inserting new user...');
-      await db.query(
+      const [insertResult] = await db.query(
         'INSERT INTO users (firstName, lastName, userName, email, password) VALUES (?, ?, ?, ?, ?)',
         [firstName, lastName, userName, email, hashedPassword]
       );
       
-      console.log('User registered successfully');
+      // Get the new user ID
+      const userId = insertResult.insertId;
+      console.log('User registered successfully with ID:', userId);
+      
+      // Create wallet for new user with initial balance 0
+      try {
+        console.log('Creating wallet for new user...');
+        await db.query(
+          'INSERT INTO user_wallets (user_id, balance) VALUES (?, 0)',
+          [userId]
+        );
+        console.log('Wallet created successfully for user:', userId);
+      } catch (walletErr) {
+        console.error('Error creating wallet:', walletErr);
+        // We don't return an error here as the user registration was successful
+        // But we log the error for monitoring purposes
+      }
+      
       res.json({ message: 'Đăng ký thành công' });
     } catch (dbErr) {
       console.error('Database error:', dbErr);

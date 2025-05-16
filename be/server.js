@@ -17,6 +17,8 @@ const crypto = require('crypto');
 const authRouter = require('./routes/authRouter');
 const messageController = require('./controllers/messageController');
 const { bodyParserMiddleware, urlEncodedMiddleware } = require('./middleware/bodyParser');
+const vnpayRoutes = require('./routes/vnpay_routes');
+
 
 const app = express();
 
@@ -93,6 +95,7 @@ app.use("/api/comments", commentRoutes);
 app.use('/api/ratings', ratingRoutes);
 app.use('/api', productRoutes);
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/topup', vnpayRoutes);
 
 // Test route for checking if the API is working
 app.get('/api/test', (req, res) => {
