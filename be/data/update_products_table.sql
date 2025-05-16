@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
     googleId VARCHAR(255),
     profilePic VARCHAR(255),
     facebookId VARCHAR(255),
-    displayName VARCHAR(255)
+    displayName VARCHAR(255),
+    avatarUrl LONGTEXT
 );
 -- database rating
 CREATE TABLE IF NOT EXISTS ratings (
@@ -21,6 +22,13 @@ CREATE TABLE IF NOT EXISTS ratings (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+CREATE TABLE messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id INT,
+    receiver_id INT,
+    message TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS comments (

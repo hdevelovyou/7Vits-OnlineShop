@@ -198,15 +198,6 @@ io.on('connection', (socket) => {
     
     // Save message to database
     await messageController.saveSocketMessage(sender_id, receiver_id, message);
-    try {
-      await db.query(
-        'INSERT INTO messages (sender_id, receiver_id, message) VALUES (?, ?, ?)',
-        [sender_id, receiver_id, message]
-      );
-      console.log('Message saved to database');
-    } catch (err) {
-      console.error('Error saving message:', err);
-    }
   });
 
   socket.on('disconnect', () => {
@@ -225,7 +216,8 @@ app.post('/api/messages', messageController.sendMessage);
 
 // Route lấy tin nhắn giữa hai người dùng
 app.get('/api/messages/:sender_id/:receiver_id', messageController.getMessages);
-
+// Route lấy tất cả tin nhắn của một người dùng
+app.get('/api/conversations/:userId', messageController.getConversations);
 // Server start
 const PORT = process.env.PORT || 5000;
 console.log('--- Các route đang được khai báo ---');

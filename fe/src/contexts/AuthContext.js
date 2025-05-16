@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
                 const token = localStorage.getItem('token');
                 if (!token) throw new Error('No token found');
 
-                const response = await axios.get('http://localhost:5000/api/auth/me', {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/me`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
