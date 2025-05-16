@@ -21,6 +21,8 @@ import Chat from "./components/Chat"; // Đường dẫn tới component Chat c�
 import SellProductPage from "./pages/user/sellProductPage/sellProductPage";
 import MyProductsPage from "./pages/user/myProductPage/myProductPage";
 import EditProductPage from "./pages/user/editProductPage/editProductPage";
+import VnpayTopup from "./components/vnpay_Topup/vnpay_Topup";
+import VnpayReturn from "./components/vnpay_Return/vnpay_Return";
 
 const renderUserRoutes = () => {
     return (
@@ -47,6 +49,8 @@ const renderUserRoutes = () => {
                     <Route path={ROUTES.USER.SELL_PRODUCT} element={<SellProductPage />} />
                     <Route path={ROUTES.USER.MY_PRODUCTS} element={<MyProductsPage />} />
                     <Route path={ROUTES.USER.EDIT_PRODUCT} element={<EditProductPage />} />
+                    <Route path="/topup" element={<VnpayTopup />} />
+                    <Route path="/payment/vnpay_return" element={<VnpayReturn />} />
                 </Routes>
             )}
         </MasterLayout>

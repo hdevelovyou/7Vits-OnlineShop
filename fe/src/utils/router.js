@@ -19,5 +19,6 @@ export const ROUTES = {
         MY_PRODUCTS: '/my-products',
         EDIT_PRODUCT: '/edit-product/:id',
         CHAT: '/chat/:receiverId',
+        TOPUP: '/topup',
     }
 }

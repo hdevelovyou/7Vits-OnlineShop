@@ -53,6 +53,11 @@ const menuItems = [
     path: "/su-kien",
   },
   {
+    name: "Nạp tiền",
+    icon: <FaWallet />,
+    path: ROUTES.USER.TOPUP,
+  },
+  {
     name: "Đăng xuất",
     icon: <MdLogout />,
     path: "/",
@@ -275,6 +280,10 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
                   </ul>
                   {isLoggedIn ? (
                     <>
+                      <Link to={ROUTES.USER.TOPUP} onClick={() => window.scrollTo(0, 0)} className="topup-btn">
+                        <FaWallet style={{ marginRight: '5px' }} />
+                        Nạp tiền
+                      </Link>
                       <Link to="/" onClick={handleLogout} className="logout-btn">
                         Đăng xuất
                       </Link>

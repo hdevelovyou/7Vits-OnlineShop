@@ -64,8 +64,6 @@
     }
 }
 
-
-
 .header-menu {
     padding: 4.0rem 0;
 
@@ -168,14 +166,11 @@
     padding: 3.6rem 1rem;
 }
 
-
-
 .profile-btn {
     display: flex;
     padding: 3.6rem 1rem;
     font-size: 2.4rem;
 }
-
 
 .cart {
     display: flex;
@@ -230,14 +225,11 @@
     background-color: #000;
 }
 
-
 html {
     scroll-behavior: smooth;
 }
 
-
 @include Responsive($TABLET) {
-
     .header-menu,
     .header-top,
     .login-btn-mobile,
@@ -555,4 +547,43 @@ html {
             }
         }
     }
+}
+
+.login-btn-header,
+.signup-btn,
+.topup-btn,
+.logout-btn {
+    font-size: 15px;
+    color: #222;
+    padding: 8px 15px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    margin-left: 10px;
+    font-weight: 500;
+    min-width: 105px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    text-decoration: none;
+}
+
+.login-btn-header:hover,
+.signup-btn:hover,
+.topup-btn:hover,
+.logout-btn:hover {
+    background-color: #000;
+    color: #fff;
+}
+
+.topup-btn {
+    background-color: #3498db;
+    border-color: #3498db;
+    color: #fff;
+}
+
+.topup-btn:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
 }
