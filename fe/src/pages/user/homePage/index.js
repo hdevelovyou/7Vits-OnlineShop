@@ -103,6 +103,7 @@ const Homepage = () => {
                                             <div className="grid__column-3" key={product.id}>
                                                 <Link
                                                     to={`/product/${product.id}`}
+                                                    onClick={() => window.scrollTo(0, 0)}
                                                     className="home-product-item"
                                                     style={{ display: "block", textDecoration: "none" }}
                                                 >
