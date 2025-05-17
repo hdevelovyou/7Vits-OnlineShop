@@ -59,7 +59,7 @@ export default function Chat({ receiverId, receiverName }) {
     useEffect(() => {
         if (!user?.id || !selectedUser?.id) return;
         axios
-            .get(`/api/messages/${user.id}/${selectedUser.id}`)
+            .get(`${process.env.REACT_APP_API_URL}/api/messages/${user.id}/${selectedUser.id}`)
             .then((res) => setMessages(res.data.messages))
             .catch((err) => console.error('Error fetching messages:', err));
     }, [user?.id, selectedUser?.id]);

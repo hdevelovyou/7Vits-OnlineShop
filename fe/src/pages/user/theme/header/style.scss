@@ -137,7 +137,7 @@
         box-shadow: 0 0 1rem 0.5rem rgba(0, 0, 0, 0.5);
         text-decoration: none;
         margin-right: 1rem;
-
+        font-weight:bold;
         &:hover {
             background: #810000;
             transition-duration: 200ms;
@@ -152,7 +152,7 @@
         box-shadow: 0 0 1rem 0.5rem rgba(0, 0, 0, 0.5);
         border-radius: 0.5rem;
         text-decoration: none;
-
+        font-weight: bold;
         &:hover {
             background: #3f3f3f;
             transition-duration: 200ms;
@@ -215,7 +215,7 @@
     text-decoration: none;
     cursor: pointer;
     font-weight: bold;
-
+    
     &:hover {
         background: #480101;
     }
@@ -367,7 +367,6 @@ html {
     border: 1px solid #000;
     border-radius: 5px;
     margin-left: 10px;
-    font-weight: 500;
     min-width: 105px;
     text-align: center;
     display: flex;

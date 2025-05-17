@@ -10,7 +10,7 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     if (user?.id) {
-      const newSocket = io('http://localhost:5000', {
+      const newSocket = io(process.env.REACT_APP_API_URL, {
         query: { userId: user.id }, // nếu backend cần userId
         transports: ['websocket'],
       });

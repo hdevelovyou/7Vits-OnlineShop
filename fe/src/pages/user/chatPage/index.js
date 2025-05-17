@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import Chat from '../../../components/Chat'; // Đường dẫn tới component Chat của bạn
+import Chat from '../../../components/Chat'; 
 
 export default function ChatPage() {
   
@@ -9,11 +9,9 @@ export default function ChatPage() {
 
     const receiverId = parseInt(id);
     const receiverName = searchParams.get('receiverName');
-    // giả lập tên người nhận (nếu chưa lấy từ server)
 
     return (
         <div>
-            <h2>Trang nhắn tin</h2>
             <Chat receiverId={receiverId} receiverName={receiverName} />
         </div>
     );
