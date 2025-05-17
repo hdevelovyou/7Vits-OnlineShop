@@ -459,6 +459,26 @@
             box-shadow: 0 0 0 2px rgba(185, 28, 28, 0.4);
         }
     }
+
+    .image-upload-toggle {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #b91c1c;
+        margin-right: 0.5rem;
+
+        &:hover {
+            color: #fff;
+        }
+    }
+}
+
+.chat-image {
+    max-width: 200px;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(185, 28, 28, 0.6);
 }
 
 .chat-page~ #footer {

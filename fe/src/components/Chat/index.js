@@ -17,6 +17,7 @@ export default function Chat({ receiverId, receiverName }) {
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const fileInputRef = useRef(null);
 
 
     // Fetch conversations
@@ -102,6 +103,28 @@ export default function Chat({ receiverId, receiverName }) {
         });
     };
 
+    // Send image
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (!file || !user || !socket || !selectedUser) return;
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            // Gửi base64 dạng chuỗi thẳng vào message
+            const payload = {
+                sender_id: user.id,
+                receiver_id: selectedUser.id,
+                message: reader.result, // base64 string ở đây
+                created_at: new Date().toISOString(),
+            };
+            socket.emit('private_message', payload);
+            setMessages((prev) => [...prev, payload]);
+            updateSidebar(payload);
+        };
+        reader.readAsDataURL(file);
+        e.target.value = '';
+    };
+
     // Send message
     const send = (e) => {
         e.preventDefault();
@@ -149,12 +172,20 @@ export default function Chat({ receiverId, receiverName }) {
                         <div className="chat-window">
                            
                             <div className="messages">
-                                {messages.map((m, i) => (
-                                    <div key={i} className={m.sender_id === user.id ? 'mine' : 'theirs'}>
-                                        <span>{m.message}</span>
-                                        <small>{new Date(m.created_at).toLocaleTimeString()}</small>
-                                    </div>
-                                ))}
+                                {messages.map((m, i) => {
+                                    // Kiểm tra xem message có phải base64 ảnh không (thường sẽ bắt đầu bằng "data:image")
+                                    const isImage = m.message.startsWith('data:image');
+                                    return (
+                                        <div key={i} className={m.sender_id === user.id ? 'mine' : 'theirs'}>
+                                            {isImage ? (
+                                                <img src={m.message} alt="sent-img" className="chat-image" />
+                                            ) : (
+                                                <span>{m.message}</span>
+                                            )}
+                                            <small>{new Date(m.created_at).toLocaleTimeString()}</small>
+                                        </div>
+                                    );
+                                })}
                                 <div ref={messagesEndRef} />
                             </div>
                             <form onSubmit={send} className="chat-input">
@@ -166,6 +197,21 @@ export default function Chat({ receiverId, receiverName }) {
                                     😊
                                 </button>
 
+                                <button
+                                    type="button"
+                                    className="image-upload-toggle"
+                                    onClick={() => fileInputRef.current.click()}
+                                >
+                                    📷
+                                </button>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    style={{ display: 'none' }}
+                                    ref={fileInputRef}
+                                    onChange={handleImageChange}
+                                />
+
                                 {showEmojiPicker && (
                                     <div className="emoji-picker-container">
                                         <EmojiPicker onEmojiClick={(emojiData) => setInput((prev) => prev + emojiData.emoji)} />
@@ -174,7 +220,7 @@ export default function Chat({ receiverId, receiverName }) {
                                 <input
                                     ref={inputRef}
                                     value={input}
-                                    onChange={(e) => setInput(e.target.value)}
+                                    onChange={(e) => setInput(e.target.value)} 
                                     placeholder="Nhập tin nhắn..."
                                 />
                                 <button type="submit">Gửi</button>
