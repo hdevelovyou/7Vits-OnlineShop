@@ -32,7 +32,7 @@ const Footer = () => {
                     <div className="container-footer">
                         <div className="col-md-6 col-sm-12 col-lg-3 col-xl-3 footer-bottom-left">
                             <h3>Liên hệ</h3>
-                            <p>Địa chỉ: Hàn Thuyên, khu phố 6 P, Thủ Đức, Hồ Chí Minh</p>
+                            <p>Địa chỉ: Hàn Thuyên, khu phố 6, P. Linh Trung, TP. Thủ Đức, TP. Hồ Chí Minh</p>
                             <p>Điện thoại: 0123456789</p>
                             <p>7vits.shop@gmail.com</p> 
                             <ul>

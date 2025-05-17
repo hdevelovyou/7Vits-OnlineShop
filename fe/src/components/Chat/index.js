@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 import { useSocket } from '../../contexts/SocketContext';
+import EmojiPicker from 'emoji-picker-react';
 import './style.scss';
 
 export default function Chat({ receiverId, receiverName }) {
@@ -15,6 +16,8 @@ export default function Chat({ receiverId, receiverName }) {
     const [input, setInput] = useState('');
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
 
     // Fetch conversations
     useEffect(() => {
@@ -65,7 +68,10 @@ export default function Chat({ receiverId, receiverName }) {
     }, [user?.id, selectedUser?.id]);
 
     // Scroll to bottom
-  
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
+      
     // Focus input
     useEffect(() => {
         inputRef.current?.focus();
@@ -152,6 +158,19 @@ export default function Chat({ receiverId, receiverName }) {
                                 <div ref={messagesEndRef} />
                             </div>
                             <form onSubmit={send} className="chat-input">
+                                <button
+                                    type="button"
+                                    className="emoji-toggle"
+                                    onClick={() => setShowEmojiPicker((prev) => !prev)}
+                                >
+                                    😊
+                                </button>
+
+                                {showEmojiPicker && (
+                                    <div className="emoji-picker-container">
+                                        <EmojiPicker onEmojiClick={(emojiData) => setInput((prev) => prev + emojiData.emoji)} />
+                                    </div>
+                                )}
                                 <input
                                     ref={inputRef}
                                     value={input}
