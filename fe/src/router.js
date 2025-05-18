@@ -24,7 +24,7 @@ import EditProductPage from "./pages/user/editProductPage/editProductPage";
 import VnpayTopup from "./components/vnpay_Topup/vnpay_Topup";
 import VnpayReturn from "./components/vnpay_Return/vnpay_Return";
 import PaymentSuccessPage from "./pages/user/paymentSuccessPage";
-
+import Otpregister from "./pages/user/otpregister";
 const renderUserRoutes = () => {
     return (
         <MasterLayout>
@@ -54,6 +54,8 @@ const renderUserRoutes = () => {
                     <Route path="/payment/vnpay_return" element={<VnpayReturn />} />
                     {/* Payment success page */}
                     <Route path={ROUTES.USER.PAYMENT_SUCCESS} element={<PaymentSuccessPage />} />
+                    <Route path="/otp-for-signup" element={<Otpregister />} />
+                    {/* Add other routes here */}
                 </Routes>
             )}
         </MasterLayout>

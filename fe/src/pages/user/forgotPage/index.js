@@ -10,7 +10,7 @@ const ForgotPassword = () => {
 
     const handleSubmit = async () => {
         if (!email) {
-            setError("Vui lòng nhập email hoặc số điện thoại");
+            setError("Vui lòng nhập email");
             return;
         }
         try {

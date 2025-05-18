@@ -50,8 +50,47 @@ const forgotPasswordController = async (req, res) => {
     }
 };
 
+const registerOTPController = async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            return res.status(400).json({ error: "Email là bắt buộc." });
+        }
 
-// verifyOtpController giữ nguyên
+        // Kiểm tra nếu email đã tồn tại thì không cho đăng ký
+        const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+        if (rows.length > 0) {
+            return res.status(400).json({ error: "Email đã tồn tại." });
+        }
+
+        const otp = crypto.randomInt(100000, 999999).toString();
+        otpStore[email] = otp;
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USERNAME,
+                pass: process.env.EMAIL_PASSWORD,
+            },
+        });
+
+        const mailOptions = {
+            from: process.env.EMAIL_USERNAME,
+            to: email,
+            subject: 'Mã OTP đăng ký tài khoản',
+            text: `Mã OTP để xác nhận đăng ký tài khoản của bạn là: ${otp}`,
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        res.status(200).json({ message: "OTP đăng ký đã được gửi tới email." });
+    } catch (error) {
+        console.error("Error in registerOTPController:", error);
+        res.status(500).json({ error: "Lỗi server." });
+    }
+};
+
+// verifyOtpController
 
 const verifyOtpController = (req, res) => {
     const { email, otp } = req.body;
@@ -130,6 +169,7 @@ router.get('/get-avatar', authMiddleware, async (req, res) => {
         res.status(500).json({ error: 'Lỗi server' });
     }
 });
+router.post("/register-otp", registerOTPController);
 router.post("/forgot-password", forgotPasswordController);
 router.post("/verify-otp", verifyOtpController);
 router.post("/reset-password", resetPasswordController);

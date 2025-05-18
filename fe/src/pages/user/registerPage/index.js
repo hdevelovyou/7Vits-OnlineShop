@@ -30,7 +30,7 @@ const RegisterPage = () => {
     const handleGoogleSignup = () => {
         window.location.href = `${process.env.REACT_APP_API_URL}/api/auth/google`;
         // For production: window.location.href = 'https://your-domain.com/api/auth/google';
-      };
+    };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -51,7 +51,7 @@ const RegisterPage = () => {
         e.preventDefault();
         setError(""); // Clear previous errors
         setLoading(true);
-        
+
         if (formData.password !== formData.confirmPassword) {
             setError("Mật khẩu không khớp"); // Set error for password mismatch
             setLoading(false);
@@ -65,7 +65,7 @@ const RegisterPage = () => {
             setLoading(false);
             return;
         }
-        
+
         try {
             // Prepare data for API
             const userData = {
@@ -75,14 +75,21 @@ const RegisterPage = () => {
                 userName: formData.userName,
                 password: formData.password
             };
-            
-            // Send registration data to backend
-            await axios.post('/api/auth/register', userData);
-            
-            // Keep the original alert notification
-            alert("Đăng ký thành công!");
-            navigate("/otp-for-signup");
-            
+
+            await axios.post("/api/auth/register-otp", { email: formData.email }
+            );
+
+            // Sau khi backend trả về success, điều hướng sang trang nhập OTP:
+            navigate("/otp-for-signup", {
+                state: {
+                    firstName: formData.firstName,
+                    lastName: formData.lastName,
+                    email: formData.email,
+                    userName: formData.userName,
+                    password: formData.password
+                }
+            });
+
         } catch (err) {
             // Better error handling to match your login page
             if (err.response && err.response.data && err.response.data.error) {
@@ -101,10 +108,10 @@ const RegisterPage = () => {
                 <div className="title">
                     <h1>Đăng ký tài khoản</h1>
                 </div>
-                
+
                 {/* Error message display, styled the same as in LoginPage */}
                 {error && <p className="error-message">{error}</p>}
-                
+
                 <div className="input-group">
                     <input type="text" name="firstName" placeholder="Họ" onChange={handleChange} required />
                     <input type="text" name="lastName" placeholder="Tên" onChange={handleChange} required />
@@ -120,23 +127,23 @@ const RegisterPage = () => {
                     <FaLock className="icon" />
                     <input type="password" name="password" placeholder="Mật khẩu" onChange={handleChange} required />
                 </div>
-                
+
                 {/* Password criteria indicators */}
                 <div className="password-criteria">
                     <div className={`criteria-item ${passwordCriteria.length ? 'met' : ''}`}>
-                        {passwordCriteria.length ? <FaCheck /> : <FaTimes />} 
+                        {passwordCriteria.length ? <FaCheck /> : <FaTimes />}
                         <span>8+ Characters</span>
                     </div>
                     <div className={`criteria-item ${passwordCriteria.lowercase ? 'met' : ''}`}>
-                        {passwordCriteria.lowercase ? <FaCheck /> : <FaTimes />} 
+                        {passwordCriteria.lowercase ? <FaCheck /> : <FaTimes />}
                         <span>Lowercase</span>
                     </div>
                     <div className={`criteria-item ${passwordCriteria.uppercase ? 'met' : ''}`}>
-                        {passwordCriteria.uppercase ? <FaCheck /> : <FaTimes />} 
+                        {passwordCriteria.uppercase ? <FaCheck /> : <FaTimes />}
                         <span>Uppercase</span>
                     </div>
                     <div className={`criteria-item ${passwordCriteria.number ? 'met' : ''}`}>
-                        {passwordCriteria.number ? <FaCheck /> : <FaTimes />} 
+                        {passwordCriteria.number ? <FaCheck /> : <FaTimes />}
                         <span>Number</span>
                     </div>
                 </div>
@@ -146,10 +153,10 @@ const RegisterPage = () => {
                     <input type="password" name="confirmPassword" placeholder="Xác nhận mật khẩu" onChange={handleChange} required />
                 </div>
                 <div className="signup">
-                <div className="otherSignUp">
-                    <FaFacebook className="icon" />
-                    <FcGoogle className="icon-gg" onClick={handleGoogleSignup} style={{ cursor: 'pointer' }} />
-                </div>
+                    <div className="otherSignUp">
+                        <FaFacebook className="icon" />
+                        <FcGoogle className="icon-gg" onClick={handleGoogleSignup} style={{ cursor: 'pointer' }} />
+                    </div>
                     <div className="sig-btn-rs">
                         <button type="submit" disabled={loading}>
                             {loading ? "Đang xử lý..." : "Đăng ký"}
