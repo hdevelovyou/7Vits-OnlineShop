@@ -3,13 +3,27 @@ const db = require('../config/connectDB');
 // Get all products
 exports.getAllProducts = async (req, res) => {
     try {
-        const sql = `SELECT p.*, u.userName as seller_name 
+        // Cập nhật truy vấn để lấy số lượng đã bán cho mỗi sản phẩm
+        const sql = `SELECT p.*, u.userName as seller_name,
+                     (SELECT SUM(oi.quantity) 
+                      FROM order_items oi 
+                      JOIN orders o ON oi.order_id = o.id 
+                      WHERE oi.product_id = p.id AND o.status IN ('completed', 'processing')
+                     ) as sold_count
                      FROM products p 
                      JOIN users u ON p.seller_id = u.id 
                      WHERE p.status = 'active' 
                      ORDER BY p.created_at DESC`;
         
         const [results] = await db.query(sql);
+        
+        // Chuyển đổi null thành 0 cho các sản phẩm chưa có đơn hàng
+        results.forEach(product => {
+            if (product.sold_count === null) {
+                product.sold_count = 0;
+            }
+        });
+        
         res.json(results);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -20,14 +34,25 @@ exports.getAllProducts = async (req, res) => {
 exports.getProductById = async (req, res) => {
     try {
         const { id } = req.params;
-        const sql = `SELECT p.*, u.userName as seller_name 
-                     FROM products p 
-                     JOIN users u ON p.seller_id = u.id 
+        // Cập nhật truy vấn để lấy số lượng đã bán từ bảng order_items
+        const sql = `SELECT p.*, u.userName as seller_name,
+                     (SELECT SUM(oi.quantity)
+                      FROM order_items oi
+                      JOIN orders o ON oi.order_id = o.id
+                      WHERE oi.product_id = p.id AND o.status IN ('completed', 'processing')
+                     ) as sold_count
+                     FROM products p
+                     JOIN users u ON p.seller_id = u.id
                      WHERE p.id = ?`;
         
         const [results] = await db.query(sql, [id]);
         
         if (results.length === 0) return res.status(404).json({ error: 'Product not found' });
+        
+        // Chuyển đổi null thành 0 nếu chưa có đơn hàng nào
+        if (results[0].sold_count === null) {
+            results[0].sold_count = 0;
+        }
         
         res.json(results[0]);
     } catch (err) {
@@ -111,13 +136,25 @@ exports.getProductsBySeller = async (req, res) => {
     try {
         const { sellerId } = req.params;
         
-        const sql = `SELECT p.*, u.userName as seller_name 
-                     FROM products p 
-                     JOIN users u ON p.seller_id = u.id 
-                     WHERE p.seller_id = ? 
-                     ORDER BY p.created_at DESC`;
+        const sql = `SELECT p.*, u.userName as seller_name,
+                    (SELECT SUM(oi.quantity) 
+                     FROM order_items oi 
+                     JOIN orders o ON oi.order_id = o.id 
+                     WHERE oi.product_id = p.id AND o.status IN ('completed', 'processing')
+                    ) as sold_count
+                    FROM products p 
+                    JOIN users u ON p.seller_id = u.id 
+                    WHERE p.seller_id = ? 
+                    ORDER BY p.created_at DESC`;
         
         const [results] = await db.query(sql, [sellerId]);
+        
+        // Chuyển đổi null thành 0 cho các sản phẩm chưa có đơn hàng
+        results.forEach(product => {
+            if (product.sold_count === null) {
+                product.sold_count = 0;
+            }
+        });
         
         res.json(results);
     } catch (err) {
@@ -130,11 +167,24 @@ exports.getMyProducts = async (req, res) => {
     try {
         const seller_id = req.user.id;
         
-        const sql = `SELECT * FROM products 
-                     WHERE seller_id = ? 
-                     ORDER BY created_at DESC`;
+        const sql = `SELECT p.*, 
+                    (SELECT SUM(oi.quantity) 
+                     FROM order_items oi 
+                     JOIN orders o ON oi.order_id = o.id 
+                     WHERE oi.product_id = p.id AND o.status IN ('completed', 'processing')
+                    ) as sold_count 
+                    FROM products p 
+                    WHERE p.seller_id = ? 
+                    ORDER BY p.created_at DESC`;
         
         const [results] = await db.query(sql, [seller_id]);
+        
+        // Convert null to 0 for products without orders
+        results.forEach(product => {
+            if (product.sold_count === null) {
+                product.sold_count = 0;
+            }
+        });
         
         res.json(results);
     } catch (err) {
