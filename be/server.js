@@ -96,6 +96,7 @@ app.use('/api/ratings', ratingRoutes);
 app.use('/api', productRoutes);
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/topup', vnpayRoutes);
+app.use('/api', require('./routes/api'));
 
 // Test route for checking if the API is working
 app.get('/api/test', (req, res) => {

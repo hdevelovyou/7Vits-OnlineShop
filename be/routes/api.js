@@ -1,8 +1,7 @@
-// Initialize express router
-let router = require('express').Router();
+const express = require('express');
+const router = express.Router();
 
+// Tạo router cho orders
+router.use('/orders', require('./orderRoutes'));
 
-
-
-//password
-const ResetPassword = require('../models/ResetPassword');
+module.exports = router;
