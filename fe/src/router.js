@@ -23,6 +23,7 @@ import MyProductsPage from "./pages/user/myProductPage/myProductPage";
 import EditProductPage from "./pages/user/editProductPage/editProductPage";
 import VnpayTopup from "./components/vnpay_Topup/vnpay_Topup";
 import VnpayReturn from "./components/vnpay_Return/vnpay_Return";
+import PaymentSuccessPage from "./pages/user/paymentSuccessPage";
 
 const renderUserRoutes = () => {
     return (
@@ -51,6 +52,8 @@ const renderUserRoutes = () => {
                     <Route path={ROUTES.USER.EDIT_PRODUCT} element={<EditProductPage />} />
                     <Route path="/topup" element={<VnpayTopup />} />
                     <Route path="/payment/vnpay_return" element={<VnpayReturn />} />
+                    {/* Payment success page */}
+                    <Route path={ROUTES.USER.PAYMENT_SUCCESS} element={<PaymentSuccessPage />} />
                 </Routes>
             )}
         </MasterLayout>

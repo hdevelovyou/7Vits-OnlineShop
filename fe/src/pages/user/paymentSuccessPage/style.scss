@@ -1,0 +1,234 @@
+.payment-success-page {
+  min-height: 100vh;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem 1rem;
+
+  .success-container {
+    width: 100%;
+    max-width: 900px;
+    background-color: #2a2a2a;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    padding: 2rem;
+    margin-top: 2rem;
+    
+    @media (max-width: 768px) {
+      padding: 1rem;
+    }
+  }
+
+  .success-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    .success-icon {
+      font-size: 6rem;
+      color: #4CAF50;
+      margin-bottom: 1rem;
+      animation: pulse 2s infinite;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      color: #ff9800;
+      
+      @media (max-width: 768px) {
+        font-size: 1.8rem;
+      }
+    }
+
+    p {
+      font-size: 1.2rem;
+      opacity: 0.8;
+    }
+  }
+
+  .order-details {
+    margin-bottom: 2rem;
+
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      color: #64B5F6;
+      
+      @media (max-width: 768px) {
+        font-size: 1.5rem;
+      }
+    }
+  }
+
+  .purchased-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+  }
+
+  .purchased-item {
+    display: flex;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: translateY(-3px);
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+
+    .item-image {
+      flex: 0 0 120px;
+      margin-right: 1.5rem;
+      
+      @media (max-width: 768px) {
+        margin-right: 0;
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+
+      img {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 8px;
+        
+        @media (max-width: 768px) {
+          width: 100px;
+          height: 100px;
+        }
+      }
+    }
+
+    .item-details {
+      flex: 1;
+
+      h3 {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+        color: #ffffff;
+      }
+
+      p {
+        margin-bottom: 0.3rem;
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .item-total {
+        font-weight: bold;
+        color: #ff9800;
+        font-size: 1.2rem;
+        margin-top: 0.5rem;
+      }
+    }
+  }
+
+  .order-summary {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+    text-align: right;
+
+    p {
+      margin-bottom: 0.5rem;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    .total-items {
+      font-size: 1.1rem;
+    }
+
+    .total-amount {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #ff9800;
+    }
+  }
+
+  .success-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    gap: 1rem;
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+
+    button {
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      flex: 1;
+      
+      @media (max-width: 768px) {
+        width: 100%;
+      }
+    }
+
+    .view-orders-btn {
+      background-color: #2196F3;
+      color: white;
+
+      &:hover {
+        background-color: #1976D2;
+      }
+    }
+
+    .back-shopping-btn {
+      background-color: #4CAF50;
+      color: white;
+
+      &:hover {
+        background-color: #388E3C;
+      }
+    }
+  }
+
+  .no-data {
+    text-align: center;
+    padding: 3rem 0;
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+} 

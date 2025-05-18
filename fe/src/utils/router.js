@@ -20,5 +20,6 @@ export const ROUTES = {
         EDIT_PRODUCT: '/edit-product/:id',
         CHAT: '/chat/:receiverId',
         TOPUP: '/topup',
+        PAYMENT_SUCCESS: '/user/payment-success',
     }
 }

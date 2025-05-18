@@ -3,6 +3,7 @@ import "./style.scss";
 import axios from "axios";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../../../utils/router";
 
 // Set the app element for accessibility
 Modal.setAppElement("#root");
@@ -141,8 +142,6 @@ const CartPage = ({ cart, setCart }) => {
         if (response.data.success) {
           // Lưu trữ thông tin đơn hàng thành công
           setOrderSuccess(response.data);
-          setPurchasedItems(cart);
-          setShowPurchaseModal(true);
           
           // Cập nhật số dư ví sau khi thanh toán
           setWalletBalance(prev => prev - totalPrice);
@@ -154,6 +153,14 @@ const CartPage = ({ cart, setCart }) => {
           // Reset các trạng thái retry
           setRetryCount(0);
           setIsRetrying(false);
+          
+          // Chuyển hướng đến trang thanh toán thành công
+          navigate(ROUTES.USER.PAYMENT_SUCCESS, { 
+            state: { 
+              orderData: response.data,
+              purchasedItems: cart
+            }
+          });
         } else {
           alert(response.data.message || "Có lỗi xảy ra khi thanh toán");
         }
@@ -202,6 +209,7 @@ const CartPage = ({ cart, setCart }) => {
     }
   };
 
+  // Các hàm xử lý modal (giữ lại để tương thích nhưng không còn sử dụng)
   const closeModal = () => {
     setShowPurchaseModal(false);
     setPurchasedItems([]);
@@ -209,7 +217,7 @@ const CartPage = ({ cart, setCart }) => {
 
   const handleNavigateToOrders = () => {
     closeModal();
-    navigate("/user/orders"); // Điều hướng đến trang đơn hàng (cần tạo sau)
+    navigate("/user/orders");
   };
 
   const customModalStyles = {
@@ -396,10 +404,9 @@ const CartPage = ({ cart, setCart }) => {
                   : "Mua Ngay"}
               </button>
             </div>
-          
           </div>
 
-          {/* Purchase Confirmation Modal */}
+          {/* Giữ lại Modal nhưng không còn sử dụng (để khả năng tương thích) */}
           <Modal
             isOpen={showPurchaseModal}
             onRequestClose={closeModal}
