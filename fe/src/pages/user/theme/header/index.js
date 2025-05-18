@@ -315,7 +315,10 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
                   </ul>
                   {isLoggedIn ? (
                     <>
-                      
+                    <Link to={ROUTES.USER.TOPUP} onClick={() => window.scrollTo(0, 0)} className="wallet-btn">
+                      <FaWallet />
+                      <span>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(walletBalance)}</span>
+                    </Link>
                       <Link to="/" onClick={handleLogout} className="logout-btn">
                         Đăng xuất
                       </Link>

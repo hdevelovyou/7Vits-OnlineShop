@@ -7,7 +7,15 @@
     position: fixed;
     transition: all 0.4s ease-in-out;
 }
-
+.wallet-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1 rem;
+    font-weight: bold;
+    gap: 5px;
+    text-decoration: none;
+}
 .humberger_menu_wrapper,
 .hamergur_open,
 .login-btn-mobile,
