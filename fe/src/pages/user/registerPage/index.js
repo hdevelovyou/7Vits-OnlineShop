@@ -76,7 +76,7 @@ const RegisterPage = () => {
                 password: formData.password
             };
 
-            await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register-otp`, { email: formData.email }
+            await axios.post("/api/auth/register-otp", { email: formData.email }
             );
 
             // Sau khi backend trả về success, điều hướng sang trang nhập OTP:
