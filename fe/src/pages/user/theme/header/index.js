@@ -11,6 +11,8 @@ import { AiOutlineMenu, AiOutlineSearch, AiOutlineUser } from "react-icons/ai";
 import { AiOutlineDown } from "react-icons/ai";
 import { FaHouse } from "react-icons/fa6";
 import { MdEmojiEvents, MdLogout } from "react-icons/md";
+import axios from "axios";
+
 const menuItems = [
   {
     name: "Ví",
@@ -82,17 +84,18 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
 
   const fetchWalletBalance = async () => {
     try {
-      const userId = localStorage.getItem("userId");
-      if (!userId) return;
+      const token = localStorage.getItem("token");
+      if (!token) return;
 
-      const response = await fetch(`/api/auth/wallet-balance?userId=${userId}`);
-      const data = await response.json();
+      console.log("Fetching wallet balance...");
+      const response = await axios.get("/api/orders/wallet-balance", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       
-      if (response.ok) {
-        setWalletBalance(data.balance);
-      } else {
-        console.error("Failed to fetch wallet balance:", data.error);
-      }
+      console.log("Wallet balance response:", response.data);
+      setWalletBalance(response.data.balance);
     } catch (error) {
       console.error("Error fetching wallet balance:", error);
     }
