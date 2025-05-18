@@ -137,7 +137,7 @@ const VnpayReturn = () => {
         // Check if backend indicated the transaction was already processed
         const alreadyProcessed = response?.data?.alreadyProcessed || false;
         const message = alreadyProcessed 
-          ? (vnp_ResponseCode === '00' ? 'Thanh toán thành công (đã xử lý trước đó)' : 'Thanh toán thất bại (đã xử lý trước đó)')
+          ? (vnp_ResponseCode === '00' ? 'Thanh toán thành công ' : 'Thanh toán thất bại ')
           : (response?.data?.message || (vnp_ResponseCode === '00' ? 'Thanh toán thành công' : 'Thanh toán thất bại'));
 
         setPaymentResult({
