@@ -63,7 +63,7 @@ const VnpayTopup = () => {
           const returnUrl = window.location.origin + '/payment/vnpay_return';
           console.log('📍 Return URL:', returnUrl);
           
-          const response = await axios.post('http://localhost:5000/api/topup/create_payment_url', {
+          const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/topup/create_payment_url`, {
             amount: amount,
             userId: currentUserId,
             orderInfo: 'Nạp tiền vào ví',
