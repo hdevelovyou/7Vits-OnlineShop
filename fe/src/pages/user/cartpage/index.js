@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "./style.scss";
 import axios from "axios";
 import Modal from "react-modal";
+import { useNavigate } from "react-router-dom";
 
 // Set the app element for accessibility
 Modal.setAppElement("#root");
@@ -12,12 +13,18 @@ const CartPage = ({ cart, setCart }) => {
   const [purchasedItems, setPurchasedItems] = useState([]);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState("wallet");
+  const [orderSuccess, setOrderSuccess] = useState(null);
+  const navigate = useNavigate();
   
   useEffect(() => {
     const savedCart = localStorage.getItem("cart");
     if (savedCart) {
       setCart(JSON.parse(savedCart));
     }
+    // Lấy số dư ví khi trang được tải
+    fetchWalletBalance();
   }, []);
 
   useEffect(() => {
@@ -28,12 +35,32 @@ const CartPage = ({ cart, setCart }) => {
     const total = cart.reduce((sum, item) => sum + item.price * item.amount, 0);
     setTotalPrice(total);
   };
+  
   useEffect(() => {
     calculateTotaldiscountPrice();
   }, [cart]);
+  
   const calculateTotaldiscountPrice = () => {
     const total = cart.reduce((sum, item) => sum + ((item.originalPrice || item.price * 1.2) - item.price) * item.amount, 0);
     setTotalDiscountPrice(total);
+  };
+
+  // Lấy số dư ví người dùng
+  const fetchWalletBalance = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const response = await axios.get("/api/orders/wallet-balance", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      setWalletBalance(response.data.balance);
+    } catch (error) {
+      console.error("Error fetching wallet balance:", error);
+    }
   };
 
   const handleUpdateAmount = (id, newAmount) => {
@@ -67,7 +94,6 @@ const CartPage = ({ cart, setCart }) => {
 
     setIsLoading(true);
     try {
-      // Fetch product details including notes for each item in the cart
       const token = localStorage.getItem("token");
       if (!token) {
         alert("Bạn cần đăng nhập để mua hàng");
@@ -75,38 +101,58 @@ const CartPage = ({ cart, setCart }) => {
         return;
       }
 
-      const productIds = cart.map(item => item.id);
-      const productDetails = [];
-
-      // Fetch detailed product information including notes
-      for (const id of productIds) {
-        try {
-          const response = await axios.get(`/api/products/${id}`, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          });
-          
-          // Find the cart item to get the quantity
-          const cartItem = cart.find(item => item.id === id);
-          productDetails.push({
-            ...response.data,
-            purchasedQuantity: cartItem.amount
-          });
-        } catch (error) {
-          console.error(`Error fetching product ${id}:`, error);
+      if (paymentMethod === "wallet") {
+        // Kiểm tra số dư ví
+        if (walletBalance < totalPrice) {
+          alert("Số dư ví không đủ. Vui lòng nạp thêm tiền vào ví.");
+          setIsLoading(false);
+          return;
         }
+        
+        // Chuẩn bị dữ liệu thanh toán
+        const orderData = {
+          items: cart.map(item => ({
+            productId: item.id,
+            quantity: item.amount || 1,
+            price: item.price
+          })),
+          totalAmount: totalPrice
+        };
+        
+        // Gọi API để tạo đơn hàng và thanh toán từ ví
+        const response = await axios.post("/api/orders/create", orderData, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        
+        if (response.data.success) {
+          // Lưu trữ thông tin đơn hàng thành công
+          setOrderSuccess(response.data);
+          setPurchasedItems(cart);
+          setShowPurchaseModal(true);
+          
+          // Cập nhật số dư ví sau khi thanh toán
+          setWalletBalance(prev => prev - totalPrice);
+          
+          // Xóa giỏ hàng
+          setCart([]);
+          localStorage.setItem("cart", JSON.stringify([]));
+        } else {
+          alert(response.data.message || "Có lỗi xảy ra khi thanh toán");
+        }
+      } else {
+        // Xử lý cho phương thức thanh toán khác (sẽ phát triển sau)
+        alert("Phương thức thanh toán này chưa được hỗ trợ");
       }
-
-      setPurchasedItems(productDetails);
-      setShowPurchaseModal(true);
-      
-      // Clear the cart after purchase
-      setCart([]);
-      localStorage.setItem("cart", JSON.stringify([]));
     } catch (error) {
       console.error("Checkout error:", error);
-      alert("Đã xảy ra lỗi khi thanh toán. Vui lòng thử lại sau.");
+      if (error.response && error.response.data && error.response.data.message === "Bạn không thể mua sản phẩm do chính mình đăng bán") {
+        // Xử lý khi có sản phẩm của chính người dùng trong giỏ hàng
+        alert("Giỏ hàng có sản phẩm do bạn đăng bán. Vui lòng xóa sản phẩm đó trước khi thanh toán.");
+      } else {
+        alert(error.response?.data?.message || "Đã xảy ra lỗi khi thanh toán. Vui lòng thử lại sau.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -115,6 +161,11 @@ const CartPage = ({ cart, setCart }) => {
   const closeModal = () => {
     setShowPurchaseModal(false);
     setPurchasedItems([]);
+  };
+
+  const handleNavigateToOrders = () => {
+    closeModal();
+    navigate("/user/orders"); // Điều hướng đến trang đơn hàng (cần tạo sau)
   };
 
   const customModalStyles = {
@@ -253,6 +304,34 @@ const CartPage = ({ cart, setCart }) => {
           {/* Khu vực tính tiền */}
           <div className="cart-summary">
             <div className="summary-info col-sm-12">
+              {/* Hiển thị số dư ví */}
+              <div className="wallet-balance">
+                <span className="balance-label">Số dư ví:</span>
+                <span className="balance-amount">{formatPrice(walletBalance)}</span>
+                {walletBalance < totalPrice && (
+                  <button 
+                    className="topup-btn"
+                    onClick={() => navigate('/topup')}
+                  >
+                    Nạp thêm tiền
+                  </button>
+                )}
+              </div>
+              
+              {/* Chọn phương thức thanh toán */}
+              <div className="payment-methods">
+                <div className="payment-method-option">
+                  <input
+                    type="radio"
+                    id="wallet-payment"
+                    name="payment-method"
+                    checked={paymentMethod === "wallet"}
+                    onChange={() => setPaymentMethod("wallet")}
+                  />
+                  <label htmlFor="wallet-payment">Thanh toán bằng ví</label>
+                </div>
+              </div>
+              
               <span className="summary-title">
                 Tổng Thanh Toán ({cart.length} Sản Phẩm):
                 <span className="summary-total">{formatPrice(totalPrice)}</span>
@@ -289,21 +368,30 @@ const CartPage = ({ cart, setCart }) => {
                 {purchasedItems.map(item => (
                   <div key={item.id} className="purchased-item">
                     <h3>{item.name}</h3>
-                    <p className="purchase-info">Số lượng: {item.purchasedQuantity}</p>
+                    <p className="purchase-info">Số lượng: {item.amount || 1}</p>
                     <p className="purchase-info">Giá: {formatPrice(item.price)} / sản phẩm</p>
-                    <p className="purchase-info">Tổng: {formatPrice(item.price * item.purchasedQuantity)}</p>
-                    
-                    {item.notes && (
-                      <div className="product-notes">
-                        <h4>Thông tin sản phẩm:</h4>
-                        <pre>{item.notes}</pre>
-                      </div>
-                    )}
+                    <p className="purchase-info">Tổng: {formatPrice(item.price * (item.amount || 1))}</p>
                   </div>
                 ))}
               </div>
               
-              <button onClick={closeModal} className="close-modal-btn">Đóng</button>
+              <div className="payment-summary">
+                <p className="wallet-transaction">
+                  Đã thanh toán từ ví: {formatPrice(totalPrice)}
+                </p>
+                <p className="wallet-balance">
+                  Số dư ví còn lại: {formatPrice(walletBalance)}
+                </p>
+              </div>
+              
+              <div className="modal-actions">
+                <button onClick={handleNavigateToOrders} className="view-orders-btn">
+                  Xem đơn hàng
+                </button>
+                <button onClick={closeModal} className="close-modal-btn">
+                  Đóng
+                </button>
+              </div>
             </div>
           </Modal>
         </>

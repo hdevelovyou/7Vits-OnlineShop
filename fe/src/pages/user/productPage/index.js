@@ -30,6 +30,7 @@ const ProductPage = ({ cart, setCart }) => {
                         images: response.data.image_url ? [response.data.image_url] : [],
                         rating: response.data.rating !== undefined ? response.data.rating : 4,
                         sold: response.data.sold !== undefined ? response.data.sold : 0,
+                        stock: response.data.stock !== undefined ? response.data.stock : 0,
                         features: response.data.features ? response.data.features : [],
                         originalPrice: response.data.price * 1.2
                     });
@@ -128,6 +129,25 @@ const ProductPage = ({ cart, setCart }) => {
     };
 
     const addToCart = () => {
+        // Kiểm tra trạng thái sản phẩm và số lượng tồn kho
+        if (product.status === 'sold_out' || product.stock <= 0) {
+            alert("Sản phẩm đã hết hàng!");
+            return;
+        }
+
+        // Kiểm tra người dùng không mua sản phẩm của chính mình
+        if (user && user.id && product.seller_id === user.id) {
+            alert("Bạn không thể mua sản phẩm do chính mình đăng bán");
+            return;
+        }
+
+        // Kiểm tra số lượng đặt mua có vượt quá tồn kho không
+        if (quantity > product.stock) {
+            alert(`Chỉ còn ${product.stock} sản phẩm trong kho. Vui lòng giảm số lượng.`);
+            setQuantity(product.stock);
+            return;
+        }
+
         const item = {
             id: product.id,
             name: product.name,
@@ -139,9 +159,18 @@ const ProductPage = ({ cart, setCart }) => {
 
         // Check if item is already in cart
         const existingItemIndex = cart.findIndex(cartItem => cartItem.id === item.id);
-
+        
         let updatedCart;
         if (existingItemIndex >= 0) {
+            // Tính tổng số lượng sau khi thêm
+            const newTotalQuantity = cart[existingItemIndex].amount + quantity;
+            
+            // Kiểm tra tổng số lượng có vượt quá tồn kho không
+            if (newTotalQuantity > product.stock) {
+                alert(`Tổng số lượng (${newTotalQuantity}) vượt quá số lượng tồn kho (${product.stock}). Chỉ thêm được tối đa ${product.stock - cart[existingItemIndex].amount} sản phẩm vào giỏ hàng.`);
+                return;
+            }
+            
             // Update item quantity if already in cart
             updatedCart = [...cart];
             updatedCart[existingItemIndex].amount += quantity;
@@ -156,6 +185,66 @@ const ProductPage = ({ cart, setCart }) => {
         localStorage.setItem("cart", JSON.stringify(updatedCart));
 
         alert("Đã thêm vào giỏ hàng!");
+    };
+
+    const handleBuyNow = () => {
+        // Kiểm tra trạng thái sản phẩm và số lượng tồn kho
+        if (product.status === 'sold_out' || product.stock <= 0) {
+            alert("Sản phẩm đã hết hàng!");
+            return;
+        }
+
+        // Kiểm tra người dùng không mua sản phẩm của chính mình
+        if (user && user.id && product.seller_id === user.id) {
+            alert("Bạn không thể mua sản phẩm do chính mình đăng bán");
+            return;
+        }
+
+        // Kiểm tra số lượng đặt mua có vượt quá tồn kho không
+        if (quantity > product.stock) {
+            alert(`Chỉ còn ${product.stock} sản phẩm trong kho. Vui lòng giảm số lượng.`);
+            setQuantity(product.stock);
+            return;
+        }
+
+        const item = {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            originalPrice: product.originalPrice,
+            image: getImageUrl(product.images[0]),
+            amount: quantity
+        };
+
+        // Check if item is already in cart
+        const existingItemIndex = cart.findIndex(cartItem => cartItem.id === item.id);
+        
+        let updatedCart;
+        if (existingItemIndex >= 0) {
+            // Tính tổng số lượng sau khi thêm
+            const newTotalQuantity = cart[existingItemIndex].amount + quantity;
+            
+            // Kiểm tra tổng số lượng có vượt quá tồn kho không
+            if (newTotalQuantity > product.stock) {
+                alert(`Tổng số lượng (${newTotalQuantity}) vượt quá số lượng tồn kho (${product.stock}). Chỉ thêm được tối đa ${product.stock - cart[existingItemIndex].amount} sản phẩm vào giỏ hàng.`);
+                return;
+            }
+            
+            // Update item quantity if already in cart
+            updatedCart = [...cart];
+            updatedCart[existingItemIndex].amount += quantity;
+            setCart(updatedCart);
+        } else {
+            // Add new item to cart
+            updatedCart = [...cart, item];
+            setCart(updatedCart);
+        }
+
+        // Save to localStorage for persistence
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+        
+        // Chuyển đến trang giỏ hàng
+        navigate('/gio-hang');
     };
 
     if (loading) {
@@ -272,7 +361,19 @@ const ProductPage = ({ cart, setCart }) => {
                                     </div>
                                     <span className="rating-number">{product.rating}/5</span>
                                     <span className="divider">|</span>
-                                    <span className="sold">{product.sold.toLocaleString()} Đã Bán</span>
+                                    <span className="sold">{product.sold?.toLocaleString() || 0} Đã Bán</span>
+                                </div>
+                                <div className="product-stock-info">
+                                    <div className="stock-status">
+                                        <i className={`fa-solid ${product.status === 'sold_out' || product.stock <= 0 ? 'fa-xmark' : 'fa-check'}`}></i>
+                                        <span className={`status ${product.status === 'sold_out' || product.stock <= 0 ? 'out-of-stock' : 'in-stock'}`}>
+                                            {product.status === 'sold_out' || product.stock <= 0 ? 'Hết hàng' : 'Còn hàng'}
+                                        </span>
+                                    </div>
+                                    <div className="stock-quantity">
+                                        <i className="fa-solid fa-warehouse"></i>
+                                        <span>Còn lại: {product.stock}</span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -332,13 +433,31 @@ const ProductPage = ({ cart, setCart }) => {
                                 </div>
 
                                 <div className="action-buttons">
-                                    <button className="buy-now-btn">
+                                    <button 
+                                        className="buy-now-btn" 
+                                        disabled={product.status === 'sold_out' || product.stock <= 0 || (user && user.id === product.seller_id)}
+                                        onClick={handleBuyNow}
+                                    >
                                         <i className="fa-solid fa-bolt-lightning"></i>
-                                        Mua ngay
+                                        {user && user.id === product.seller_id 
+                                            ? 'Không thể tự mua'
+                                            : (product.status === 'sold_out' || product.stock <= 0) 
+                                                ? 'Hết hàng' 
+                                                : 'Mua ngay'
+                                        }
                                     </button>
-                                    <button onClick={addToCart} className="add-to-cart-btn">
+                                    <button 
+                                        onClick={addToCart} 
+                                        className="add-to-cart-btn"
+                                        disabled={product.status === 'sold_out' || product.stock <= 0 || (user && user.id === product.seller_id)}
+                                    >
                                         <i className="fa-solid fa-cart-plus"></i>
-                                        Thêm vào giỏ hàng
+                                        {user && user.id === product.seller_id 
+                                            ? 'Không thể tự mua'
+                                            : (product.status === 'sold_out' || product.stock <= 0) 
+                                                ? 'Hết hàng' 
+                                                : 'Thêm vào giỏ hàng'
+                                        }
                                     </button>
                                 </div>
                             </div>

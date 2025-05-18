@@ -98,7 +98,7 @@ const VnpayReturn = () => {
   };
 
   const handleBackToHome = () => {
-    window.location.href = '/';
+    window.location.href = '/gio-hang';
   };
 
   if (paymentResult.loading) {
