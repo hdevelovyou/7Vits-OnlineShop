@@ -57,7 +57,7 @@ async function updateTransactionStatus(txnRef, status, responseData) {
         
         // Find transaction by reference ID
         const [transactions] = await db.query(
-            `SELECT id FROM transactions WHERE reference_id = ?`,
+            `SELECT id, status FROM transactions WHERE reference_id = ?`,
             [txnRef]
         );
         
@@ -69,6 +69,17 @@ async function updateTransactionStatus(txnRef, status, responseData) {
         }
         
         const transactionId = transactions[0].id;
+        
+        // Check if transaction is already processed (completed or failed)
+        if (transactions[0].status === 'completed' || transactions[0].status === 'failed') {
+            console.log('🚫 Transaction already processed, txnRef:', txnRef, 'current status:', transactions[0].status);
+            return {
+                alreadyProcessed: true,
+                transactionId: transactionId,
+                currentStatus: transactions[0].status
+            };
+        }
+        
         const transactionStatus = status === '00' ? 'completed' : 'failed';
         
         console.log('📝 Updating transaction status to:', transactionStatus, 'for ID:', transactionId);
@@ -245,7 +256,22 @@ router.get('/vnpay_return', async function (req, res) {
             const responseCode = vnp_Params['vnp_ResponseCode'];
             
             // Update transaction in database
-            await updateTransactionStatus(vnp_Params['vnp_TxnRef'], responseCode, vnp_Params);
+            const updateResult = await updateTransactionStatus(vnp_Params['vnp_TxnRef'], responseCode, vnp_Params);
+            
+            // If transaction already processed, return appropriate response
+            if (updateResult && updateResult.alreadyProcessed) {
+                console.log('🔄 Responding to repeated request for txnRef:', vnp_Params['vnp_TxnRef']);
+                
+                // Still return success but log that it was already processed
+                res.status(200).json({
+                    status: updateResult.currentStatus === 'completed' ? 'success' : 'failed',
+                    message: updateResult.currentStatus === 'completed' ? 
+                        'Thanh toán đã được xử lý trước đó' : 'Thanh toán thất bại (đã xử lý trước đó)',
+                    data: vnp_Params,
+                    alreadyProcessed: true
+                });
+                return;
+            }
             
             // Return payment result
             res.status(200).json({
@@ -314,12 +340,28 @@ router.get('/vnpay_ipn', async function (req, res) {
                     if(paymentStatus != "completed") { //kiểm tra trạng thái giao dịch
                         if(rspCode == "00") {
                             // Thanh toán thành công - cập nhật CSDL
-                            await updateTransactionStatus(orderId, rspCode, vnp_Params);
+                            const updateResult = await updateTransactionStatus(orderId, rspCode, vnp_Params);
+                            
+                            // If already processed, still return success to VNPay
+                            if (updateResult && updateResult.alreadyProcessed) {
+                                console.log('🔄 IPN: Already processed transaction:', orderId);
+                                res.status(200).json({RspCode: '00', Message: 'Success (already processed)'});
+                                return;
+                            }
+                            
                             res.status(200).json({RspCode: '00', Message: 'Success'});
                         }
                         else {
                             // Thanh toán thất bại - cập nhật CSDL
-                            await updateTransactionStatus(orderId, rspCode, vnp_Params);
+                            const updateResult = await updateTransactionStatus(orderId, rspCode, vnp_Params);
+                            
+                            // If already processed, still return success to VNPay
+                            if (updateResult && updateResult.alreadyProcessed) {
+                                console.log('🔄 IPN: Already processed failed transaction:', orderId);
+                                res.status(200).json({RspCode: '00', Message: 'Success (already processed)'});
+                                return;
+                            }
+                            
                             res.status(200).json({RspCode: '00', Message: 'Success'});
                         }
                     }

@@ -2,6 +2,29 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './vnpay_Return.css';
 
+// Utility function to clean up old processed transactions (older than 30 days)
+const cleanupOldTransactions = () => {
+  try {
+    const processedTxns = JSON.parse(localStorage.getItem('processed_transactions') || '{}');
+    const now = new Date().getTime();
+    const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+    let hasChanges = false;
+    
+    Object.keys(processedTxns).forEach(txnRef => {
+      if (now - processedTxns[txnRef].timestamp > thirtyDaysInMs) {
+        delete processedTxns[txnRef];
+        hasChanges = true;
+      }
+    });
+    
+    if (hasChanges) {
+      localStorage.setItem('processed_transactions', JSON.stringify(processedTxns));
+    }
+  } catch (error) {
+    console.error('Error cleaning up old transactions:', error);
+  }
+};
+
 const VnpayReturn = () => {
   const [paymentResult, setPaymentResult] = useState({
     loading: true,
@@ -11,10 +34,14 @@ const VnpayReturn = () => {
     amount: '',
     orderInfo: '',
     paymentTime: '',
-    transactionNo: ''
+    transactionNo: '',
+    alreadyProcessed: false
   });
 
   useEffect(() => {
+    // Clean up old transactions data
+    cleanupOldTransactions();
+    
     const fetchPaymentStatus = async () => {
       try {
         console.log('Starting payment verification process...');
@@ -34,6 +61,34 @@ const VnpayReturn = () => {
             loading: false,
             success: false,
             message: 'Không tìm thấy thông tin thanh toán'
+          });
+          return;
+        }
+
+        // Check localStorage for this transaction
+        const txnRef = params.vnp_TxnRef;
+        const processedTxns = JSON.parse(localStorage.getItem('processed_transactions') || '{}');
+        
+        if (processedTxns[txnRef]) {
+          console.log('Found locally cached transaction result:', processedTxns[txnRef]);
+          // Use cached result and avoid calling API again
+          const { vnp_ResponseCode, vnp_Amount, vnp_OrderInfo, vnp_PayDate, vnp_TransactionNo } = params;
+          
+          // Format payment time
+          const paymentTime = vnp_PayDate 
+            ? `${vnp_PayDate.substring(6, 8)}/${vnp_PayDate.substring(4, 6)}/${vnp_PayDate.substring(0, 4)} ${vnp_PayDate.substring(8, 10)}:${vnp_PayDate.substring(10, 12)}:${vnp_PayDate.substring(12, 14)}`
+            : '';
+
+          setPaymentResult({
+            loading: false,
+            success: vnp_ResponseCode === '00',
+            message: vnp_ResponseCode === '00' ? 'Thanh toán thành công ' : 'Thanh toán thất bại ',
+            transactionId: txnRef || '',
+            amount: vnp_Amount ? (parseInt(vnp_Amount) / 100).toLocaleString('vi-VN') : '',
+            orderInfo: vnp_OrderInfo || '',
+            paymentTime: paymentTime,
+            transactionNo: vnp_TransactionNo || '',
+            alreadyProcessed: true
           });
           return;
         }
@@ -70,15 +125,31 @@ const VnpayReturn = () => {
           ? `${vnp_PayDate.substring(6, 8)}/${vnp_PayDate.substring(4, 6)}/${vnp_PayDate.substring(0, 4)} ${vnp_PayDate.substring(8, 10)}:${vnp_PayDate.substring(10, 12)}:${vnp_PayDate.substring(12, 14)}`
           : '';
 
+        // Store this transaction in localStorage to prevent duplicate processing on client side too
+        if (txnRef) {
+          processedTxns[txnRef] = {
+            success: vnp_ResponseCode === '00',
+            timestamp: new Date().getTime()
+          };
+          localStorage.setItem('processed_transactions', JSON.stringify(processedTxns));
+        }
+
+        // Check if backend indicated the transaction was already processed
+        const alreadyProcessed = response?.data?.alreadyProcessed || false;
+        const message = alreadyProcessed 
+          ? (vnp_ResponseCode === '00' ? 'Thanh toán thành công (đã xử lý trước đó)' : 'Thanh toán thất bại (đã xử lý trước đó)')
+          : (response?.data?.message || (vnp_ResponseCode === '00' ? 'Thanh toán thành công' : 'Thanh toán thất bại'));
+
         setPaymentResult({
           loading: false,
           success: vnp_ResponseCode === '00',
-          message: response?.data?.message || (vnp_ResponseCode === '00' ? 'Thanh toán thành công' : 'Thanh toán thất bại'),
+          message: message,
           transactionId: vnp_TxnRef || '',
           amount: vnp_Amount ? (parseInt(vnp_Amount) / 100).toLocaleString('vi-VN') : '',
           orderInfo: vnp_OrderInfo || '',
           paymentTime: paymentTime,
-          transactionNo: vnp_TransactionNo || ''
+          transactionNo: vnp_TransactionNo || '',
+          alreadyProcessed: alreadyProcessed
         });
       } catch (error) {
         console.error('Error processing payment return:', error);
