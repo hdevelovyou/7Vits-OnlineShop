@@ -1,11 +1,11 @@
-import { memo, useState } from "react";
+import { memo, useState, useEffect } from "react";
 import "./style.scss";
-import { Link, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { FaFacebook } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { FaCircleUser } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa";
-import axios from "axios";
+import { FaCheck, FaTimes } from "react-icons/fa";
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -18,6 +18,12 @@ const RegisterPage = () => {
         confirmPassword: ""
     });
     const [error, setError] = useState("");
+    const [passwordCriteria, setPasswordCriteria] = useState({
+        length: false,
+        lowercase: false,
+        uppercase: false,
+        number: false
+    });
 
     const handleGoogleSignup = () => {
         window.location.href = `${process.env.REACT_APP_API_URL}/api/auth/google`;
@@ -28,6 +34,17 @@ const RegisterPage = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    // Validate password criteria whenever password changes
+    useEffect(() => {
+        const password = formData.password;
+        setPasswordCriteria({
+            length: password.length >= 8,
+            lowercase: /[a-z]/.test(password),
+            uppercase: /[A-Z]/.test(password),
+            number: /[0-9]/.test(password)
+        });
+    }, [formData.password]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(""); // Clear previous errors
@@ -36,9 +53,16 @@ const RegisterPage = () => {
             setError("Mật khẩu không khớp"); // Set error for password mismatch
             return;
         }
+
+        // Check if all password criteria are met
+        const allCriteriaMet = Object.values(passwordCriteria).every(criteria => criteria);
+        if (!allCriteriaMet) {
+            setError("Mật khẩu không đáp ứng tất cả các yêu cầu");
+            return;
+        }
         
         try {
-            const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, formData);
+            
             alert("Đăng ký thành công!");
             navigate("/otp-for-signup");
         } catch (err) {
@@ -75,6 +99,30 @@ const RegisterPage = () => {
                 <div className="input-group">
                     <FaLock className="icon" />
                     <input type="password" name="password" placeholder="Mật khẩu" onChange={handleChange} required />
+                </div>
+                
+                {/* Password criteria indicators */}
+                <div className="password-criteria">
+                    <div className={`criteria-item ${passwordCriteria.length ? 'met' : ''}`}>
+                        {passwordCriteria.length ? <FaCheck /> : <FaTimes />} 
+                        <span>8+ Characters</span>
+                    </div>
+                    <div className={`criteria-item ${passwordCriteria.lowercase ? 'met' : ''}`}>
+                        {passwordCriteria.lowercase ? <FaCheck /> : <FaTimes />} 
+                        <span>Lowercase</span>
+                    </div>
+                    <div className={`criteria-item ${passwordCriteria.uppercase ? 'met' : ''}`}>
+                        {passwordCriteria.uppercase ? <FaCheck /> : <FaTimes />} 
+                        <span>Uppercase</span>
+                    </div>
+                    <div className={`criteria-item ${passwordCriteria.number ? 'met' : ''}`}>
+                        {passwordCriteria.number ? <FaCheck /> : <FaTimes />} 
+                        <span>Number</span>
+                    </div>
+                </div>
+
+                <div className="input-group">
+                    <FaLock className="icon" />
                     <input type="password" name="confirmPassword" placeholder="Xác nhận mật khẩu" onChange={handleChange} required />
                 </div>
                 <div className="signup">
