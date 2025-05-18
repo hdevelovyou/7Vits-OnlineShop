@@ -47,7 +47,7 @@ const VnpayReturn = () => {
         while (retries < maxRetries && !success) {
           try {
             console.log(`Attempt ${retries + 1}/${maxRetries} to verify payment...`);
-            response = await axios.get('http://localhost:5000/api/topup/vnpay_return', { params });
+            response = await axios.get(`${process.env.REACT_APP_API_URL}/api/topup/vnpay_return`, { params });
             console.log('Payment verification response:', response.data);
             success = true;
           } catch (error) {
