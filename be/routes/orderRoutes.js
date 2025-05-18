@@ -32,10 +32,10 @@ router.post('/create', authMiddleware, async (req, res) => {
                 });
             }
 
-            // 2. Kiểm tra sản phẩm có tồn tại, còn hàng và không phải của chính người mua
+            // 2. Kiểm tra sản phẩm có tồn tại và không phải của chính người mua
             for (const item of items) {
                 const [productResult] = await db.query(
-                    'SELECT id, seller_id, price, stock, status FROM products WHERE id = ?',
+                    'SELECT id, seller_id, price, status FROM products WHERE id = ?',
                     [item.productId]
                 );
 
@@ -58,20 +58,19 @@ router.post('/create', authMiddleware, async (req, res) => {
                     });
                 }
 
-                // Kiểm tra số lượng hàng
-                if (product.stock < item.quantity || product.status === 'sold_out') {
+                // Kiểm tra trạng thái sản phẩm
+                if (product.status === 'sold_out' || product.status === 'inactive') {
                     await db.query('ROLLBACK');
                     return res.status(400).json({ 
                         success: false, 
-                        message: `Sản phẩm ID ${item.productId} không đủ số lượng trong kho` 
+                        message: `Sản phẩm ID ${item.productId} đã hết hàng hoặc ngừng bán` 
                     });
                 }
 
-                // Cập nhật số lượng sản phẩm trong kho
-                const newStock = product.stock - item.quantity;
+                // Cập nhật trạng thái sản phẩm thành đã bán
                 await db.query(
-                    'UPDATE products SET stock = ?, status = ? WHERE id = ?',
-                    [newStock, newStock === 0 ? 'sold_out' : product.status, item.productId]
+                    'UPDATE products SET status = ? WHERE id = ?',
+                    ['sold_out', item.productId]
                 );
             }
 
@@ -102,7 +101,9 @@ router.post('/create', authMiddleware, async (req, res) => {
                 
                 const sellerId = productResult[0].seller_id;
                 const itemPrice = productResult[0].price;
-                const itemTotal = itemPrice * item.quantity;
+                // Mỗi sản phẩm chỉ có thể mua 1 cái
+                const itemQuantity = 1;
+                const itemTotal = itemPrice * itemQuantity;
                 
                 if (!sellerMap[sellerId]) {
                     sellerMap[sellerId] = {
@@ -114,7 +115,7 @@ router.post('/create', authMiddleware, async (req, res) => {
                 sellerMap[sellerId].amount += itemTotal;
                 sellerMap[sellerId].items.push({
                     productId: item.productId,
-                    quantity: item.quantity,
+                    quantity: itemQuantity,
                     price: itemPrice
                 });
             }

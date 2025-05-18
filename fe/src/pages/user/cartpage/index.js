@@ -35,7 +35,7 @@ const CartPage = ({ cart, setCart }) => {
   }, [cart]);
 
   const calculateTotalPrice = () => {
-    const total = cart.reduce((sum, item) => sum + item.price * item.amount, 0);
+    const total = cart.reduce((sum, item) => sum + item.price, 0);
     setTotalPrice(total);
   };
   
@@ -44,7 +44,7 @@ const CartPage = ({ cart, setCart }) => {
   }, [cart]);
   
   const calculateTotaldiscountPrice = () => {
-    const total = cart.reduce((sum, item) => sum + ((item.originalPrice || item.price * 1.2) - item.price) * item.amount, 0);
+    const total = cart.reduce((sum, item) => sum + ((item.originalPrice || item.price * 1.2) - item.price), 0);
     setTotalDiscountPrice(total);
   };
 
@@ -64,16 +64,6 @@ const CartPage = ({ cart, setCart }) => {
     } catch (error) {
       console.error("Error fetching wallet balance:", error);
     }
-  };
-
-  const handleUpdateAmount = (id, newAmount) => {
-    if (newAmount < 1) return; // Không cho phép số lượng < 1
-
-    const updatedCart = cart.map(item =>
-      item.id === id ? { ...item, amount: newAmount } : item
-    );
-    setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
   const handleRemoveItem = (id) => {
@@ -124,7 +114,7 @@ const CartPage = ({ cart, setCart }) => {
         const orderData = {
           items: cart.map(item => ({
             productId: item.id,
-            quantity: item.amount || 1,
+            quantity: 1,
             price: item.price
           })),
           totalAmount: totalPrice
@@ -285,23 +275,11 @@ const CartPage = ({ cart, setCart }) => {
 
                   {/* Cột: Số Lượng */}
                   <td className="quantity-control">
-                    <button
-                      className="quantity-btn"
-                      onClick={() => handleUpdateAmount(item.id, (item.amount || 1) - 1)}
-                    >
-                      -
-                    </button>
-                    <span className="quantity">{item.amount || 1}</span>
-                    <button
-                      className="quantity-btn"
-                      onClick={() => handleUpdateAmount(item.id, (item.amount || 1) + 1)}
-                    >
-                      +
-                    </button>
+                    <span className="quantity">1</span>
                   </td>
 
                   {/* Cột: Số Tiền */}
-                  <td className="price">{formatPrice(item.price * (item.amount || 1))}</td>
+                  <td className="price">{formatPrice(item.price)}</td>
 
                   {/* Cột: Thao Tác */}
                   <td>
@@ -333,19 +311,7 @@ const CartPage = ({ cart, setCart }) => {
                 </div>
                 <div className="cart-state">
                   <div className="cart-state-mobile">
-                  <button
-                      className="quantity-btn"
-                      onClick={() => handleUpdateAmount(item.id, (item.amount || 1) - 1)}
-                    >
-                      -
-                    </button>
-                    <span className="quantity">{item.amount || 1}</span>
-                    <button
-                      className="quantity-btn"
-                      onClick={() => handleUpdateAmount(item.id, (item.amount || 1) + 1)}
-                    >
-                      +
-                    </button>
+                    <span className="quantity">1</span>
                   </div>
                   <button className="cart-remove" onClick={() => handleRemoveItem(item.id)}>Xóa</button>
                 </div>
@@ -421,9 +387,9 @@ const CartPage = ({ cart, setCart }) => {
                 {purchasedItems.map(item => (
                   <div key={item.id} className="purchased-item">
                     <h3>{item.name}</h3>
-                    <p className="purchase-info">Số lượng: {item.amount || 1}</p>
+                    <p className="purchase-info">Số lượng: 1</p>
                     <p className="purchase-info">Giá: {formatPrice(item.price)} / sản phẩm</p>
-                    <p className="purchase-info">Tổng: {formatPrice(item.price * (item.amount || 1))}</p>
+                    <p className="purchase-info">Tổng: {formatPrice(item.price)}</p>
                   </div>
                 ))}
               </div>

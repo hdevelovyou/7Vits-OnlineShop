@@ -13,7 +13,6 @@ const EditProductPage = () => {
         description: '',
         price: '',
         category: '',
-        stock: 1,
         status: 'active',
         notes: ''
     });
@@ -42,7 +41,6 @@ const EditProductPage = () => {
                     description: product.description,
                     price: product.price.toString(),
                     category: product.category,
-                    stock: product.stock,
                     status: product.status,
                     notes: product.notes || ''
                 });
@@ -112,7 +110,6 @@ const EditProductPage = () => {
             const productData = {
                 ...formData,
                 price: parseFloat(formData.price),
-                stock: parseInt(formData.stock),
                 image: image
             };
 
@@ -215,19 +212,6 @@ const EditProductPage = () => {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="stock">Số lượng *</label>
-                    <input
-                        type="number"
-                        id="stock"
-                        name="stock"
-                        value={formData.stock}
-                        onChange={handleChange}
-                        required
-                        min="1"
-                    />
-                </div>
-
-                <div className="form-group">
                     <label htmlFor="notes">Ghi chú (Key, thông tin đăng nhập)</label>
                     <textarea
                         id="notes"
@@ -249,9 +233,8 @@ const EditProductPage = () => {
                         onChange={handleChange}
                         required
                     >
-                        <option value="active">Đang bán</option>
-                        <option value="inactive">Đã ẩn</option>
-                        <option value="sold_out">Đã bán hết</option>
+                        <option value="active">Hoạt động</option>
+                        <option value="inactive">Tạm ngưng</option>
                     </select>
                 </div>
 
@@ -272,7 +255,7 @@ const EditProductPage = () => {
                 </div>
 
                 <button type="submit" className="submit-button" disabled={submitting}>
-                    {submitting ? 'Đang cập nhật...' : 'Cập nhật sản phẩm'}
+                    {submitting ? 'Đang xử lý...' : 'Cập nhật sản phẩm'}
                 </button>
             </form>
         </div>

@@ -63,11 +63,14 @@ exports.getProductById = async (req, res) => {
 // Create a new product
 exports.createProduct = async (req, res) => {
     try {
-        const { name, description, price, category, stock, notes, image } = req.body;
+        const { name, description, price, category, notes, image } = req.body;
         const seller_id = req.user.id;
         
         const sql = `INSERT INTO products (name, description, price, category, stock, seller_id, image_url, notes) 
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+        
+        // Always set stock to 1
+        const stock = 1;
         
         const [result] = await db.query(sql, [name, description, price, category, stock, seller_id, image, notes]);
         
@@ -84,7 +87,7 @@ exports.createProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, description, price, category, stock, status, notes, image } = req.body;
+        const { name, description, price, category, status, notes, image } = req.body;
         const seller_id = req.user.id;
         
         // Check if product belongs to the user
@@ -94,6 +97,9 @@ exports.updateProduct = async (req, res) => {
         if (ownerResults.length === 0) {
             return res.status(403).json({ error: 'Unauthorized access to this product' });
         }
+        
+        // Always set stock to 1
+        const stock = 1;
         
         const updateSQL = `UPDATE products 
                            SET name = ?, description = ?, price = ?, 

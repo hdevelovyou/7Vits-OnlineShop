@@ -1,11 +1,12 @@
 import { memo, useState, useEffect } from "react";
 import "./style.scss";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FaFacebook } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { FaCircleUser } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa";
 import { FaCheck, FaTimes } from "react-icons/fa";
+import axios from "axios";
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -18,6 +19,7 @@ const RegisterPage = () => {
         confirmPassword: ""
     });
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
     const [passwordCriteria, setPasswordCriteria] = useState({
         length: false,
         lowercase: false,
@@ -48,9 +50,11 @@ const RegisterPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(""); // Clear previous errors
+        setLoading(true);
         
         if (formData.password !== formData.confirmPassword) {
             setError("Mật khẩu không khớp"); // Set error for password mismatch
+            setLoading(false);
             return;
         }
 
@@ -58,13 +62,27 @@ const RegisterPage = () => {
         const allCriteriaMet = Object.values(passwordCriteria).every(criteria => criteria);
         if (!allCriteriaMet) {
             setError("Mật khẩu không đáp ứng tất cả các yêu cầu");
+            setLoading(false);
             return;
         }
         
         try {
+            // Prepare data for API
+            const userData = {
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                email: formData.email,
+                userName: formData.userName,
+                password: formData.password
+            };
             
+            // Send registration data to backend
+            await axios.post('/api/auth/register', userData);
+            
+            // Keep the original alert notification
             alert("Đăng ký thành công!");
             navigate("/otp-for-signup");
+            
         } catch (err) {
             // Better error handling to match your login page
             if (err.response && err.response.data && err.response.data.error) {
@@ -72,6 +90,8 @@ const RegisterPage = () => {
             } else {
                 setError(err.message || "Đăng ký thất bại. Vui lòng thử lại sau.");
             }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -131,7 +151,9 @@ const RegisterPage = () => {
                     <FcGoogle className="icon-gg" onClick={handleGoogleSignup} style={{ cursor: 'pointer' }} />
                 </div>
                     <div className="sig-btn-rs">
-                        <button type="submit">Đăng ký</button>
+                        <button type="submit" disabled={loading}>
+                            {loading ? "Đang xử lý..." : "Đăng ký"}
+                        </button>
                     </div>
                 </div>
             </form>

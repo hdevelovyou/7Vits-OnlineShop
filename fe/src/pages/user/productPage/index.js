@@ -6,15 +6,15 @@ import CommentSection from "../../../components/comment/comment";
 import "./style.scss";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { formatVND } from "../../../utils/formatprice";
+
 const ProductPage = ({ cart, setCart }) => {
     const { id } = useParams();
     const { user } = useAuth();
     const navigate = useNavigate();
-    const [quantity, setQuantity] = useState(1);
-    const [selectedImage, setSelectedImage] = useState(0);
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(0);
     const [selectedRating, setSelectedRating] = useState(0);
 
     useEffect(() => {
@@ -98,23 +98,6 @@ const ProductPage = ({ cart, setCart }) => {
         return fullUrl;
     };
 
-    const handleQuantityChange = (e) => {
-        const value = parseInt(e.target.value);
-        if (!isNaN(value) && value > 0) {
-            setQuantity(value);
-        }
-    };
-
-    const decreaseQuantity = () => {
-        if (quantity > 1) {
-            setQuantity(quantity - 1);
-        }
-    };
-
-    const increaseQuantity = () => {
-        setQuantity(quantity + 1);
-    };
-
     const addToCart = () => {
         // Kiểm tra trạng thái sản phẩm và số lượng tồn kho
         if (product.status === 'sold_out' || product.stock <= 0) {
@@ -128,20 +111,13 @@ const ProductPage = ({ cart, setCart }) => {
             return;
         }
 
-        // Kiểm tra số lượng đặt mua có vượt quá tồn kho không
-        if (quantity > product.stock) {
-            alert(`Chỉ còn ${product.stock} sản phẩm trong kho. Vui lòng giảm số lượng.`);
-            setQuantity(product.stock);
-            return;
-        }
-
         const item = {
             id: product.id,
             name: product.name,
             price: product.price,
             originalPrice: product.originalPrice,
             image: getImageUrl(product.images[0]),
-            amount: quantity
+            amount: 1
         };
 
         // Check if item is already in cart
@@ -149,18 +125,9 @@ const ProductPage = ({ cart, setCart }) => {
         
         let updatedCart;
         if (existingItemIndex >= 0) {
-            // Tính tổng số lượng sau khi thêm
-            const newTotalQuantity = cart[existingItemIndex].amount + quantity;
-            
-            // Kiểm tra tổng số lượng có vượt quá tồn kho không
-            if (newTotalQuantity > product.stock) {
-                alert(`Tổng số lượng (${newTotalQuantity}) vượt quá số lượng tồn kho (${product.stock}). Chỉ thêm được tối đa ${product.stock - cart[existingItemIndex].amount} sản phẩm vào giỏ hàng.`);
-                return;
-            }
-            
-            // Update item quantity if already in cart
+            // Item already in cart - just replace it
             updatedCart = [...cart];
-            updatedCart[existingItemIndex].amount += quantity;
+            updatedCart[existingItemIndex] = item;
             setCart(updatedCart);
         } else {
             // Add new item to cart
@@ -187,20 +154,13 @@ const ProductPage = ({ cart, setCart }) => {
             return;
         }
 
-        // Kiểm tra số lượng đặt mua có vượt quá tồn kho không
-        if (quantity > product.stock) {
-            alert(`Chỉ còn ${product.stock} sản phẩm trong kho. Vui lòng giảm số lượng.`);
-            setQuantity(product.stock);
-            return;
-        }
-
         const item = {
             id: product.id,
             name: product.name,
             price: product.price,
             originalPrice: product.originalPrice,
             image: getImageUrl(product.images[0]),
-            amount: quantity
+            amount: 1
         };
 
         // Check if item is already in cart
@@ -208,18 +168,9 @@ const ProductPage = ({ cart, setCart }) => {
         
         let updatedCart;
         if (existingItemIndex >= 0) {
-            // Tính tổng số lượng sau khi thêm
-            const newTotalQuantity = cart[existingItemIndex].amount + quantity;
-            
-            // Kiểm tra tổng số lượng có vượt quá tồn kho không
-            if (newTotalQuantity > product.stock) {
-                alert(`Tổng số lượng (${newTotalQuantity}) vượt quá số lượng tồn kho (${product.stock}). Chỉ thêm được tối đa ${product.stock - cart[existingItemIndex].amount} sản phẩm vào giỏ hàng.`);
-                return;
-            }
-            
-            // Update item quantity if already in cart
+            // Item already in cart - just replace it
             updatedCart = [...cart];
-            updatedCart[existingItemIndex].amount += quantity;
+            updatedCart[existingItemIndex] = item;
             setCart(updatedCart);
         } else {
             // Add new item to cart
@@ -357,10 +308,6 @@ const ProductPage = ({ cart, setCart }) => {
                                             {product.status === 'sold_out' || product.stock <= 0 ? 'Hết hàng' : 'Còn hàng'}
                                         </span>
                                     </div>
-                                    <div className="stock-quantity">
-                                        <i className="fa-solid fa-warehouse"></i>
-                                        <span>Còn lại: {product.stock}</span>
-                                    </div>
                                 </div>
                             </div>
 
@@ -396,29 +343,6 @@ const ProductPage = ({ cart, setCart }) => {
                             )}
 
                             <div className="product-actions">
-                                <div className="quantity-control">
-                                    <span className="quantity-label">Số lượng:</span>
-                                    <div className="quantity-selector">
-                                        <button
-                                            onClick={decreaseQuantity}
-                                            className="quantity-btn"
-                                            disabled={quantity <= 1}
-                                        >
-                                            <i className="fas fa-minus"></i>
-                                        </button>
-                                        <input
-                                            type="number"
-                                            value={quantity}
-                                            onChange={handleQuantityChange}
-                                            min="1"
-                                            className="quantity-input"
-                                        />
-                                        <button onClick={increaseQuantity} className="quantity-btn">
-                                            <i className="fas fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-
                                 <div className="action-buttons">
                                     <button 
                                         className="buy-now-btn" 

@@ -10,7 +10,6 @@ const SellProductPage = () => {
         description: '',
         price: '',
         category: '',
-        stock: 1,
         notes: ''
     });
     const [image, setImage] = useState(null);
@@ -91,7 +90,6 @@ const SellProductPage = () => {
                 description: formData.description,
                 price: priceValue,
                 category: formData.category,
-                stock: parseInt(formData.stock),
                 notes: formData.notes,
                 image: image
             };
@@ -180,20 +178,6 @@ const SellProductPage = () => {
                             </option>
                         ))}
                     </select>
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="stock">Số lượng *</label>
-                    <input
-                        type="number"
-                        id="stock"
-                        name="stock"
-                        value={formData.stock}
-                        onChange={handleChange}
-                        required
-                        min="1"
-                        placeholder="Nhập số lượng"
-                    />
                 </div>
 
                 <div className="form-group">
