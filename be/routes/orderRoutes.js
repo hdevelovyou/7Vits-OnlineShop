@@ -4,7 +4,7 @@ const db = require('../config/connectDB');
 const { authMiddleware } = require('../controllers/authController');
 
 // Hàm hỗ trợ thử lại giao dịch
-const executeWithRetry = async (operation, maxRetries = 5) => {
+const executeWithRetry = async (operation, maxRetries = 8) => {
     let lastError;
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
@@ -12,12 +12,12 @@ const executeWithRetry = async (operation, maxRetries = 5) => {
         } catch (error) {
             lastError = error;
             // Chỉ thử lại đối với lỗi timeout khóa
-            if (error.code === 'ER_LOCK_WAIT_TIMEOUT') {
+            if (error.code === 'ER_LOCK_WAIT_TIMEOUT' || error.message.includes('lock timeout')) {
                 console.log(`Lần thử ${attempt} thất bại do lock timeout, đang thử lại...`);
                 
                 // Đợi một chút trước khi thử lại (thời gian chờ tăng theo cấp số nhân + jitter)
-                const baseDelay = 500 * Math.pow(2, attempt - 1);
-                const jitter = Math.floor(Math.random() * 300); // Thêm nhiễu ngẫu nhiên để tránh nhiều request cùng retry
+                const baseDelay = 600 * Math.pow(1.8, attempt - 1);
+                const jitter = Math.floor(Math.random() * 500); // Thêm nhiễu ngẫu nhiên để tránh nhiều request cùng retry
                 await new Promise(resolve => setTimeout(resolve, baseDelay + jitter));
                 
                 // Đảm bảo rằng bất kỳ giao dịch trước đó đều đã được rollback
@@ -117,7 +117,7 @@ router.post('/create', authMiddleware, async (req, res) => {
             });
         }
 
-        // Thực hiện toàn bộ giao dịch với cơ chế tự động thử lại
+        // GIỮ CHO TẤT CẢ TRONG MỘT TRANSACTION DUY NHẤT để tránh vấn đề về khóa ngoại
         await executeWithRetry(async () => {
             try {
                 // Bắt đầu transaction
@@ -129,12 +129,8 @@ router.post('/create', authMiddleware, async (req, res) => {
                     [userId]
                 );
 
-                // Nếu không có ví, tạo ví mới với số dư 0
+                // Nếu không có ví, báo lỗi
                 if (walletResult.length === 0) {
-                    await db.query(
-                        'INSERT INTO user_wallets (user_id, balance) VALUES (?, 0)',
-                        [userId]
-                    );
                     await db.query('ROLLBACK');
                     throw { status: 400, message: 'Số dư ví không đủ để thanh toán. Vui lòng nạp tiền vào ví.' };
                 }
@@ -147,8 +143,23 @@ router.post('/create', authMiddleware, async (req, res) => {
                     throw { status: 400, message: 'Số dư ví không đủ để thanh toán. Vui lòng nạp tiền vào ví.' };
                 }
 
-                // 2. Kiểm tra và khóa các sản phẩm
-                const productUpdates = [];
+                // 2. Tạo giao dịch trừ tiền của người mua
+                const [buyerTransaction] = await db.query(
+                    `INSERT INTO transactions 
+                    (user_id, amount, transaction_type, status, description) 
+                    VALUES (?, ?, 'purchase', 'pending', ?)`,
+                    [userId, totalAmount, 'Thanh toán đơn hàng']
+                );
+
+                const buyerTransactionId = buyerTransaction.insertId;
+
+                // 3. Trừ tiền từ ví người mua
+                await db.query(
+                    'UPDATE user_wallets SET balance = balance - ? WHERE user_id = ?',
+                    [totalAmount, userId]
+                );
+                
+                // 4. Cập nhật hàng tồn kho trước
                 for (const item of validatedItems) {
                     // Kiểm tra lại và khóa sản phẩm
                     const [productResult] = await db.query(
@@ -158,34 +169,30 @@ router.post('/create', authMiddleware, async (req, res) => {
                     
                     if (productResult.length === 0 || productResult[0].stock < item.quantity) {
                         await db.query('ROLLBACK');
-                        throw { status: 400, message: 'Sản phẩm không đủ số lượng trong kho hoặc đã bị thay đổi' };
+                        throw { status: 400, message: `Sản phẩm ID ${item.productId} không đủ số lượng trong kho` };
                     }
                     
-                    // Chuẩn bị dữ liệu để cập nhật (thay vì cập nhật ngay lập tức)
-                    productUpdates.push({
-                        id: item.productId,
-                        quantity: item.quantity,
-                        newStock: productResult[0].stock - item.quantity
-                    });
+                    const newStock = productResult[0].stock - item.quantity;
+                    
+                    // Cập nhật stock
+                    await db.query(
+                        'UPDATE products SET stock = ? WHERE id = ?',
+                        [newStock, item.productId]
+                    );
+                    
+                    // Kiểm tra nếu số lượng bằng 0 thì đánh dấu là sold_out
+                    if (newStock === 0) {
+                        await db.query(
+                            `UPDATE products SET status = 'sold_out' WHERE id = ?`,
+                            [item.productId]
+                        );
+                    }
                 }
-
-                // 3. Tạo giao dịch trừ tiền của người mua
-                const [buyerTransaction] = await db.query(
-                    `INSERT INTO transactions 
-                    (user_id, amount, transaction_type, status, description) 
-                    VALUES (?, ?, 'purchase', 'completed', ?)`,
-                    [userId, totalAmount, 'Thanh toán đơn hàng']
-                );
-
-                const buyerTransactionId = buyerTransaction.insertId;
-
-                // 4. Trừ tiền từ ví người mua
-                await db.query(
-                    'UPDATE user_wallets SET balance = balance - ? WHERE user_id = ?',
-                    [totalAmount, userId]
-                );
-
-                // 5. Tạo đơn hàng và xử lý cho từng người bán
+                
+                // 5. Danh sách order IDs và seller transaction IDs cho wallet_transfers
+                const transfersData = [];
+                
+                // 6. Tạo đơn hàng và chuyển tiền cho từng người bán
                 for (const sellerId in sellerDataMap) {
                     const seller = sellerDataMap[sellerId];
                     
@@ -213,7 +220,7 @@ router.post('/create', authMiddleware, async (req, res) => {
                         );
                     }
                     
-                    // Sử dụng INSERT nhiều hàng thay vì nhiều câu INSERT
+                    // Thêm order_items
                     if (orderItemValues.length > 0) {
                         await db.query(
                             `INSERT INTO order_items 
@@ -253,30 +260,22 @@ router.post('/create', authMiddleware, async (req, res) => {
                         );
                     }
                     
-                    // Ghi nhận chuyển tiền
-                    await db.query(
-                        `INSERT INTO wallet_transfers 
-                        (order_id, buyer_id, seller_id, amount, buyer_transaction_id, seller_transaction_id, status) 
-                        VALUES (?, ?, ?, ?, ?, ?, 'completed')`,
-                        [orderId, userId, sellerId, seller.amount, buyerTransactionId, sellerTransactionId]
-                    );
+                    // Lưu dữ liệu cho wallet_transfers
+                    transfersData.push({
+                        orderId,
+                        sellerId,
+                        amount: seller.amount,
+                        sellerTransactionId
+                    });
                 }
                 
-                // 6. Cập nhật stock sản phẩm (thực hiện cuối cùng để giảm thời gian giữ khóa)
-                for (const update of productUpdates) {
-                    await db.query(
-                        'UPDATE products SET stock = ? WHERE id = ?',
-                        [update.newStock, update.id]
-                    );
-                    
-                    // Kiểm tra nếu số lượng sản phẩm bằng 0 thì đổi trạng thái thành sold_out
-                    if (update.newStock === 0) {
-                        await db.query(
-                            `UPDATE products SET status = 'sold_out' WHERE id = ?`,
-                            [update.id]
-                        );
-                    }
-                }
+                // 7. Cập nhật trạng thái giao dịch người mua thành công
+                await db.query(
+                    `UPDATE transactions SET status = 'completed' WHERE id = ?`,
+                    [buyerTransactionId]
+                );
+                
+                                // 8. Thêm các giao dịch ví sau khi order đã được tạo                for (const data of transfersData) {                    // Chèn với giá trị status ban đầu là 'pending' (hợp lệ trong ENUM)                    await db.query(                        `INSERT INTO wallet_transfers                         (order_id, buyer_id, seller_id, amount, buyer_transaction_id, seller_transaction_id, status)                         VALUES (?, ?, ?, ?, ?, ?, 'pending')`,                        [data.orderId, userId, data.sellerId, data.amount, buyerTransactionId, data.sellerTransactionId]                    );                                        // Cập nhật trạng thái sau khi chèn thành 'completed' (cũng hợp lệ trong ENUM)                    await db.query(                        `UPDATE wallet_transfers SET status = 'completed'                          WHERE order_id = ? AND buyer_id = ? AND seller_id = ?`,                        [data.orderId, userId, data.sellerId]                    );                }
                 
                 // Hoàn tất transaction
                 await db.query('COMMIT');
@@ -298,20 +297,10 @@ router.post('/create', authMiddleware, async (req, res) => {
         });
         
     } catch (error) {
-        console.error('Lỗi khi tạo đơn hàng:', error);
-        
-        // Nếu là lỗi ứng dụng tùy chỉnh
-        if (error.status && error.message) {
-            return res.status(error.status).json({ 
-                success: false, 
-                message: error.message
-            });
-        }
-        
-        // Lỗi chung
-        res.status(500).json({ 
-            success: false, 
-            message: 'Đã xảy ra lỗi khi xử lý đơn hàng. Vui lòng thử lại sau.' 
+        console.error('Order creation error:', error);
+        res.status(error.status || 500).json({
+            success: false,
+            message: error.message || 'Đã xảy ra lỗi khi tạo đơn hàng'
         });
     }
 });
