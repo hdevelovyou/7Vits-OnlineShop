@@ -24,20 +24,7 @@ const ProductPage = ({ cart, setCart }) => {
                 const response = await axios.get(`/api/products/${id}`);
                 console.log("Chi tiết sản phẩm:", response.data);
 
-                if (response.data) {
-                    setProduct({
-                        ...response.data,
-                        images: response.data.image_url ? [response.data.image_url] : [],
-                        rating: response.data.rating !== undefined ? response.data.rating : 4,
-                        sold: response.data.sold !== undefined ? response.data.sold : 0,
-                        stock: response.data.stock !== undefined ? response.data.stock : 0,
-                        features: response.data.features ? response.data.features : [],
-                        originalPrice: response.data.price * 1.2
-                    });
-                } else {
-                    setError("Không tìm thấy thông tin sản phẩm");
-                    navigate("/");
-                }
+                                if (response.data) {                    setProduct({                        ...response.data,                        images: response.data.image_url ? [response.data.image_url] : [],                        rating: response.data.rating !== undefined ? response.data.rating : 4,                        sold: response.data.sold_count !== undefined ? response.data.sold_count : 0,                        stock: response.data.stock !== undefined ? response.data.stock : 0,                        features: response.data.features ? response.data.features : [],                        originalPrice: response.data.price * 1.2                    });                } else {                    setError("Không tìm thấy thông tin sản phẩm");                    navigate("/");                }
             } catch (error) {
                 console.error("Lỗi khi tải sản phẩm:", error);
                 setError("Đã xảy ra lỗi khi tải thông tin sản phẩm");

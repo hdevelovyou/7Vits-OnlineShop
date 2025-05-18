@@ -16,6 +16,8 @@ const CartPage = ({ cart, setCart }) => {
   const [walletBalance, setWalletBalance] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("wallet");
   const [orderSuccess, setOrderSuccess] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const [isRetrying, setIsRetrying] = useState(false);
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -93,11 +95,18 @@ const CartPage = ({ cart, setCart }) => {
     }
 
     setIsLoading(true);
+    
+    // Nếu đang thử lại, hiển thị trạng thái
+    if (retryCount > 0) {
+      setIsRetrying(true);
+    }
+    
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         alert("Bạn cần đăng nhập để mua hàng");
         setIsLoading(false);
+        setIsRetrying(false);
         return;
       }
 
@@ -106,6 +115,7 @@ const CartPage = ({ cart, setCart }) => {
         if (walletBalance < totalPrice) {
           alert("Số dư ví không đủ. Vui lòng nạp thêm tiền vào ví.");
           setIsLoading(false);
+          setIsRetrying(false);
           return;
         }
         
@@ -123,7 +133,9 @@ const CartPage = ({ cart, setCart }) => {
         const response = await axios.post("/api/orders/create", orderData, {
           headers: {
             Authorization: `Bearer ${token}`
-          }
+          },
+          // Tăng timeout cho request
+          timeout: 30000,
         });
         
         if (response.data.success) {
@@ -138,6 +150,10 @@ const CartPage = ({ cart, setCart }) => {
           // Xóa giỏ hàng
           setCart([]);
           localStorage.setItem("cart", JSON.stringify([]));
+          
+          // Reset các trạng thái retry
+          setRetryCount(0);
+          setIsRetrying(false);
         } else {
           alert(response.data.message || "Có lỗi xảy ra khi thanh toán");
         }
@@ -147,7 +163,34 @@ const CartPage = ({ cart, setCart }) => {
       }
     } catch (error) {
       console.error("Checkout error:", error);
-      if (error.response && error.response.data && error.response.data.message === "Bạn không thể mua sản phẩm do chính mình đăng bán") {
+      
+      // Xử lý lỗi lock timeout
+      if (error.message?.includes('timeout') || 
+          error.response?.data?.message?.includes('timeout') ||
+          error.response?.data?.message?.includes('Lần thử') ||
+          error.code === 'ECONNABORTED') {
+        
+        // Nếu chưa vượt quá số lần thử lại (tối đa 3 lần)
+        if (retryCount < 3) {
+          const newRetryCount = retryCount + 1;
+          setRetryCount(newRetryCount);
+          
+          // Thông báo đang thử lại
+          console.log(`Lần thử ${newRetryCount}: Đang thử lại sau lỗi timeout...`);
+          
+          // Thử lại sau khoảng thời gian (giãn cách tăng dần)
+          const retryDelay = 2000 * Math.pow(1.5, newRetryCount - 1);
+          setTimeout(() => {
+            handleCheckout(); // Thử lại
+          }, retryDelay);
+          
+          return;
+        } else {
+          // Đã hết số lần thử
+          alert("Hệ thống đang tải nặng. Vui lòng thử lại sau vài phút.");
+          setRetryCount(0);
+        }
+      } else if (error.response && error.response.data && error.response.data.message === "Bạn không thể mua sản phẩm do chính mình đăng bán") {
         // Xử lý khi có sản phẩm của chính người dùng trong giỏ hàng
         alert("Giỏ hàng có sản phẩm do bạn đăng bán. Vui lòng xóa sản phẩm đó trước khi thanh toán.");
       } else {
@@ -155,6 +198,7 @@ const CartPage = ({ cart, setCart }) => {
       }
     } finally {
       setIsLoading(false);
+      setIsRetrying(false);
     }
   };
 
@@ -347,7 +391,9 @@ const CartPage = ({ cart, setCart }) => {
                 onClick={handleCheckout}
                 disabled={isLoading}
               >
-                {isLoading ? "Đang xử lý..." : "Mua Ngay"}
+                {isLoading ? 
+                  isRetrying ? `Đang thử lại lần ${retryCount}...` : "Đang xử lý..." 
+                  : "Mua Ngay"}
               </button>
             </div>
           
