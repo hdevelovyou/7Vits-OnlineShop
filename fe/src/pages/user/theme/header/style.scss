@@ -243,7 +243,8 @@ html {
     .login-btn-mobile,
     .input-search,
     .sig-btn-mobile,
-    .logout-mobile {
+    .logout-mobile,
+    .wallet-btn {
         display: none;
     }
 
@@ -319,13 +320,14 @@ html {
         li {
             padding: 20px 0;
             border-bottom: 1px solid #fff;
-
+             
         }
 
         a {
             font-size: 2rem;
             font-weight: bold;
             text-decoration: none;
+           
         }
 
         .header__menu_navbar_icon {
@@ -416,7 +418,8 @@ html {
     .login-btn-header,
     .profile-btn,
     .logout-btn,
-    .topup-btn {
+    .topup-btn,
+    .wallet-btn {
         display: none;
     }
 
