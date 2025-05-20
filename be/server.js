@@ -188,18 +188,29 @@ io.on('connection', (socket) => {
   socket.on('private_message', async ({ sender_id, receiver_id, message }) => {
     console.log(`${sender_id} → ${receiver_id}: ${message}`);
 
+    const newMessage = {
+      sender_id,
+      receiver_id,
+      message,
+      created_at: new Date().toISOString()
+    };
+
+    // Gửi cho người nhận
     const receiverSocketId = users[receiver_id];
     if (receiverSocketId) {
-      io.to(receiverSocketId).emit('private_message', {
-        sender_id,
-        message,
-        created_at: new Date().toISOString()
-      });
+      io.to(receiverSocketId).emit('private_message', newMessage);
     }
-    
-    // Save message to database
+
+    // Gửi lại cho người gửi
+    const senderSocketId = users[sender_id];
+    if (senderSocketId) {
+      io.to(senderSocketId).emit('private_message', newMessage);
+    }
+
+    // Lưu vào DB
     await messageController.saveSocketMessage(sender_id, receiver_id, message);
   });
+  
 
   socket.on('disconnect', () => {
     for (const [userId, sockId] of Object.entries(users)) {

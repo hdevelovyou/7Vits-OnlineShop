@@ -22,6 +22,13 @@ export default function Chat({ receiverId, receiverName }) {
     const [zoomedImageSize, setZoomedImageSize] = useState({ width: 0, height: 0 });
     const scale = 3;
 
+    // Đăng ký socket với user ID
+    useEffect(() => {
+        if (socket && user?.id) {
+            socket.emit('register', user.id);
+        }
+    }, [socket, user?.id]);
+
 
     // Fetch conversations
     useEffect(() => {
@@ -47,20 +54,33 @@ export default function Chat({ receiverId, receiverName }) {
 
     // Listen for incoming messages
     useEffect(() => {
-        if (!socket) return;
+        if (!socket || !user?.id) return;
+
         const handler = (msg) => {
-            if (
-                (msg.sender_id === selectedUser?.id && msg.receiver_id === user?.id) ||
-                (msg.sender_id === user?.id && msg.receiver_id === selectedUser?.id)
-            ) {
-                setMessages((prev) => [...prev, msg]);
-                // update sidebar
-                updateSidebar(msg);
+            const isRelevant =
+                (msg.sender_id === user.id || msg.receiver_id === user.id);
+
+            if (isRelevant) {
+                // Hiện tin nhắn nếu thuộc cuộc hội thoại hiện tại
+                const isCurrent =
+                    (msg.sender_id === selectedUser?.id && msg.receiver_id === user.id) ||
+                    (msg.sender_id === user.id && msg.receiver_id === selectedUser?.id);
+
+                if (isCurrent) {
+                    setMessages((prev) => [...prev, msg]);
+                }
+
+                updateSidebar(msg); // Luôn cập nhật sidebar
             }
         };
+
         socket.on('private_message', handler);
-        return () => socket.off('private_message', handler);
-    }, [socket, selectedUser, user.id]);
+
+        return () => {
+            socket.off('private_message', handler); // Cleanup đúng cách
+        };
+    }, [socket, user?.id, selectedUser?.id]);
+    
 
     // Fetch message history on select
     useEffect(() => {
@@ -139,11 +159,10 @@ export default function Chat({ receiverId, receiverName }) {
             sender_id: user.id,
             receiver_id: selectedUser.id,
             message: input.trim(),
+            created_at: new Date().toISOString(),
         };
         socket.emit('private_message', payload);
-        const localMsg = { ...payload, created_at: new Date().toISOString() };
-        setMessages((prev) => [...prev, localMsg]);
-        updateSidebar(localMsg);
+        updateSidebar(payload);
         setInput('');
     };    
 
