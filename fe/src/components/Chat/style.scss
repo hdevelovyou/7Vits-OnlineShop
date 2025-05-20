@@ -475,10 +475,29 @@
 }
 
 .chat-image {
-    max-width: 200px;
+    max-width: 300px;
     border-radius: 12px;
-    cursor: pointer;
-    box-shadow: 0 0 5px rgba(185, 28, 28, 0.6);
+}
+
+.zoomed-image-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: zoom-out;
+    z-index: 9999;
+}
+
+.zoomed-image {
+    max-width: 90vw;
+    max-height: 90vh;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
 .chat-page~ #footer {

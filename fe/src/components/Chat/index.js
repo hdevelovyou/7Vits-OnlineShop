@@ -18,6 +18,9 @@ export default function Chat({ receiverId, receiverName }) {
     const inputRef = useRef(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const fileInputRef = useRef(null);
+    const [zoomedImage, setZoomedImage] = useState(null);
+    const [zoomedImageSize, setZoomedImageSize] = useState({ width: 0, height: 0 });
+    const scale = 3;
 
 
     // Fetch conversations
@@ -107,7 +110,10 @@ export default function Chat({ receiverId, receiverName }) {
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (!file || !user || !socket || !selectedUser) return;
-
+        if (file.size > 1024 * 1024) {
+            alert("Ảnh quá lớn! Vui lòng chọn ảnh dưới 1MB.");
+            return;
+        }
         const reader = new FileReader();
         reader.onloadend = () => {
             // Gửi base64 dạng chuỗi thẳng vào message
@@ -139,7 +145,7 @@ export default function Chat({ receiverId, receiverName }) {
         setMessages((prev) => [...prev, localMsg]);
         updateSidebar(localMsg);
         setInput('');
-    };
+    };    
 
     return (
         <div className="chat-page">
@@ -173,16 +179,53 @@ export default function Chat({ receiverId, receiverName }) {
                            
                             <div className="messages">
                                 {messages.map((m, i) => {
-                                    // Kiểm tra xem message có phải base64 ảnh không (thường sẽ bắt đầu bằng "data:image")
                                     const isImage = m.message.startsWith('data:image');
+                                    const isMine = m.sender_id === user.id;
+
+                                    if (isImage) {
+                                        return (
+                                            <div
+                                                key={i}
+                                                style={{
+                                                    display: 'flex',
+                                                    justifyContent: isMine ? 'flex-end' : 'flex-start',
+                                                    margin: '10px 0'
+                                                }}
+                                            >
+                                                <div>
+                                                    <img
+                                                        src={m.message}
+                                                        alt="sent-img"
+                                                        className="chat-image"
+                                                        onClick={(e) => {
+                                                            setZoomedImage(m.message);
+                                                            setZoomedImageSize({ width: e.target.naturalWidth, height: e.target.naturalHeight });
+                                                          }}
+                                                        style={{ cursor: 'zoom-in' }}
+                                                    />
+
+                                                    <small style={{ display: 'block', textAlign: isMine ? 'right' : 'left' }}>
+                                                        {new Date(m.created_at).toLocaleString('vi-VN', {
+                                                            hour: '2-digit',
+                                                            minute: '2-digit',
+                                                            second: '2-digit',
+                                                        })}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        );
+                                    }
+
                                     return (
-                                        <div key={i} className={m.sender_id === user.id ? 'mine' : 'theirs'}>
-                                            {isImage ? (
-                                                <img src={m.message} alt="sent-img" className="chat-image" />
-                                            ) : (
-                                                <span>{m.message}</span>
-                                            )}
-                                            <small>{new Date(m.created_at).toLocaleTimeString()}</small>
+                                        <div key={i} className={isMine ? 'mine' : 'theirs'}>
+                                            <span>{m.message}</span>
+                                            <small>
+                                                {new Date(m.created_at).toLocaleString('vi-VN', {
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                    second: '2-digit',
+                                                })}
+                                            </small>
                                         </div>
                                     );
                                 })}
@@ -231,6 +274,23 @@ export default function Chat({ receiverId, receiverName }) {
                     )}
                 </div>
             </div>
+            {zoomedImage && (
+                <div className="zoomed-image-overlay" onClick={() => setZoomedImage(null)}>
+                    <img
+                        src={zoomedImage}
+                        alt="Zoomed"
+                        className="zoomed-image"
+                        onClick={(e) => e.stopPropagation()}
+                        style={{
+                            width: zoomedImageSize.width * scale,
+                            height: zoomedImageSize.height * scale,
+                            maxWidth: '90vw',
+                            maxHeight: '90vh',
+                            objectFit: 'contain',
+                        }}
+                    />
+                </div>
+            )}
         </div>
     );
 }
