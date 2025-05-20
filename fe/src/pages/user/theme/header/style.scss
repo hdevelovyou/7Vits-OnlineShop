@@ -7,6 +7,41 @@
     position: fixed;
     transition: all 0.4s ease-in-out;
 }
+.input-search{
+    display: flex;
+    justify-content: center;
+    margin: 8px 0;
+    border: 0.5px solid #fff;
+    border-radius: 5px;
+    button{
+        background-color: #000;
+       border: none;
+    }
+   
+    .header-search{
+        font-size: 40px;
+        padding:8px;
+        color: #0c0c0c;
+        background-color: rgb(255 255 255 / 8%);
+       
+        cursor: pointer;
+    }
+    
+input[type="text"] {
+    width: 100%;
+    border-radius: 5px;
+    border:none;
+    padding: 10px;
+    color: #000;
+    font-size: 1.5rem;
+    &:focus {
+        outline: none;
+    }
+    &::placeholder {
+        opacity: 0.8;
+    }
+}
+}
 .wallet-btn{
     display: flex;
     justify-content: center;
@@ -18,8 +53,8 @@
 }
 .humberger_menu_wrapper,
 .hamergur_open,
-.login-btn-mobile,
-.input-search {
+.login-btn-mobile
+{
     display: none;
 }
 
@@ -73,7 +108,8 @@
 }
 
 .header-menu {
-    padding: 4.0rem 0;
+    padding:1rem 0 0 ;
+    text-align: center;
 
     ul {
         display: flex;
@@ -241,13 +277,14 @@ html {
     .header-menu,
     .header-top,
     .login-btn-mobile,
-    .input-search,
     .sig-btn-mobile,
     .logout-mobile,
     .wallet-btn {
         display: none;
     }
-
+    .input-search{
+      padding: 16px 0;
+    }
     .header-logo {
         img {
             width: 80px;
@@ -409,7 +446,7 @@ html {
     .form-group .sig-btn button {
         background-color: #ff4500;
     }
-
+    .input-search,
     .header-menu,
     .header-top,
     .search,
@@ -586,7 +623,7 @@ html {
             justify-content: center;
             align-items: center;
             border-radius: 5px;
-
+            
             .header-search {
                 font-size: 40px;
                 color: #fff;
@@ -598,4 +635,43 @@ html {
             }
         }
     }
+}
+.search-container {
+  position: relative;
+    
+     button {
+      background: transparent;
+      border: none;      
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+
+      
+    }
+  .autocomplete-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0; right: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    z-index: 20;
+    list-style: none;
+    margin: 0; padding: 0;
+    max-height: 200px; overflow-y: auto;
+    margin-top:0.25rem;
+    border-radius: 0.5rem;
+    
+    li {
+      display: flex;
+      align-items: center;
+      padding: 6px;
+      cursor: pointer;
+      img { width: 32px; height: 32px; object-fit: cover; margin-right: 8px; }
+      &:hover { background: #f5f5f5; }
+      span{
+         color: #000;
+         font-size:1.5rem;
+      }
+    }
+  }
 }

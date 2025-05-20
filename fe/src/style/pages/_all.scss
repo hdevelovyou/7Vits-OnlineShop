@@ -8,11 +8,18 @@ body {
     background: rgb(20, 20, 20);
 }
 * {
-    font-family: Arial;
+    font-family: "Roboto", sans-serif,Arial, Helvetica, sans-serif;
     padding: 0;
     margin: 0;
     color: rgb(255, 255, 255);
     box-sizing: border-box;
+}
+li {
+    list-style: none;
+}
+a {
+    text-decoration: none;
+    color: inherit;
 }
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {

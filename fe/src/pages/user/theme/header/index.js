@@ -1,8 +1,8 @@
-import { memo, useState, useEffect } from "react";
+import { memo, useState, useEffect, useRef, use } from "react";
 import "./style.scss";
 import { CiFacebook } from "react-icons/ci";
 import { FaInstagram, FaShoppingCart, FaWallet, FaStore, FaGamepad, FaKey } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../../../assets/images/logo.png";
 import { ROUTES } from "../../../../utils/router.js";
 import { IoSearchCircleSharp } from "react-icons/io5";
@@ -35,12 +35,12 @@ const menuItems = [
     icon: <MdEmojiEvents />,
     path: "/su-kien",
   },
- {
+  {
     name: "Đăng xuất",
     icon: <MdLogout />,
     path: "/",
   },
-  
+
 ];
 
 const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLoggedIn và setIsLoggedIn
@@ -48,7 +48,41 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
   const [isHumbergerMenuOpen, setIsHumbergerMenuOpen] = useState(false);
   const [isShowSubmenu, setIsShowSubmenu] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const debounceRef = useRef(null);
+  const inputRef = useRef(null);
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (inputRef.current && !inputRef.current.contains(e.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setSuggestions([]);
+      return;
+    }
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const res = await axios.get(`/api/products?search=${encodeURIComponent(searchTerm)}`);
+        const filtered = res.data.filter(p =>
+          p.name.toLowerCase().includes(searchTerm.toLowerCase()));
+        setSuggestions(filtered.slice(0, 5));
+        setShowDropdown(true);
+      } catch (err) {
+        console.error(err);
+      }
+    }, 100);
+    return () => clearTimeout(debounceRef.current);
+  }, [searchTerm]);
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 0);
@@ -62,20 +96,20 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
     // Fetch wallet balance when user is logged in
     if (isLoggedIn) {
       fetchWalletBalance();
-      
+
       // Refresh balance when tab becomes visible again
       document.addEventListener('visibilitychange', handleVisibilityChange);
-      
+
       // Setup interval to refresh balance every minute when the app is active
       const balanceInterval = setInterval(fetchWalletBalance, 60000);
-      
+
       return () => {
         document.removeEventListener('visibilitychange', handleVisibilityChange);
         clearInterval(balanceInterval);
       };
     }
   }, [isLoggedIn]);
-  
+
   const handleVisibilityChange = () => {
     if (document.visibilityState === 'visible') {
       fetchWalletBalance();
@@ -93,7 +127,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
           Authorization: `Bearer ${token}`
         }
       });
-      
+
       console.log("Wallet balance response:", response.data);
       setWalletBalance(response.data.balance);
     } catch (error) {
@@ -105,8 +139,19 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
     setIsLoggedIn(false); // Gọi setIsLoggedIn để cập nhật trạng thái đăng nhập về false khi logout
     localStorage.removeItem("token"); // Xóa token
     localStorage.removeItem("userId"); // Xóa userId
-    window.location.href = "/"; 
+    window.location.href = "/";
   };
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (searchTerm.trim() === "") return;
+    setShowDropdown(false);
+    navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
+  }
+  const pickSugeestion = (item) => {
+    setSearchTerm(item.name);
+    setShowDropdown(false);
+    navigate(`/product/${item.id}`);
+  }
 
   return (
     <>
@@ -120,7 +165,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
             <AiOutlineSearch className="header-search" />
           </div>
           <ul>
-            {menuItems.filter(menu=>menu.name!=="Danh mục").map((menu, menuKey) => {
+            {menuItems.filter(menu => menu.name !== "Danh mục").map((menu, menuKey) => {
               if (menu.name === "Đăng xuất" && !isLoggedIn) return null; // Nếu không đăng nhập thì không hiển thị mục "Đăng xuất"
               if (menu.name === "Ví" && !isLoggedIn) return null; // Không hiển thị mục "Ví" nếu chưa đăng nhập
 
@@ -158,7 +203,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
                     >
                       {menu.icon}
                       <span>{menu.name}</span>
-                   
+
                     </Link>
                   ) : menu.isWallet ? (
                     // Hiển thị số dư ví
@@ -183,7 +228,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
                     >
                       {menu.icon}
                       <span>{menu.name}</span>
-                    
+
                     </Link>
                   )}
                   {menu.child && menu.child.length > 0 && (
@@ -250,16 +295,41 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
                   <h1>7VITS</h1>
                 </div>
               </div>
-              <div className="col-lg-3 ">
+              <div className="col-lg-3  " >
+                <div className="search-container" ref={inputRef}>
+                  <form className="input-search" onSubmit={handleSearch}>
+                    <input
+                      type="text"
+                      placeholder="Tìm kiếm sản phẩm"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onFocus={() => searchTerm && setShowDropdown(true)}
+                    />
+                    <button type="submit" >
+                    <AiOutlineSearch className="header-search"/>
+                    </button>
+                  </form>
+                  {showDropdown && suggestions.length > 0 && (
+                    <ul className="autocomplete-dropdown">
+                      {suggestions.map((prod) => (
+                        <li key={prod.id} onClick={() => pickSugeestion(prod)}>
+                           
+                          <span>{prod.name}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
                 <nav className="header-menu">
                   <ul>
                     {menuItems
                       .filter(menu => menu.name !== "Đăng xuất" &&
-                                      menu.name !=="Key Bản quyền" &&
-                                      menu.name !=="Key Game" &&
-                                      menu.name !=="Tài khoản Game" 
-                                      && menu.name !=="Ví"
-                      ) 
+                        menu.name !== "Key Bản quyền" &&
+                        menu.name !== "Key Game" &&
+                        menu.name !== "Tài khoản Game"
+                        && menu.name !== "Ví"
+                      )
                       .map((menu, menuKey) => (
                         <li key={menuKey}>
                           {menu.name === "Trang chủ" ? (
@@ -288,9 +358,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
               {/* responsive tablet */}
               <div className="col-lg-3 col-sm-6 mobile-menu">
                 <div className="header-login-signup">
-                  <div className="search">
-                    <IoSearchCircleSharp />
-                  </div>
+
                   {
                     isLoggedIn ? (
                       <Link to="/profile" onClick={() => window.scrollTo(0, 0)} className="login-btn-mobile">
@@ -318,10 +386,10 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
                   </ul>
                   {isLoggedIn ? (
                     <>
-                    <Link to={ROUTES.USER.TOPUP} onClick={() => window.scrollTo(0, 0)} className="wallet-btn">
-                      <FaWallet />
-                      <span>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(walletBalance)}</span>
-                    </Link>
+                      <Link to={ROUTES.USER.TOPUP} onClick={() => window.scrollTo(0, 0)} className="wallet-btn">
+                        <FaWallet />
+                        <span>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(walletBalance)}</span>
+                      </Link>
                       <Link to="/" onClick={handleLogout} className="logout-btn">
                         Đăng xuất
                       </Link>
