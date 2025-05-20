@@ -160,7 +160,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
 
       <div className={`humberger_menu_wrapper ${isHumbergerMenuOpen ? "show" : ""}`}>
         <div className="header__menu_navbar">
-          <div className="input-search">
+          <div className="input-search-mobile">
             <input type="text" placeholder="Nhập từ khóa cần tìm kiếm" />
             <AiOutlineSearch className="header-search" />
           </div>

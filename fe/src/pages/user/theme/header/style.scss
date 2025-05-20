@@ -11,7 +11,6 @@
     display: flex;
     justify-content: center;
     margin: 8px 0;
-    border: 0.5px solid #fff;
     border-radius: 5px;
     button{
         background-color: #000;
@@ -20,16 +19,17 @@
    
     .header-search{
         font-size: 40px;
-        padding:8px;
+        padding:6px;
         color: #0c0c0c;
         background-color: rgb(255 255 255 / 8%);
-       
+        border-radius: 5px;
         cursor: pointer;
     }
     
 input[type="text"] {
     width: 100%;
-    border-radius: 5px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
     border:none;
     padding: 10px;
     color: #000;
@@ -279,11 +279,11 @@ html {
     .login-btn-mobile,
     .sig-btn-mobile,
     .logout-mobile,
-    .wallet-btn {
+    .wallet-btn,.input-search-mobile {
         display: none;
     }
     .input-search{
-      padding: 16px 0;
+      padding:16px 0;
     }
     .header-logo {
         img {
@@ -617,7 +617,7 @@ html {
             font-size: 1.5rem;
         }
 
-        .input-search {
+        .input-search-mobile {
             display: flex;
             border: 0.5px solid #fff;
             justify-content: center;
