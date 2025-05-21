@@ -33,7 +33,7 @@ const menuItems = [
   {
     name: "Chính sách",
     icon: <MdEmojiEvents />,
-    path: "/su-kien",
+    path: "/chinh-sach",
   },
   {
     name: "Đăng xuất",

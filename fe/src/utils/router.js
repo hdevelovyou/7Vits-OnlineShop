@@ -20,5 +20,6 @@ export const ROUTES = {
         CHAT: '/chat/:receiverId',
         TOPUP: '/topup',
         PAYMENT_SUCCESS: '/user/payment-success',
+        CHINH_SACH: '/chinh-sach',
     }
 }
