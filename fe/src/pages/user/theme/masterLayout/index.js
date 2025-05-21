@@ -13,6 +13,7 @@ const MasterLayout = ({ children }) => {
 
     const navigate = useNavigate();
     const location = useLocation();
+    const isChatPage = location.pathname.startsWith('/chat');
 
     const [cart, setCart] = useState(() => {
         try {
@@ -57,34 +58,45 @@ const MasterLayout = ({ children }) => {
 
     return (
         <div>
+            {/* Luôn hiện Header */}
             <Header cart={cart} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} sluong={cart.length} />
+
+            {/* Truyền dữ liệu qua children nếu là function */}
             {children && typeof children === "function"
-                ? children({ isLoggedIn, setIsLoggedIn, cart, setCart, updateCart,  })
+                ? children({ isLoggedIn, setIsLoggedIn, cart, setCart, updateCart })
                 : children}
-            <Footer />
-            <div style={{
-                position: 'fixed',
-                right: '20px',
-                top: '660px',
-                zIndex: 1000,
-                width: '50px',
-                height: '50px',
-                backgroundColor: 'red',
-                borderRadius: '50%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-            }}>
-                <ChatButton />
-            </div>
-            <div style={{
-                position: 'fixed',
-                right: '20px',
-                bottom: '20px',
-                zIndex: 1000
-            }}>
-                <ChatbotComponent />
-            </div>
+
+            {/* Ẩn Footer và Chatbot nếu đang ở /chat */}
+            {!isChatPage && <Footer />}
+
+            {!isChatPage && (
+                <div style={{
+                    position: 'fixed',
+                    right: '20px',
+                    top: '660px',
+                    zIndex: 1000,
+                    width: '50px',
+                    height: '50px',
+                    backgroundColor: 'red',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+                    <ChatButton />
+                </div>
+            )}
+
+            {!isChatPage && (
+                <div style={{
+                    position: 'fixed',
+                    right: '20px',
+                    bottom: '20px',
+                    zIndex: 1000
+                }}>
+                    <ChatbotComponent />
+                </div>
+            )}
         </div>
     );
 };
