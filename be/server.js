@@ -101,8 +101,7 @@ app.use('/api', require('./routes/api'));
 // Test route for checking if the API is working
 app.get('/api/test', (req, res) => {
   res.json({
-    message: 'API is working',
-    env: process.env.GOOGLE_CLIENT_ID ? 'OAuth configured' : 'OAuth not configured'
+    message: 'API is working'
   });
 });
 

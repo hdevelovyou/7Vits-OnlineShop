@@ -34,6 +34,7 @@ const ChinhSachPage = () => {
             <li>Số tiền thu được từ mỗi đơn hàng sẽ được tạm giữ trong 7 ngày kể từ thời điểm giao dịch thành công.</li>
             <li>Sau 7 ngày, nếu không có khiếu nại hoặc yêu cầu bảo hành từ người mua, số tiền sẽ được tự động mở khóa để rút.</li>
             <li>Trong thời gian này, người bán có trách nhiệm hỗ trợ bảo hành nếu có lỗi xảy ra theo mục 3 bên dưới.</li>
+            <li>Số tiền rút ra sẽ thu phí 5% tổng số tiền rút.</li>
           </ul>
         </div>
 

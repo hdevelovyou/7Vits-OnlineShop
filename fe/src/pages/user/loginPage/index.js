@@ -1,8 +1,6 @@
 import { memo, useState, useEffect } from "react";
 import "./style.scss";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { FaFacebook } from "react-icons/fa6";
-import { FcGoogle } from "react-icons/fc";
 import { FaCircleUser } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa";
 
@@ -14,17 +12,6 @@ const LoginPage = ({ setIsLoggedIn }) => {
     const [error, setError] = useState("");
     const navigate = useNavigate();
     const location = useLocation();
-
-    const handleGoogleLogin = () => {
-        window.location.href = `${process.env.REACT_APP_API_URL}/api/auth/google`;
-        // For production: window.location.href = 'https://your-domain.com/api/auth/google';
-      };
-
-     // Add Facebook login handler
-     const handleFacebookLogin = () => {
-        window.location.href = `${process.env.REACT_APP_API_URL}/api/auth/facebook`;
-        // For production: window.location.href = 'https://your-domain.com/api/auth/facebook';
-    };
 
     // Kiểm tra xem setIsLoggedIn có phải là hàm không
     useEffect(() => {
@@ -146,12 +133,6 @@ const LoginPage = ({ setIsLoggedIn }) => {
                             Ghi nhớ đăng nhập
                         </label>
                         <Link to="/forgot-password">Quên mật khẩu?</Link>
-                    </div>
-
-                    <div className="otherLogin">
-                        {/* Add Facebook button alongside Google button */}
-                        <FaFacebook className="icon-fb" style={{ color: '#1877F2', cursor: 'pointer' }} onClick={handleFacebookLogin} />
-                        <FcGoogle className="icon-gg" style={{ color: '#DB4437', cursor: 'pointer' }} onClick={handleGoogleLogin} />
                     </div>
 
                     <div className="login-btn">

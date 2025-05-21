@@ -1,8 +1,6 @@
 import { memo, useState, useEffect } from "react";
 import "./style.scss";
 import { useNavigate } from "react-router-dom";
-import { FaFacebook } from "react-icons/fa6";
-import { FcGoogle } from "react-icons/fc";
 import { FaCircleUser } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa";
 import { FaCheck, FaTimes } from "react-icons/fa";
@@ -26,11 +24,6 @@ const RegisterPage = () => {
         uppercase: false,
         number: false
     });
-
-    const handleGoogleSignup = () => {
-        window.location.href = `${process.env.REACT_APP_API_URL}/api/auth/google`;
-        // For production: window.location.href = 'https://your-domain.com/api/auth/google';
-    };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -153,10 +146,6 @@ const RegisterPage = () => {
                     <input type="password" name="confirmPassword" placeholder="Xác nhận mật khẩu" onChange={handleChange} required />
                 </div>
                 <div className="signup">
-                    <div className="otherSignUp">
-                        <FaFacebook className="icon" />
-                        <FcGoogle className="icon-gg" onClick={handleGoogleSignup} style={{ cursor: 'pointer' }} />
-                    </div>
                     <div className="sig-btn-rs">
                         <button type="submit" disabled={loading}>
                             {loading ? "Đang xử lý..." : "Đăng ký"}
