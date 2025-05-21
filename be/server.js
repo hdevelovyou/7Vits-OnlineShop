@@ -176,12 +176,18 @@ const sendEmail = (email, otp) => {
 // --- SOCKET.IO LOGIC FOR 1-1 CHAT ---
 const users = {}; // userId -> socket.id
 
+function broadcastOnlineUsers() {
+  const onlineUserIds = Object.keys(users);
+  io.emit('online_users', onlineUserIds);
+}
+
 io.on('connection', (socket) => {
   console.log('New client connected:', socket.id);
 
   socket.on('register', (userId) => {
     users[userId] = socket.id;
     console.log(`User ${userId} registered with socket ${socket.id}`);
+    broadcastOnlineUsers();
   });
 
   socket.on('private_message', async ({ sender_id, receiver_id, message }) => {
@@ -216,6 +222,7 @@ io.on('connection', (socket) => {
       if (sockId === socket.id) {
         delete users[userId];
         console.log(`User ${userId} disconnected`);
+        broadcastOnlineUsers();
         break;
       }
     }

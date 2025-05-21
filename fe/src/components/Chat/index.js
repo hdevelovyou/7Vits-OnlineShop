@@ -21,6 +21,8 @@ export default function Chat({ receiverId, receiverName }) {
     const [zoomedImage, setZoomedImage] = useState(null);
     const [zoomedImageSize, setZoomedImageSize] = useState({ width: 0, height: 0 });
     const scale = 3;
+    const [onlineUsers, setOnlineUsers] = useState([]);
+
 
     // Đăng ký socket với user ID
     useEffect(() => {
@@ -29,6 +31,20 @@ export default function Chat({ receiverId, receiverName }) {
         }
     }, [socket, user?.id]);
 
+    useEffect(() => {
+        if (!socket) return;
+
+        const handleOnlineUsers = (data) => {
+            console.log('Online users data from server:', data);
+            setOnlineUsers(data); // data là mảng ID
+        };
+
+        socket.on('online_users', handleOnlineUsers);
+
+        return () => {
+            socket.off('online_users', handleOnlineUsers);
+        };
+    }, [socket]);
 
     // Fetch conversations
     useEffect(() => {
@@ -182,7 +198,7 @@ export default function Chat({ receiverId, receiverName }) {
                             >
                                 <div className="user-avatar">
                                     <span>{conv.userName.charAt(0).toUpperCase()}</span>
-                                    <span className="online-dot"></span>
+                                    {onlineUsers.includes(String(conv.id)) && <span className="online-dot"></span>}
                                 </div>
                                 <div className="conversation-info">
                                     <h3>{conv.userName}</h3>
