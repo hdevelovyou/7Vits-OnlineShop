@@ -11,8 +11,8 @@ async function sendMessage(req, res) {
     try {
         // Lưu tin nhắn vào cơ sở dữ liệu
         await db.query(
-            'INSERT INTO messages (sender_id, receiver_id, message) VALUES (?, ?, ?)',
-            [sender_id, receiver_id, message]
+            'INSERT INTO messages (sender_id, receiver_id, message, is_read) VALUES (?, ?, ?, ?)',
+            [sender_id, receiver_id, message, false]
         );
 
         // Trả về kết quả thành công
@@ -80,14 +80,19 @@ async function getConversations(req, res) {
                     OR (sender_id = u.id AND receiver_id = ?)
                     ORDER BY created_at DESC 
                     LIMIT 1
-                ) as lastMessageTime
+                ) as lastMessageTime,
+                (
+                    SELECT COUNT(*)
+                    FROM messages
+                    WHERE sender_id = u.id AND receiver_id = ? AND is_read = 0
+                ) as unreadCount
             FROM users u
             INNER JOIN messages m ON (m.sender_id = ? AND m.receiver_id = u.id) 
             OR (m.sender_id = u.id AND m.receiver_id = ?)
             WHERE u.id != ?
             GROUP BY u.id
             ORDER BY lastMessageTime DESC`,
-            [userId, userId, userId, userId, userId, userId, userId]
+            [userId, userId, userId, userId, userId, userId, userId, userId]
         );
 
         return res.status(200).json({ conversations: rows });
@@ -102,8 +107,8 @@ async function saveSocketMessage(sender_id, receiver_id, message) {
     try {
         // Lưu tin nhắn vào cơ sở dữ liệu khi nhận tin nhắn qua Socket.IO
         await db.query(
-            'INSERT INTO messages (sender_id, receiver_id, message) VALUES (?, ?, ?)',
-            [sender_id, receiver_id, message]
+            'INSERT INTO messages (sender_id, receiver_id, message, is_read) VALUES (?, ?, ?, ?)',
+            [sender_id, receiver_id, message, false]
         );
         console.log('Tin nhắn đã được lưu vào cơ sở dữ liệu từ Socket.IO');
     } catch (err) {
@@ -111,9 +116,51 @@ async function saveSocketMessage(sender_id, receiver_id, message) {
     }
 }
 
+// Hàm đánh dấu tin nhắn là đã đọc
+async function markMessagesAsRead(req, res) {
+    const { sender_id, receiver_id } = req.body;
+
+    if (!sender_id || !receiver_id) {
+        return res.status(400).json({ error: 'Thiếu sender_id hoặc receiver_id!' });
+    }
+
+    try {
+        await db.query(
+            'UPDATE messages SET is_read = 1 WHERE sender_id = ? AND receiver_id = ? AND is_read = 0',
+            [sender_id, receiver_id]
+        );
+
+        return res.status(200).json({ message: 'Đã đánh dấu tin nhắn là đã đọc' });
+    } catch (err) {
+        console.error('Lỗi khi đánh dấu tin nhắn đã đọc:', err);
+        return res.status(500).json({ error: 'Lỗi hệ thống khi đánh dấu đã đọc!' });
+    }
+}
+
+async function getUnreadCounts(req, res) {
+    const userId = req.params.userId;
+
+    try {
+        const [results] = await db.query(
+            `SELECT sender_id AS conversationId, COUNT(*) AS unreadCount
+             FROM messages
+             WHERE receiver_id = ? AND is_read = 0
+             GROUP BY sender_id`,
+            [userId]
+        );
+
+        res.status(200).json(results);
+    } catch (err) {
+        console.error('Lỗi khi lấy unread count:', err);
+        res.status(500).json({ error: 'Lỗi hệ thống khi lấy số tin chưa đọc!' });
+    }
+}
+
 module.exports = {
     sendMessage,
     getMessages,
     getConversations,
-    saveSocketMessage
+    saveSocketMessage,
+    markMessagesAsRead,
+    getUnreadCounts
 };

@@ -28,7 +28,8 @@ CREATE TABLE messages (
     sender_id INT,
     receiver_id INT,
     message TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_read TINYINT(1) DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS comments (

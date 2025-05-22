@@ -22,6 +22,7 @@ export default function Chat({ receiverId, receiverName }) {
     const [zoomedImageSize, setZoomedImageSize] = useState({ width: 0, height: 0 });
     const scale = 3;
     const [onlineUsers, setOnlineUsers] = useState([]);
+    const [unreadCounts, setUnreadCounts] = useState({});
 
 
     // Đăng ký socket với user ID
@@ -53,6 +54,11 @@ export default function Chat({ receiverId, receiverName }) {
             try {
                 const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/conversations/${user.id}`);
                 setConversations(res.data.conversations);
+                const counts = {};
+                res.data.conversations.forEach(conv => {
+                    counts[conv.id] = conv.unreadCount || 0;
+                });
+                setUnreadCounts(counts);
             } catch (err) {
                 console.error('Error fetching conversations:', err);
             }
@@ -77,23 +83,30 @@ export default function Chat({ receiverId, receiverName }) {
                 (msg.sender_id === user.id || msg.receiver_id === user.id);
 
             if (isRelevant) {
-                // Hiện tin nhắn nếu thuộc cuộc hội thoại hiện tại
                 const isCurrent =
                     (msg.sender_id === selectedUser?.id && msg.receiver_id === user.id) ||
                     (msg.sender_id === user.id && msg.receiver_id === selectedUser?.id);
 
                 if (isCurrent) {
                     setMessages((prev) => [...prev, msg]);
+                } else {
+                    // Tin nhắn mới đến cuộc trò chuyện khác, tăng unread count
+                    if (msg.sender_id !== user.id) {
+                        setUnreadCounts((prev) => ({
+                            ...prev,
+                            [msg.sender_id]: (prev[msg.sender_id] || 0) + 1,
+                        }));
+                    }
                 }
 
-                updateSidebar(msg); // Luôn cập nhật sidebar
+                updateSidebar(msg);
             }
         };
 
         socket.on('private_message', handler);
 
         return () => {
-            socket.off('private_message', handler); // Cleanup đúng cách
+            socket.off('private_message', handler);
         };
     }, [socket, user?.id, selectedUser?.id]);
     
@@ -101,11 +114,29 @@ export default function Chat({ receiverId, receiverName }) {
     // Fetch message history on select
     useEffect(() => {
         if (!user?.id || !selectedUser?.id) return;
+
         axios
             .get(`${process.env.REACT_APP_API_URL}/api/messages/${user.id}/${selectedUser.id}`)
-            .then((res) => setMessages(res.data.messages))
-            .catch((err) => console.error('Error fetching messages:', err));
+            .then((res) => {
+                setMessages(res.data.messages);
+
+                // Gửi mark read lên server
+                return axios.post(`${process.env.REACT_APP_API_URL}/api/messages/read`, {
+                    sender_id: selectedUser.id,
+                    receiver_id: user.id,
+                });
+            })
+            .then(() => {
+                // Xoá số lượng unread của cuộc trò chuyện này
+                setUnreadCounts((prev) => {
+                    const updated = { ...prev };
+                    delete updated[selectedUser.id];
+                    return updated;
+                });
+            })
+            .catch((err) => console.error('Lỗi khi load hoặc mark read:', err));
     }, [user?.id, selectedUser?.id]);
+    
 
     // Scroll to bottom
     useEffect(() => {
@@ -180,7 +211,7 @@ export default function Chat({ receiverId, receiverName }) {
         socket.emit('private_message', payload);
         updateSidebar(payload);
         setInput('');
-    };    
+    };          
 
     return (
         <div className="chat-page">
@@ -190,22 +221,28 @@ export default function Chat({ receiverId, receiverName }) {
                         <h2>Tin nhắn</h2>
                     </div>
                     <div className="conversations-list">
-                        {conversations.map((conv) => (
-                            <div
-                                key={conv.id}
-                                onClick={() => setSelectedUser(conv)}
-                                className={`conversation-item ${selectedUser?.id === conv.id ? 'active' : ''}`}
-                            >
-                                <div className="user-avatar">
-                                    <span>{conv.userName.charAt(0).toUpperCase()}</span>
-                                    {onlineUsers.includes(String(conv.id)) && <span className="online-dot"></span>}
+                        {conversations.map((conv) => {
+                            const unreadCount = unreadCounts[conv.id] || 0;
+                            return (
+                                <div
+                                    key={conv.id}
+                                    onClick={() => setSelectedUser(conv)}
+                                    className={`conversation-item ${selectedUser?.id === conv.id ? 'active' : ''}`}
+                                >
+                                    <div className="user-avatar">
+                                        <span>{conv.userName.charAt(0).toUpperCase()}</span>
+                                        {onlineUsers.includes(String(conv.id)) && <span className="online-dot"></span>}
+                                    </div>
+                                    <div className="conversation-info">
+                                        <div className="conversation-header">
+                                            <h3>{conv.userName}</h3>
+                                            {unreadCount > 0 && <span className="unread-count">{unreadCount}</span>}
+                                        </div>
+                                        <p>{conv.lastMessage || 'Chưa có tin nhắn'}</p>
+                                    </div>
                                 </div>
-                                <div className="conversation-info">
-                                    <h3>{conv.userName}</h3>
-                                    <p>{conv.lastMessage || 'Chưa có tin nhắn'}</p>
-                                </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
                 <div className="chat-main">

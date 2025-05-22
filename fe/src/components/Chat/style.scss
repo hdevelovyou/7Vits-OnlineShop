@@ -500,6 +500,25 @@
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
+.unread-count {
+    background-color: red;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 999px;
+    min-width: 20px;
+    text-align: center;
+    display: inline-block;
+    margin-top: 4px;
+}
+
+.conversation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+}
+
 .chat-page~ #footer {
     display: none;
 }

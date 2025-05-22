@@ -97,6 +97,8 @@ app.use('/api', productRoutes);
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/topup', vnpayRoutes);
 app.use('/api', require('./routes/api'));
+app.post('/api/messages/read', messageController.markMessagesAsRead);
+app.get('/api/messages/unread-counts/:userId', messageController.getUnreadCounts);
 
 // Test route for checking if the API is working
 app.get('/api/test', (req, res) => {
