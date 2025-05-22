@@ -64,7 +64,8 @@ async function getConversations(req, res) {
         const [rows] = await db.query(
             `SELECT DISTINCT 
                 u.id,
-                u.userName,  
+                u.userName, 
+                u.avatarUrl,
                 (
                     SELECT message 
                     FROM messages 

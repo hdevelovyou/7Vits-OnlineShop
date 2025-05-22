@@ -230,7 +230,11 @@ export default function Chat({ receiverId, receiverName }) {
                                     className={`conversation-item ${selectedUser?.id === conv.id ? 'active' : ''}`}
                                 >
                                     <div className="user-avatar">
-                                        <span>{conv.userName.charAt(0).toUpperCase()}</span>
+                                        {conv.avatarUrl ? (
+                                            <img src={conv.avatarUrl} alt={conv.userName} className="avatar-img" />
+                                        ) : (
+                                            <span>{conv.userName.charAt(0).toUpperCase()}</span>
+                                        )}
                                         {onlineUsers.includes(String(conv.id)) && <span className="online-dot"></span>}
                                     </div>
                                     <div className="conversation-info">
