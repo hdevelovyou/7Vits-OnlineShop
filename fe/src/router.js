@@ -4,7 +4,7 @@ import ProfilePage from "./pages/user/profilePage";
 import RegisterPage from "./pages/user/registerPage";
 import MasterLayout from "./pages/user/theme/masterLayout";
 import { ROUTES } from "./utils/router";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import OtpPage from "./pages/user/otpPage";
 import ForgotPage from "./pages/user/forgotPage";
 import NewPassword from "./pages/user/newPassword";
@@ -26,6 +26,7 @@ import ChinhSachPage from "./pages/user/chinhSachPage";
 import SocialAuthCallback from "./pages/user/SocialAuthCallback";
 import SetupAccount from "./pages/user/SetupAccount";
 
+import AdminPage from "./components/Admin";
 const renderUserRoutes = () => {
     return (
         <MasterLayout>
@@ -67,6 +68,19 @@ const renderUserRoutes = () => {
 }
 
 const RouterCustom = () => {
+    const location = useLocation();
+
+    //Render trang admin nếu đường dẫn bắt đầu bằng "/admin"
+    if (location.pathname.startsWith("/admin")) {
+        return (
+            <Routes>
+                <Route path="/admin" element={<AdminPage />} />
+                {/* Add other admin routes here */}
+            </Routes>
+        );
+    }
+
+    //Các routes còn lại
     return renderUserRoutes();
 }
 

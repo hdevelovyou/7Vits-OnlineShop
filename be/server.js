@@ -18,7 +18,7 @@ const authRouter = require('./routes/authRouter');
 const messageController = require('./controllers/messageController');
 const { bodyParserMiddleware, urlEncodedMiddleware } = require('./middleware/bodyParser');
 const vnpayRoutes = require('./routes/vnpay_routes');
-
+const adminRouter = require('./routes/admin');
 
 const app = express();
 
@@ -42,20 +42,31 @@ const io = socketIO(server, {
 
 // Enhanced CORS Configuration
 const allowedOrigins = [
-  'https://sevenvits-onlineshop.onrender.com',
-  'https://seventvits-onlineshop.onrender.com',
   'http://localhost:3000',
-  'http://localhost:3001', // Thêm origin này
+  'http://localhost:3001',
   'http://localhost:5000',
-  'https://7-vits-online-shop-frontend.vercel.app'
+  'https://7-vits-online-shop-frontend.vercel.app',
+  'https://sevenvits-onlineshop.onrender.com',
+  'https://seventvits-onlineshop.onrender.com'
 ];
 
+// Đặt middleware CORS trước tất cả các route
 app.use(cors({
-  origin: '*', // Cho phép tất cả các origin
+  origin: function (origin, callback) {
+    // Cho phép request không có origin (như từ Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-  credentials: true
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 }));
+
+// Đáp ứng preflight OPTIONS cho tất cả route
+app.options('*', cors());
 
 app.use(express.json({limit: '10mb'}));
 const bodyParser = require('body-parser');
@@ -67,7 +78,6 @@ app.options('*', cors()); // Đáp ứng tất cả các yêu cầu OPTIONS
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
 
 // Static file serving
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
@@ -99,6 +109,7 @@ app.use('/api/topup', vnpayRoutes);
 app.use('/api', require('./routes/api'));
 app.post('/api/messages/read', messageController.markMessagesAsRead);
 app.get('/api/messages/unread-counts/:userId', messageController.getUnreadCounts);
+app.use('/api', adminRouter);
 
 // Test route for checking if the API is working
 app.get('/api/test', (req, res) => {
@@ -260,3 +271,11 @@ app.use((err, req, res, next) => {
 });
 
 //push
+app.use(session({
+  secret: 'secret',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { 
+    maxAge: 1000 * 60 * 60 * 2 // 2 hours
+  }
+}));

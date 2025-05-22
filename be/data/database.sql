@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS users (
     profilePic VARCHAR(255),
     facebookId VARCHAR(255),
     displayName VARCHAR(255),
-    avatarUrl LONGTEXT
+    avatarUrl LONGTEXT,
+    role VARCHAR(255)
 );
 
 -- 2. Tạo bảng user_wallets - phụ thuộc vào users
