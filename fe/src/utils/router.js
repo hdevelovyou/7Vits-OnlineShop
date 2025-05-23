@@ -18,5 +18,6 @@ export const ROUTES = {
         TOPUP: '/topup',
         PAYMENT_SUCCESS: '/user/payment-success',
         CHINH_SACH: '/chinh-sach',
+        SETUP_ACCOUNT: '/setup-account',
     }
 }

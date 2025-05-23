@@ -13,19 +13,24 @@ passport.use(new GoogleStrategy({
   },
   async (req, accessToken, refreshToken, profile, done) => {
     try {
-      // Check if user already exists in database
+      // Check if user already exists in database by googleId
       const [existingUsers] = await db.query(
         'SELECT * FROM users WHERE googleId = ?',
         [profile.id]
       );
       
       let user;
+      let needsUsername = false;
       
       if (existingUsers.length > 0) {
-        // User already exists, return the user
+        // User already exists
         user = existingUsers[0];
+        // Check if username exists
+        if (!user.userName) {
+          needsUsername = true;
+        }
       } else {
-        // User doesn't exist, create a new user
+        // User doesn't exist, create a new user with Google data
         const email = profile.emails && profile.emails[0] ? profile.emails[0].value : '';
         const displayName = profile.displayName || '';
         // Split displayName into firstName and lastName (best effort)
@@ -34,7 +39,7 @@ passport.use(new GoogleStrategy({
         const lastName = nameParts.slice(1).join(' ') || '';
         const avatarUrl = profile.photos && profile.photos[0] ? profile.photos[0].value : '';
         
-        // Insert new user
+        // Insert new user without username
         const [result] = await db.query(
           'INSERT INTO users (googleId, email, firstName, lastName, displayName, avatarUrl) VALUES (?, ?, ?, ?, ?, ?)',
           [profile.id, email, firstName, lastName, displayName, avatarUrl]
@@ -51,6 +56,7 @@ passport.use(new GoogleStrategy({
         // Get the newly created user
         const [newUsers] = await db.query('SELECT * FROM users WHERE id = ?', [userId]);
         user = newUsers[0];
+        needsUsername = true; // New users always need to set up username
       }
       
       // Generate JWT token
@@ -60,8 +66,8 @@ passport.use(new GoogleStrategy({
         { expiresIn: '24h' }
       );
       
-      // Pass token and user to done callback
-      done(null, { user, token });
+      // Pass token, user and needsUsername flag to done callback
+      done(null, { user, token, needsUsername });
     } catch (err) {
       console.error('Error in Google auth strategy:', err);
       done(err, null);

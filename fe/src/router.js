@@ -24,6 +24,7 @@ import PaymentSuccessPage from "./pages/user/paymentSuccessPage";
 import Otpregister from "./pages/user/otpregister";
 import ChinhSachPage from "./pages/user/chinhSachPage";
 import SocialAuthCallback from "./pages/user/SocialAuthCallback";
+import SetupAccount from "./pages/user/SetupAccount";
 
 const renderUserRoutes = () => {
     return (
@@ -45,6 +46,8 @@ const renderUserRoutes = () => {
                     <Route path="/chat" element={<Chat />} />
                     {/* Social auth callback route */}
                     <Route path="/auth/social" element={<SocialAuthCallback setIsLoggedIn={setIsLoggedIn} />} />
+                    {/* Setup account after Google login */}
+                    <Route path={ROUTES.USER.SETUP_ACCOUNT} element={<SetupAccount setIsLoggedIn={setIsLoggedIn} />} />
                     {/* New routes for selling products */}
                     <Route path={ROUTES.USER.SELL_PRODUCT} element={<SellProductPage />} />
                     <Route path={ROUTES.USER.MY_PRODUCTS} element={<MyProductsPage />} />

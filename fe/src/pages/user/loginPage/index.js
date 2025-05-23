@@ -142,15 +142,17 @@ const LoginPage = ({ setIsLoggedIn }) => {
                         <Link to="/forgot-password">Quên mật khẩu?</Link>
                     </div>
 
-                    <div className="login-btn">
-                        <button type="submit">Đăng nhập</button>
-                    </div>
-
                     <div className="google-btn">
                         <button type="button" onClick={handleGoogleLogin}>
                             <FcGoogle className="icon" /> Đăng nhập bằng Google
                         </button>
                     </div>
+                    
+                    <div className="login-btn">
+                        <button type="submit">Đăng nhập</button>
+                    </div>
+
+                   
 
                     <div className="sig-btn">
                         <Link to="/register" onClick={()=>window.scroll(0,0)}><button type="button">Đăng ký</button></Link>

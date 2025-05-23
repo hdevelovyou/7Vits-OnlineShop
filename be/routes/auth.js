@@ -26,27 +26,114 @@ router.get('/google/callback',
   }),
   (req, res) => {
     try {
-      // Authentication successful, redirect to frontend with token
-      const { user, token } = req.user;
+      // Authentication successful
+      const { user, token, needsUsername } = req.user;
       
-      // Redirect to frontend with token and user data
-      const userDataParam = encodeURIComponent(JSON.stringify({
-        id: user.id,
-        userName: user.userName || user.displayName,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        avatarUrl: user.avatarUrl || '',
-        token: token
-      }));
-      
-      res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/auth/social?userData=${userDataParam}`);
+      if (needsUsername) {
+        // User needs to set up username and password
+        // Create a temporary token for setup page
+        const setupToken = jwt.sign(
+          { id: user.id, googleId: user.googleId, needsSetup: true },
+          process.env.JWT_SECRET || 'secretkey',
+          { expiresIn: '1h' } // Short expiration time for setup
+        );
+        
+        // Redirect to username setup page with setupToken
+        res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/setup-account?token=${setupToken}`);
+      } else {
+        // User already has username, proceed with normal login
+        const userDataParam = encodeURIComponent(JSON.stringify({
+          id: user.id,
+          userName: user.userName || user.displayName,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          avatarUrl: user.avatarUrl || '',
+          token: token
+        }));
+        
+        res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/auth/social?userData=${userDataParam}`);
+      }
     } catch (error) {
       console.error('Error in Google callback:', error);
       res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/login?error=auth_failed`);
     }
   }
 );
+
+// Setup account route for Google auth users
+router.post('/setup-account', async (req, res) => {
+  try {
+    const { setupToken, userName, password } = req.body;
+    
+    if (!setupToken || !userName || !password) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+    
+    // Verify setup token
+    const decoded = jwt.verify(setupToken, process.env.JWT_SECRET || 'secretkey');
+    
+    if (!decoded.needsSetup) {
+      return res.status(400).json({ error: 'Invalid setup token' });
+    }
+    
+    // Check if username already exists
+    const [existingUsers] = await db.query(
+      'SELECT * FROM users WHERE userName = ?',
+      [userName]
+    );
+    
+    if (existingUsers.length > 0) {
+      return res.status(400).json({ error: 'Tên người dùng đã tồn tại' });
+    }
+    
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    // Update user with username and password
+    await db.query(
+      'UPDATE users SET userName = ?, password = ? WHERE id = ?',
+      [userName, hashedPassword, decoded.id]
+    );
+    
+    // Get updated user info
+    const [updatedUsers] = await db.query('SELECT * FROM users WHERE id = ?', [decoded.id]);
+    
+    if (updatedUsers.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    const user = updatedUsers[0];
+    
+    // Generate new token
+    const token = jwt.sign(
+      { id: user.id, userName: user.userName },
+      process.env.JWT_SECRET || 'secretkey',
+      { expiresIn: '24h' }
+    );
+    
+    res.json({
+      message: 'Account setup successful',
+      user: {
+        id: user.id,
+        userName: user.userName,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        avatarUrl: user.avatarUrl || '',
+      },
+      token
+    });
+  } catch (error) {
+    console.error('Error in setup account:', error);
+    
+    if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+      return res.status(401).json({ error: 'Invalid or expired token' });
+    }
+    
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 // Add a new route to get wallet balance
 router.get('/wallet-balance', async (req, res) => {

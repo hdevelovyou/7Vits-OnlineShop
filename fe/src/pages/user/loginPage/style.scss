@@ -93,14 +93,15 @@
 
     .login-btn {
         margin-top: 20px;
+        padding: 0 8rem;
         button {
             width: 100%;
-            padding: 15px;
-            background-color: #FF5B2E;
+            padding: 1.5rem;
+            background-color: #ff0000;
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 18px;
+            border-radius: 10rem;
+            font-size: 1.5rem;
             cursor: pointer;
             font-weight: bold;
             transition: background-color 0.3s ease;
@@ -114,14 +115,14 @@
 
     .google-btn {
         margin-top: 15px;
-        
+        padding: 0 8rem;
         button {
             width: 100%;
-            padding: 15px;
+            padding: 1.5rem;
             background-color: #fff;
             color: #757575;
             border: 1px solid #ddd;
-            border-radius: 10px;
+            border-radius: 10rem;
             font-size: 16px;
             cursor: pointer;
             font-weight: 500;
@@ -145,12 +146,13 @@
 
     .sig-btn{
         text-align: center;
-        padding-top: 1rem;
-        padding-bottom: 2rem;
+        margin-top: 1rem;
+        margin-bottom: 2rem;
+        padding: 0 8rem;
     }
     .sig-btn button{
-        width: 50%;
-        height: 4rem;
+        width: 100%;
+        padding: 1.5rem;
         background: gray;
         color: white;
         font-size: 1.4rem;
@@ -163,6 +165,7 @@
             background: #3f3f3f;
         }
     }
+
     .error-message{
         color: rgb(255, 255, 255);
         font-size: 1.2rem;
