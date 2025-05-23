@@ -35,7 +35,10 @@ const CartPage = ({ cart, setCart }) => {
   }, [cart]);
 
   const calculateTotalPrice = () => {
-    const total = cart.reduce((sum, item) => sum + item.price, 0);
+    const total = cart.reduce((sum, item) => {
+      const itemPrice = Number(item.price) || 0;
+      return sum + itemPrice;
+    }, 0);
     setTotalPrice(total);
   };
   
@@ -44,7 +47,11 @@ const CartPage = ({ cart, setCart }) => {
   }, [cart]);
   
   const calculateTotaldiscountPrice = () => {
-    const total = cart.reduce((sum, item) => sum + ((item.originalPrice || item.price * 1.2) - item.price), 0);
+    const total = cart.reduce((sum, item) => {
+      const itemPrice = Number(item.price) || 0;
+      const originalPrice = Number(item.originalPrice) || itemPrice * 1.2;
+      return sum + (originalPrice - itemPrice);
+    }, 0);
     setTotalDiscountPrice(total);
   };
 
@@ -76,7 +83,7 @@ const CartPage = ({ cart, setCart }) => {
     if (price === undefined || price === null) {
       return '0';
     }
-    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ";
+    return Number(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ";
   };
 
   const handleCheckout = async () => {

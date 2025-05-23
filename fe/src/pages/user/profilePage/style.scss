@@ -383,3 +383,36 @@ $success-color: #4caf50;  // Green for success messages
         transform: translateY(0);
     }
 }
+
+.profile-actions {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+
+  .action-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: #e9ecef;
+      transform: translateY(-2px);
+    }
+
+    .action-icon {
+      font-size: 20px;
+      color: #666;
+    }
+
+    span {
+      font-size: 16px;
+      font-weight: 500;
+    }
+  }
+}

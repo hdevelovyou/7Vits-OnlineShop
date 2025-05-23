@@ -1,6 +1,6 @@
 import { memo, useState, useEffect, useRef } from "react";
 import "./style.scss";
-import { FaUser, FaCheck } from "react-icons/fa";
+import { FaUser, FaCheck, FaHistory } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const ProfilePage = () => {
@@ -287,8 +287,12 @@ const ProfilePage = () => {
                     </div>
                 </div>
                 
-                {/* Add the sell product link button */}
-                
+                <div className="profile-actions">
+                    <Link to="/user/purchase-history" className="action-link">
+                        <FaHistory className="action-icon" />
+                        <span>Lịch sử mua hàng</span>
+                    </Link>
+                </div>
             </div>
         </div>
     );

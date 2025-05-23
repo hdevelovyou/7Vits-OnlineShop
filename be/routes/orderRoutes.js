@@ -237,24 +237,50 @@ router.get('/wallet-balance', authMiddleware, async (req, res) => {
     }
 });
 
-// API lấy danh sách đơn hàng của người dùng
-router.get('/my-orders', authMiddleware, async (req, res) => {
+// API lấy lịch sử mua hàng của người dùng
+router.get('/history', authMiddleware, async (req, res) => {
     try {
         const userId = req.user.id;
         
+        // Lấy danh sách đơn hàng và thông tin chi tiết sản phẩm
         const [orders] = await db.query(
-            `SELECT o.*, 
-                    (SELECT COUNT(*) FROM order_items WHERE order_id = o.id) as item_count 
-             FROM orders o 
-             WHERE o.user_id = ? 
+            `SELECT 
+                o.id as _id,
+                o.created_at as createdAt,
+                o.total_amount as totalAmount,
+                o.status,
+                JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                        'id', p.id,
+                        'name', p.name,
+                        'price', oi.price,
+                        'quantity', oi.quantity,
+                        'image', p.image_url
+                    )
+                ) as items
+             FROM orders o
+             JOIN order_items oi ON o.id = oi.order_id
+             JOIN products p ON oi.product_id = p.id
+             WHERE o.user_id = ?
+             GROUP BY o.id
              ORDER BY o.created_at DESC`,
             [userId]
         );
+
+        // Parse items array from string to JSON for each order
+        orders.forEach(order => {
+            if (typeof order.items === 'string') {
+                order.items = JSON.parse(order.items);
+            }
+        });
         
-        res.json({ orders });
+        res.json(orders);
     } catch (error) {
-        console.error('Lỗi khi lấy danh sách đơn hàng:', error);
-        res.status(500).json({ error: 'Lỗi máy chủ' });
+        console.error('Lỗi khi lấy lịch sử mua hàng:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Có lỗi xảy ra khi tải lịch sử mua hàng'
+        });
     }
 });
 
