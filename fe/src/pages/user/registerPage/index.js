@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaCircleUser } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa";
 import { FaCheck, FaTimes } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
 
 const RegisterPage = () => {
@@ -95,6 +96,10 @@ const RegisterPage = () => {
         }
     };
 
+    const handleGoogleLogin = () => {
+        window.location.href = `${process.env.REACT_APP_API_URL}/api/auth/google`;
+    };
+
     return (
         <div className="signup-page">
             <form className="form-sign" onSubmit={handleSubmit}>
@@ -149,6 +154,12 @@ const RegisterPage = () => {
                     <div className="sig-btn-rs">
                         <button type="submit" disabled={loading}>
                             {loading ? "Đang xử lý..." : "Đăng ký"}
+                        </button>
+                    </div>
+                    
+                    <div className="google-btn">
+                        <button type="button" onClick={handleGoogleLogin}>
+                            <FcGoogle className="icon" /> Đăng nhập bằng Google
                         </button>
                     </div>
                 </div>

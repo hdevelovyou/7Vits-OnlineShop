@@ -1,47 +1,80 @@
 const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const db = require('./connectDB');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-// Initialize passport with only basic functionality
-const setupPassport = () => {
-  // User serialization and deserialization for sessions
-  passport.serializeUser((user, done) => {
-    if (!user) {
-      console.error('Cannot serialize undefined or null user');
-      return done(new Error('User object is undefined or null'));
-    }
-    
-    // Use user.id or user.Id if user.id doesn't exist
-    const userId = user.id || user.Id;
-    if (userId === undefined) {
-      console.error('User object is missing id property:', user);
-      return done(new Error('User object is missing id property'));
-    }
-    
-    done(null, userId);
-  });
-  
-  passport.deserializeUser((id, done) => {
-    if (id === undefined || id === null) {
-      return done(new Error('Invalid user ID during deserialization'));
-    }
-    
-    db.query('SELECT * FROM users WHERE id = ?', [id], (err, results) => {
-      if (err) {
-        console.error("Error deserializing user:", err);
-        return done(err);
+// Google OAuth Strategy
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: `${process.env.API_URL || 'http://localhost:5000'}/api/auth/google/callback`,
+    passReqToCallback: true
+  },
+  async (req, accessToken, refreshToken, profile, done) => {
+    try {
+      // Check if user already exists in database
+      const [existingUsers] = await db.query(
+        'SELECT * FROM users WHERE googleId = ?',
+        [profile.id]
+      );
+      
+      let user;
+      
+      if (existingUsers.length > 0) {
+        // User already exists, return the user
+        user = existingUsers[0];
+      } else {
+        // User doesn't exist, create a new user
+        const email = profile.emails && profile.emails[0] ? profile.emails[0].value : '';
+        const displayName = profile.displayName || '';
+        // Split displayName into firstName and lastName (best effort)
+        const nameParts = displayName.split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || '';
+        const avatarUrl = profile.photos && profile.photos[0] ? profile.photos[0].value : '';
+        
+        // Insert new user
+        const [result] = await db.query(
+          'INSERT INTO users (googleId, email, firstName, lastName, displayName, avatarUrl) VALUES (?, ?, ?, ?, ?, ?)',
+          [profile.id, email, firstName, lastName, displayName, avatarUrl]
+        );
+        
+        const userId = result.insertId;
+        
+        // Create wallet for new user
+        await db.query(
+          'INSERT INTO user_wallets (user_id, balance) VALUES (?, 0)',
+          [userId]
+        );
+        
+        // Get the newly created user
+        const [newUsers] = await db.query('SELECT * FROM users WHERE id = ?', [userId]);
+        user = newUsers[0];
       }
       
-      if (!results || results.length === 0) {
-        console.error("No user found with ID:", id);
-        return done(null, false);
-      }
+      // Generate JWT token
+      const token = jwt.sign(
+        { id: user.id, userName: user.userName || user.displayName },
+        process.env.JWT_SECRET || 'secretkey',
+        { expiresIn: '24h' }
+      );
       
-      done(null, results[0]);
-    });
-  });
+      // Pass token and user to done callback
+      done(null, { user, token });
+    } catch (err) {
+      console.error('Error in Google auth strategy:', err);
+      done(err, null);
+    }
+  }
+));
 
-  return passport;
-};
+passport.serializeUser((userObject, done) => {
+  done(null, userObject);
+});
 
-module.exports = setupPassport();
+passport.deserializeUser((userObject, done) => {
+  done(null, userObject);
+});
+
+module.exports = passport;

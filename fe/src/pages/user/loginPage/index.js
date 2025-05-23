@@ -3,6 +3,7 @@ import "./style.scss";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaCircleUser } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 
 const LoginPage = ({ setIsLoggedIn }) => {
     console.log({setIsLoggedIn});
@@ -35,6 +36,8 @@ const LoginPage = ({ setIsLoggedIn }) => {
         const params = new URLSearchParams(location.search);
         if (params.get('expired') === 'true') {
             setError("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+        } else if (params.get('error') === 'auth_failed') {
+            setError("Đăng nhập bằng Google thất bại. Vui lòng thử lại.");
         }
     }, [location.search]);
 
@@ -84,6 +87,10 @@ const LoginPage = ({ setIsLoggedIn }) => {
         } catch (err) {
             setError(err.message);
         }
+    };
+
+    const handleGoogleLogin = () => {
+        window.location.href = `${process.env.REACT_APP_API_URL}/api/auth/google`;
     };
 
     return (
@@ -137,6 +144,12 @@ const LoginPage = ({ setIsLoggedIn }) => {
 
                     <div className="login-btn">
                         <button type="submit">Đăng nhập</button>
+                    </div>
+
+                    <div className="google-btn">
+                        <button type="button" onClick={handleGoogleLogin}>
+                            <FcGoogle className="icon" /> Đăng nhập bằng Google
+                        </button>
                     </div>
 
                     <div className="sig-btn">

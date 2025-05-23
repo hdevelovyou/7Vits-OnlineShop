@@ -23,6 +23,8 @@ import VnpayReturn from "./components/vnpay_Return/vnpay_Return";
 import PaymentSuccessPage from "./pages/user/paymentSuccessPage";
 import Otpregister from "./pages/user/otpregister";
 import ChinhSachPage from "./pages/user/chinhSachPage";
+import SocialAuthCallback from "./pages/user/SocialAuthCallback";
+
 const renderUserRoutes = () => {
     return (
         <MasterLayout>
@@ -41,6 +43,8 @@ const renderUserRoutes = () => {
                     <Route path="/reset-password" element={<ResetPassword />} />                    
                     <Route path="/chat/:id" element={<ChatPage />} />
                     <Route path="/chat" element={<Chat />} />
+                    {/* Social auth callback route */}
+                    <Route path="/auth/social" element={<SocialAuthCallback setIsLoggedIn={setIsLoggedIn} />} />
                     {/* New routes for selling products */}
                     <Route path={ROUTES.USER.SELL_PRODUCT} element={<SellProductPage />} />
                     <Route path={ROUTES.USER.MY_PRODUCTS} element={<MyProductsPage />} />
