@@ -55,6 +55,13 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
   const inputRef = useRef(null);
   const navigate = useNavigate();
 
+  // Check if user is actually logged in with valid data
+  const isActuallyLoggedIn = () => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    return isLoggedIn && token && user;
+  };
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (inputRef.current && !inputRef.current.contains(e.target)) {
@@ -94,7 +101,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
 
   useEffect(() => {
     // Fetch wallet balance when user is logged in
-    if (isLoggedIn) {
+    if (isActuallyLoggedIn()) {
       fetchWalletBalance();
 
       // Refresh balance when tab becomes visible again
@@ -138,6 +145,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
   const handleLogout = () => {
     setIsLoggedIn(false); // Gọi setIsLoggedIn để cập nhật trạng thái đăng nhập về false khi logout
     localStorage.removeItem("token"); // Xóa token
+    localStorage.removeItem("user"); // Xóa user data
     localStorage.removeItem("userId"); // Xóa userId
     window.location.href = "/";
   };
@@ -166,8 +174,8 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
           </div>
           <ul>
             {menuItems.filter(menu => menu.name !== "Danh mục").map((menu, menuKey) => {
-              if (menu.name === "Đăng xuất" && !isLoggedIn) return null; // Nếu không đăng nhập thì không hiển thị mục "Đăng xuất"
-              if (menu.name === "Ví" && !isLoggedIn) return null; // Không hiển thị mục "Ví" nếu chưa đăng nhập
+              if (menu.name === "Đăng xuất" && !isActuallyLoggedIn()) return null; // Nếu không đăng nhập thì không hiển thị mục "Đăng xuất"
+              if (menu.name === "Ví" && !isActuallyLoggedIn()) return null; // Không hiển thị mục "Ví" nếu chưa đăng nhập
 
               return (
                 <li key={menuKey}
@@ -360,7 +368,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
                 <div className="header-login-signup">
 
                   {
-                    isLoggedIn ? (
+                    isActuallyLoggedIn() ? (
                       <Link to="/profile" onClick={() => window.scrollTo(0, 0)} className="login-btn-mobile">
                         <CgProfile />
                       </Link>
@@ -370,7 +378,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
                       </Link>
                     )
                   }
-                  {isLoggedIn && (
+                  {isActuallyLoggedIn() && (
                     <Link to="/profile" onClick={() => window.scrollTo(0, 0)} className="profile-btn">
                       <AiOutlineUser />
                     </Link>
@@ -384,7 +392,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
                       </Link>
                     </li>
                   </ul>
-                  {isLoggedIn ? (
+                  {isActuallyLoggedIn() ? (
                     <>
                       <Link to={ROUTES.USER.TOPUP} onClick={() => window.scrollTo(0, 0)} className="wallet-btn">
                         <FaWallet />

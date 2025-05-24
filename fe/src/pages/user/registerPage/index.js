@@ -159,7 +159,7 @@ const RegisterPage = () => {
                     
                     <div className="google-btn">
                         <button type="button" onClick={handleGoogleLogin}>
-                            <FcGoogle className="icon" /> Đăng nhập bằng Google
+                            <FcGoogle className="icon" /> Đăng ký bằng Google
                         </button>
                     </div>
                 </div>

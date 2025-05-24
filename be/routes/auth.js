@@ -163,8 +163,37 @@ router.get('/wallet-balance', async (req, res) => {
 const { authMiddleware } = require('../controllers/authController');
 
 // Route xác minh user dựa trên JWT
-router.get('/me', authMiddleware, (req, res) => {
-  res.json({ user: req.user });
+router.get('/me', authMiddleware, async (req, res) => {
+  try {
+    // Get full user info from database
+    const [userResults] = await db.query(
+      'SELECT id, userName, firstName, lastName, email, createdAt, avatarUrl, role, displayName FROM users WHERE id = ?',
+      [req.user.id]
+    );
+    
+    if (userResults.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    const user = userResults[0];
+    
+    res.json({ 
+      user: {
+        id: user.id,
+        userName: user.userName,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        createdAt: user.createdAt,
+        avatarUrl: user.avatarUrl || '',
+        role: user.role,
+        displayName: user.displayName
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching user info:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 module.exports = router;

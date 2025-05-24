@@ -10,6 +10,7 @@ const MasterLayout = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(() => {
         return localStorage.getItem("token") ? true : false;
     });
+    const [isAuthLoading, setIsAuthLoading] = useState(true);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -30,7 +31,48 @@ const MasterLayout = ({ children }) => {
         localStorage.setItem("cart", JSON.stringify(newCart));
     };
 
-    // Sync cart with localStorage changes
+    // Verify token on component mount and when location changes
+    useEffect(() => {
+        const verifyToken = async () => {
+            const token = localStorage.getItem("token");
+            if (token) {
+                try {
+                    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/me`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const userData = await response.json();
+                        // Update user data in localStorage
+                        localStorage.setItem('user', JSON.stringify(userData.user));
+                        localStorage.setItem('userId', userData.user.id);
+                        setIsLoggedIn(true);
+                    } else {
+                        // Token is invalid
+                        localStorage.removeItem("token");
+                        localStorage.removeItem("user");
+                        localStorage.removeItem("userId");
+                        setIsLoggedIn(false);
+                    }
+                } catch (error) {
+                    console.error('Error verifying token:', error);
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("user");
+                    localStorage.removeItem("userId");
+                    setIsLoggedIn(false);
+                }
+            } else {
+                setIsLoggedIn(false);
+            }
+            setIsAuthLoading(false);
+        };
+        
+        verifyToken();
+    }, []); // Only run on mount
+
+    // Listen for localStorage changes (for cross-tab sync)
     useEffect(() => {
         const handleStorageChange = (event) => {
             if (event.key === "cart") {
@@ -39,6 +81,16 @@ const MasterLayout = ({ children }) => {
                     setCart(updatedCart);
                 } catch (error) {
                     console.error("Error parsing updated cart from localStorage:", error);
+                }
+            } else if (event.key === "token") {
+                // Handle token changes from other tabs
+                const newToken = event.newValue;
+                if (newToken) {
+                    setIsLoggedIn(true);
+                } else {
+                    setIsLoggedIn(false);
+                    localStorage.removeItem("user");
+                    localStorage.removeItem("userId");
                 }
             }
         };
@@ -49,12 +101,29 @@ const MasterLayout = ({ children }) => {
         };
     }, []);
 
+    // Clean up localStorage when logged out
     useEffect(() => {
         if (!isLoggedIn) {
             localStorage.removeItem("token");
             localStorage.removeItem("user");
+            localStorage.removeItem("userId");
         }
     }, [isLoggedIn]);
+
+    // Show loading while verifying auth
+    if (isAuthLoading) {
+        return (
+            <div style={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                height: '100vh',
+                fontSize: '18px' 
+            }}>
+                Đang kiểm tra đăng nhập...
+            </div>
+        );
+    }
 
     return (
         <div>
