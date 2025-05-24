@@ -53,6 +53,7 @@ const LoginPage = ({ setIsLoggedIn }) => {
             });
 
             const data = await response.json();
+            console.log('User role ở frontend:', data.user && data.user.role);//kiểm tra xem role có tồn tại không
             if (!response.ok) throw new Error(data.error);
 
 
@@ -68,7 +69,7 @@ const LoginPage = ({ setIsLoggedIn }) => {
             const existingAvatarUrl = oldUser ? oldUser.avatarUrl : "https://sv1.anhsieuviet.com/2025/04/10/7VITS-9.png";
             const mergedUser = {
                 ...data.user,
-                avatarUrl: existingAvatarUrl, // Giữ nguyên avatarUrl cũ nếu có
+                avatarUrl: existingAvatarUrl || data.user.avatarUrl, // Giữ nguyên avatarUrl cũ nếu có
             };
             localStorage.setItem("token", data.token);
             localStorage.setItem("user", JSON.stringify(mergedUser));
@@ -82,7 +83,11 @@ const LoginPage = ({ setIsLoggedIn }) => {
             }
             
             
-            window.location.href = "/";
+            if(data.user.role === "admin") {
+                navigate("/admin");
+            } else {
+                navigate("/");
+            }
              
         } catch (err) {
             setError(err.message);

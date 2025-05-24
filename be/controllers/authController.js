@@ -31,9 +31,10 @@ exports.register = async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, 10);
       
       console.log('Inserting new user...');
+      const role = 'user'; // Default role
       const [insertResult] = await db.query(
-        'INSERT INTO users (firstName, lastName, userName, email, password) VALUES (?, ?, ?, ?, ?)',
-        [firstName, lastName, userName, email, hashedPassword]
+        'INSERT INTO users (firstName, lastName, userName, email, password, role) VALUES (?, ?, ?, ?, ?, ?)',
+        [firstName, lastName, userName, email, hashedPassword, role]
       );
       
       // Get the new user ID
@@ -87,11 +88,15 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, userName: user.userName },
+      { id: user.id, 
+        userName: user.userName,
+        role: user.role  
+      },
       process.env.JWT_SECRET || 'secretkey',
       { expiresIn: '24h' }
     );
 
+    console.log('User role ở backend:', user.role); //kiểm tra xem role có tồn tại không
     res.json({
       message: 'Đăng nhập thành công',
       user: {
@@ -102,6 +107,7 @@ exports.login = async (req, res) => {
         email: user.email,
         createdAt: user.createdAt,
         avatarUrl: user.avatarUrl || '', // Thêm avatarUrl
+        role: user.role // Thêm role
       },
       token
     });
