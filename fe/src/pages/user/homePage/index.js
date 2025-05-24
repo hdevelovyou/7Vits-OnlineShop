@@ -11,7 +11,7 @@ import { formatVND } from "../../../utils/formatprice";
 // Danh sách các danh mục
 const categories = ["New Arrivals", "Best Sellers", "Discounted Items"];
 
-const Homepage = () => {
+const Homepage = ({user}) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
 

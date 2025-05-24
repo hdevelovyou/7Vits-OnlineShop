@@ -25,8 +25,8 @@ import Otpregister from "./pages/user/otpregister";
 import ChinhSachPage from "./pages/user/chinhSachPage";
 import SocialAuthCallback from "./pages/user/SocialAuthCallback";
 import SetupAccount from "./pages/user/SetupAccount";
-
 import AdminPage from "./components/Admin";
+
 const renderUserRoutes = () => {
     return (
         <MasterLayout>
