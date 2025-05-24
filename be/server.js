@@ -29,6 +29,7 @@ const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
     origin: [
+      'https://7vits.id.vn',
       'https://sevenvits-onlineshop.onrender.com',
       'https://seventvits-onlineshop.onrender.com',
       'http://localhost:3000',
@@ -42,6 +43,7 @@ const io = socketIO(server, {
 
 // Enhanced CORS Configuration
 const allowedOrigins = [
+  'https://7vits.id.vn/'
   'https://sevenvits-onlineshop.onrender.com',
   'https://seventvits-onlineshop.onrender.com',
   'http://localhost:3000',
