@@ -20,44 +20,57 @@ router.get('/google',
 );
 
 router.get('/google/callback', 
-  passport.authenticate('google', { 
-    failureRedirect: `${process.env.CLIENT_URL || 'http://localhost:3000'}/login`,
-    session: false
-  }),
-  (req, res) => {
-    try {
-      // Authentication successful
-      const { user, token, needsUsername } = req.user;
-      
-      if (needsUsername) {
-        // User needs to set up username and password
-        // Create a temporary token for setup page
-        const setupToken = jwt.sign(
-          { id: user.id, googleId: user.googleId, needsSetup: true },
-          process.env.JWT_SECRET || 'secretkey',
-          { expiresIn: '1h' } // Short expiration time for setup
-        );
-        
-        // Redirect to username setup page with setupToken
-        res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/setup-account?token=${setupToken}`);
-      } else {
-        // User already has username, proceed with normal login
-        const userDataParam = encodeURIComponent(JSON.stringify({
-          id: user.id,
-          userName: user.userName || user.displayName,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          avatarUrl: user.avatarUrl || '',
-          token: token
-        }));
-        
-        res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/auth/social?userData=${userDataParam}`);
+  (req, res, next) => {
+    passport.authenticate('google', { 
+      session: false
+    }, (err, user, info) => {
+      if (err) {
+        console.error('Google authentication error:', err);
+        // Check if it's an email conflict error
+        if (err.message && err.message.includes('email')) {
+          return res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/login?error=email_conflict&message=${encodeURIComponent('Email này đã được sử dụng cho tài khoản khác')}`);
+        }
+        return res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/login?error=auth_failed&message=${encodeURIComponent('Đăng nhập thất bại')}`);
       }
-    } catch (error) {
-      console.error('Error in Google callback:', error);
-      res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/login?error=auth_failed`);
-    }
+      
+      if (!user) {
+        return res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/login?error=auth_failed&message=${encodeURIComponent('Không thể xác thực người dùng')}`);
+      }
+      
+      try {
+        // Authentication successful
+        const { user: userData, token, needsUsername } = user;
+        
+        if (needsUsername) {
+          // User needs to set up username and password
+          // Create a temporary token for setup page
+          const setupToken = jwt.sign(
+            { id: userData.id, googleId: userData.googleId, needsSetup: true },
+            process.env.JWT_SECRET || 'secretkey',
+            { expiresIn: '1h' } // Short expiration time for setup
+          );
+          
+          // Redirect to username setup page with setupToken
+          res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/setup-account?token=${setupToken}`);
+        } else {
+          // User already has username, proceed with normal login
+          const userDataParam = encodeURIComponent(JSON.stringify({
+            id: userData.id,
+            userName: userData.userName || userData.displayName,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            email: userData.email,
+            avatarUrl: userData.avatarUrl || '',
+            token: token
+          }));
+          
+          res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/auth/social?userData=${userDataParam}`);
+        }
+      } catch (error) {
+        console.error('Error in Google callback:', error);
+        res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/login?error=auth_failed&message=${encodeURIComponent('Xử lý đăng nhập thất bại')}`);
+      }
+    })(req, res, next);
   }
 );
 

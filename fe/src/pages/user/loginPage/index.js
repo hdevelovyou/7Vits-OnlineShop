@@ -32,12 +32,17 @@ const LoginPage = ({ setIsLoggedIn }) => {
             setRemember(true);
         }
         
-        // Kiểm tra xem người dùng có bị đá ra do token hết hạn không
+        // Kiểm tra xem người dùng có bị đá ra do token hết hạn không hoặc lỗi xác thực
         const params = new URLSearchParams(location.search);
+        const errorType = params.get('error');
+        const customMessage = params.get('message');
+        
         if (params.get('expired') === 'true') {
             setError("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
-        } else if (params.get('error') === 'auth_failed') {
-            setError("Đăng nhập bằng Google thất bại. Vui lòng thử lại.");
+        } else if (errorType === 'email_conflict') {
+            setError(customMessage ? decodeURIComponent(customMessage) : "Email này đã được sử dụng cho tài khoản khác. Vui lòng đăng nhập bằng phương thức ban đầu.");
+        } else if (errorType === 'auth_failed') {
+            setError(customMessage ? decodeURIComponent(customMessage) : "Đăng nhập bằng Google thất bại. Vui lòng thử lại.");
         }
     }, [location.search]);
 
