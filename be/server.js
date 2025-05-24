@@ -8,7 +8,6 @@ const db = require('./config/connectDB');
 const axios = require('axios');
 const { getBestAnswer, searchFaq } = require('./utils/faqUtils');
 const productRoutes = require('./routes/productRoutes');
-//const bodyParser = require("body-parser");
 const commentRoutes = require("./routes/comments");
 const ratingRoutes = require('./routes/rating');
 const nodemailer = require('nodemailer');
@@ -19,6 +18,7 @@ const messageController = require('./controllers/messageController');
 const { bodyParserMiddleware, urlEncodedMiddleware } = require('./middleware/bodyParser');
 const vnpayRoutes = require('./routes/vnpay_routes');
 const adminRouter = require('./routes/admin');
+const bodyParser = require('body-parser');
 
 const app = express();
 
@@ -26,41 +26,38 @@ const app = express();
 const http = require('http');
 const socketIO = require('socket.io');
 const server = http.createServer(app);
+
+// Enhanced CORS Configuration
+const allowedOrigins = [
+  'https://7vits.id.vn',
+  'https://sevenvits-be.onrender.com',
+  'https://sevenvits-onlineshop.onrender.com',
+  'https://seventvits-onlineshop.onrender.com',
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://localhost:5000',
+  'https://7-vits-online-shop-frontend.vercel.app'
+];
+
 const io = socketIO(server, {
   cors: {
-    origin: [
-      'https://7vits.id.vn',
-      'https://sevenvits-onlineshop.onrender.com',
-      'https://seventvits-onlineshop.onrender.com',
-      'http://localhost:3000',
-      'http://localhost:5000',
-      'https://7-vits-online-shop-frontend.vercel.app'
-    ],
+    origin: allowedOrigins,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE']
   }
 });
 
-// Enhanced CORS Configuration
-const allowedOrigins = [
-  'https://7vits.id.vn/',
-  'https://seventvits-onlineshop.onrender.com',
-  'http://localhost:3000',
-  'http://localhost:3001',
-  'http://localhost:5000',
-  'https://7-vits-online-shop-frontend.vercel.app',
-  'https://sevenvits-onlineshop.onrender.com',
-  'https://seventvits-onlineshop.onrender.com'
-];
-
-// Đặt middleware CORS trước tất cả các route
+// Enhanced CORS middleware
 app.use(cors({
   origin: function (origin, callback) {
-    // Cho phép request không có origin (như từ Postman)
+    // Cho phép request không có origin (như từ Postman hoặc mobile apps)
     if (!origin) return callback(null, true);
+    
     if (allowedOrigins.indexOf(origin) !== -1) {
       return callback(null, true);
     }
+    
+    console.log('CORS blocked origin:', origin);
     return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
@@ -68,19 +65,25 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 }));
 
-// Đáp ứng preflight OPTIONS cho tất cả route
+// Handle preflight requests
 app.options('*', cors());
 
+// Additional CORS headers for better compatibility
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept');
+  next();
+});
+
+// Body parser middleware
 app.use(express.json({limit: '10mb'}));
-const bodyParser = require('body-parser');
 app.use(bodyParser.json({limit: '10mb'}));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
-
-app.options('*', cors()); // Đáp ứng tất cả các yêu cầu OPTIONS
-
-// Middleware
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 // Static file serving
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
@@ -92,7 +95,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production', // Set to true in production
+    secure: process.env.NODE_ENV === 'production',
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
@@ -117,7 +120,9 @@ app.use('/api', adminRouter);
 // Test route for checking if the API is working
 app.get('/api/test', (req, res) => {
   res.json({
-    message: 'API is working'
+    message: 'API is working',
+    timestamp: new Date().toISOString(),
+    cors: 'enabled'
   });
 });
 
@@ -164,7 +169,7 @@ app.get('/test-image/:filename', (req, res) => {
 
 // Email sending logic with nodemailer
 const sendEmail = (email, otp) => {
-  const transporter = nodemailer.createTransport({
+  const transporter = nodemailer.createTransporter({
     service: 'gmail',
     auth: {
       user: process.env.EMAIL_USERNAME,
@@ -232,7 +237,6 @@ io.on('connection', (socket) => {
     await messageController.saveSocketMessage(sender_id, receiver_id, message);
   });
   
-
   socket.on('disconnect', () => {
     for (const [userId, sockId] of Object.entries(users)) {
       if (sockId === socket.id) {
@@ -245,15 +249,24 @@ io.on('connection', (socket) => {
   });
 });
 
-// Route gửi tin nhắn
+// Message routes
 app.post('/api/messages', messageController.sendMessage);
-
-// Route lấy tin nhắn giữa hai người dùng
 app.get('/api/messages/:sender_id/:receiver_id', messageController.getMessages);
-// Route lấy tất cả tin nhắn của một người dùng
 app.get('/api/conversations/:userId', messageController.getConversations);
+
+// Global error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Global error:', err.stack);
+  res.status(500).json({ 
+    error: 'Something went wrong!',
+    message: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
+  });
+});
+
 // Server start
 const PORT = process.env.PORT || 5000;
+
+// Debug route logging
 console.log('--- Các route đang được khai báo ---');
 app._router.stack.forEach(function (r) {
   if (r.route && r.route.path) {
@@ -265,20 +278,5 @@ server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log(`Static files served at: http://localhost:${PORT}/images`);
   console.log(`FAQ system loaded and active`);
+  console.log(`CORS enabled for origins:`, allowedOrigins);
 });
-
-// Global error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something went wrong!');
-});
-
-//push
-app.use(session({
-  secret: 'secret',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { 
-    maxAge: 1000 * 60 * 60 * 2 // 2 hours
-  }
-}));
