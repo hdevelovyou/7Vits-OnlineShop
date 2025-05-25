@@ -272,6 +272,12 @@ html {
 }
 
 @media (max-width: 768px) {
+        .banner {
+                background: url("../../../assets/images/mainbg.png") no-repeat 70% center/cover;
+                height: 87vh;
+                max-width: 100%;
+                position: relative;
+        }
         .grid__column-3 {
                 width: calc(50% - 2.4rem);
                 /* Chia 2 cột */
