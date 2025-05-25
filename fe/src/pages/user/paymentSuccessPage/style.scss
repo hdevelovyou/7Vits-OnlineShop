@@ -5,7 +5,7 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 2rem 1rem;
+  padding-top: 15rem;
 
   .success-container {
     width: 100%;
@@ -35,9 +35,9 @@
     }
 
     h1 {
-      font-size: 2.5rem;
+      font-size: 3rem;
       margin-bottom: 0.5rem;
-      color: #ff9800;
+      color: #04ff00;
       
       @media (max-width: 768px) {
         font-size: 1.8rem;
@@ -57,9 +57,9 @@
       display: flex;
       align-items: center;
       gap: 0.8rem;
-      font-size: 1.8rem;
+      font-size: 2rem;
       margin-bottom: 1.5rem;
-      color: #64B5F6;
+      color: #ff0000;
       
       @media (max-width: 768px) {
         font-size: 1.5rem;
@@ -117,12 +117,13 @@
       flex: 1;
 
       h3 {
-        font-size: 1.3rem;
+        font-size: 2rem;
         margin-bottom: 0.5rem;
         color: #ffffff;
       }
 
       p {
+        font-size: 1rem;
         margin-bottom: 0.3rem;
         color: rgba(255, 255, 255, 0.7);
       }
@@ -130,7 +131,7 @@
       .item-total {
         font-weight: bold;
         color: #ff9800;
-        font-size: 1.2rem;
+        font-size: 2rem;
         margin-top: 0.5rem;
       }
     }
@@ -152,11 +153,11 @@
     }
 
     .total-items {
-      font-size: 1.1rem;
+      font-size: 1.5rem;
     }
 
     .total-amount {
-      font-size: 1.5rem;
+      font-size: 2rem;
       font-weight: bold;
       color: #ff9800;
     }
@@ -192,20 +193,20 @@
     }
 
     .view-orders-btn {
-      background-color: #2196F3;
+      background-color: #a8a8a8;
       color: white;
 
       &:hover {
-        background-color: #1976D2;
+        background-color: #555555;
       }
     }
 
     .back-shopping-btn {
-      background-color: #4CAF50;
+      background-color: #ff0000;
       color: white;
 
       &:hover {
-        background-color: #388E3C;
+        background-color: #6f0000;
       }
     }
   }
