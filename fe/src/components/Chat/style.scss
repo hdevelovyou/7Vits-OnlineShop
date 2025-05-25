@@ -631,6 +631,11 @@
         text-overflow: ellipsis;
         max-width: 120px;
     }
+
+    .messages,
+    .messages-container {
+        padding-bottom: 80px; 
+    }
 }
 
 .chat-page~#footer {
