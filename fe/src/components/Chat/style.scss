@@ -564,7 +564,7 @@
         top: 129px; 
         left: 0;
         width: 100%;
-        height: calc(100dvh - 129px - 64px); 
+        height: calc(var(--vh, 1vh) * 100 - 129px - 64px);
         background: #232326;
         z-index: 1000;
         overflow-y: auto;
