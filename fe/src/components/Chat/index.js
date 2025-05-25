@@ -89,6 +89,12 @@ export default function Chat({ receiverId, receiverName }) {
 
                 if (isCurrent) {
                     setMessages((prev) => [...prev, msg]);
+                    if (msg.sender_id !== user.id) {
+                        axios.post(`${process.env.REACT_APP_API_URL}/api/messages/read`, {
+                            sender_id: msg.sender_id,
+                            receiver_id: user.id,
+                        }).catch(() => { });
+                    }
                 } else {
                     // Tin nhắn mới đến cuộc trò chuyện khác, tăng unread count
                     if (msg.sender_id !== user.id) {
