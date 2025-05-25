@@ -3,7 +3,7 @@ html {
 }
 
 .banner {
-        background: url("../../../assets/images/mainbg.png") no-repeat center center/cover;
+        background: url("../../../assets/images/mainbg.png") no-repeat right center/cover;
         height: 87vh;
         max-width: 100%;
         position: relative;
@@ -288,6 +288,12 @@ html {
         }
 }
 @media (max-width: 480px) {
+        .banner {
+                background: url("../../../assets/images/mainbg.png") no-repeat 73% center/cover;
+                height: 87vh;
+                max-width: 100%;
+                position: relative;
+        }
         .grid__column-3 {
                 width: calc(100% - 2.4rem);
         }
