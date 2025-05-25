@@ -197,7 +197,6 @@ export default function Chat({ receiverId, receiverName }) {
                 created_at: new Date().toISOString(),
             };
             socket.emit('private_message', payload);
-            setMessages((prev) => [...prev, payload]);
             updateSidebar(payload);
         };
         reader.readAsDataURL(file);

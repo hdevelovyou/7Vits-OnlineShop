@@ -482,8 +482,17 @@
 }
 
 .chat-image {
+    width: 100%;
     max-width: 300px;
     border-radius: 12px;
+    height: auto;
+    display: block;
+}
+
+@media (max-width: 600px) {
+    .chat-image {
+        max-width: 50vw;
+    }
 }
 
 .zoomed-image-overlay {
