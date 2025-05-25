@@ -91,8 +91,8 @@
                     .avatar-img {
                         width: 100%;
                         height: 100%;
-                        object-fit: cover; 
-                        border-radius: 50%;                    
+                        object-fit: cover;
+                        border-radius: 50%;
                     }
                 }
 
@@ -127,6 +127,7 @@
         min-width: 0;
         position: relative;
         height: 85vh;
+
         .no-chat-selected {
             flex: 1;
             display: flex;
@@ -136,10 +137,11 @@
             font-size: 1.1rem;
             font-weight: 500;
         }
+
         .chat-window {
             display: flex;
             flex-direction: column;
-            height: 100%;       
+            height: 100%;
         }
     }
 }
@@ -234,7 +236,7 @@
             background: #18181b;
             color: #fff;
             transition: border-color 0.2s;
-          
+
 
             &:focus {
                 border-color: #fff;
@@ -293,9 +295,12 @@
     display: inline-block;
     margin-left: 5px;
 }
+
 .messages {
-    flex: 1;
+    flex: 1 1 0;
     overflow-y: auto;
+    min-height: 0;
+    max-height: 100%;
     padding: 10px;
     display: flex;
     flex-direction: column;
@@ -303,34 +308,34 @@
 }
 
 .messages .mine {
-  align-self: flex-end;
-  background-color: #f28b82;
-  padding: 8px 12px;
-  border-radius: 15px 15px 0 15px;
-  max-width: 70%;
-  text-align: right;
+    align-self: flex-end;
+    background-color: #f28b82;
+    padding: 8px 12px;
+    border-radius: 15px 15px 0 15px;
+    max-width: 70%;
+    text-align: right;
 }
 
 .messages .theirs {
-  align-self: flex-start;
-  background-color: #f1f0f0;
-  padding: 8px 12px;
-  border-radius: 15px 15px 15px 0;
-  max-width: 70%;
-  text-align: left;
+    align-self: flex-start;
+    background-color: #f1f0f0;
+    padding: 8px 12px;
+    border-radius: 15px 15px 15px 0;
+    max-width: 70%;
+    text-align: left;
 }
 
 .messages span {
-  display: block;
-      color: #000;
+    display: block;
+    color: #000;
     font-size: 20px;
 }
 
 .messages small {
-  display: block;
-  font-size: 0.75rem;
-  color: gray;
-  margin-top: 4px;
+    display: block;
+    font-size: 0.75rem;
+    color: gray;
+    margin-top: 4px;
 }
 
 .chat-input {
@@ -341,88 +346,88 @@
     flex-shrink: 0;
 
     .emoji-toggle {
-            background: none;
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    .emoji-picker-container {
+        position: absolute;
+        bottom: 60px; // khoảng cách với input
+        left: 10px;
+        z-index: 999;
+        background: #2c2c2f; // hoặc #1f1f23 cho phù hợp với theme
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        padding: 8px;
+
+        // đảm bảo không bị thừa khoảng đỏ như trong ảnh
+        .EmojiPickerReact {
+            --epr-bg-color: #2c2c2f;
+            --epr-category-label-bg-color: #1f1f23;
+            --epr-hover-bg-color: #3f3f46;
+            --epr-text-color: #fff;
             border: none;
-            font-size: 24px;
-            cursor: pointer;
-        }
-    
-        .emoji-picker-container {
-            position: absolute;
-            bottom: 60px; // khoảng cách với input
-            left: 10px;
-            z-index: 999;
-            background: #2c2c2f; // hoặc #1f1f23 cho phù hợp với theme
             border-radius: 0.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-            padding: 8px;
-    
-            // đảm bảo không bị thừa khoảng đỏ như trong ảnh
-            .EmojiPickerReact {
-                --epr-bg-color: #2c2c2f;
-                --epr-category-label-bg-color: #1f1f23;
-                --epr-hover-bg-color: #3f3f46;
-                --epr-text-color: #fff;
-                border: none;
-                border-radius: 0.5rem;
-            }
-    
-            .EmojiPickerReact button {
-                background: transparent;
-            }
-
-            button[aria-label^="Skin tone"] {
-                display: none !important;
-            }
-
-            button[aria-label="Frequently Used"] {
-                display: none !important;
-            }
-
-            button[aria-label="Smileys & People"] {
-                display: none !important;
-            }
-            
-            button[aria-label="Animals & Nature"] {
-                display: none !important;
-            }
-
-            button[aria-label="Food & Drink"] {
-                display: none !important;
-            }
-
-            button[aria-label="Travel & Places"] {
-                display: none !important;
-            }
-
-            button[aria-label="Activities"] {
-                display: none !important;
-            }
-
-            button[aria-label="Objects"] {
-                display: none !important;
-            }
-
-            button[aria-label="Symbols"] {
-                display: none !important;
-            }
-
-            button[aria-label="Flags"] {
-                display: none !important;
-            }
-
-            input[aria-label="Type to search for an emoji"] {
-                padding-left: 30px; // tạo khoảng trống cho icon kính lúp
-            }
-
-            .epr-icn-search {
-                position: absolute;
-                left: 8px; // khoảng cách từ trái, chỉnh cho phù hợp
-                top: 50%;
-                transform: translateY(-50%);
-                pointer-events: none; // để icon không bắt sự kiện chuột, tránh gây cản trở input          
-            }
         }
+
+        .EmojiPickerReact button {
+            background: transparent;
+        }
+
+        button[aria-label^="Skin tone"] {
+            display: none !important;
+        }
+
+        button[aria-label="Frequently Used"] {
+            display: none !important;
+        }
+
+        button[aria-label="Smileys & People"] {
+            display: none !important;
+        }
+
+        button[aria-label="Animals & Nature"] {
+            display: none !important;
+        }
+
+        button[aria-label="Food & Drink"] {
+            display: none !important;
+        }
+
+        button[aria-label="Travel & Places"] {
+            display: none !important;
+        }
+
+        button[aria-label="Activities"] {
+            display: none !important;
+        }
+
+        button[aria-label="Objects"] {
+            display: none !important;
+        }
+
+        button[aria-label="Symbols"] {
+            display: none !important;
+        }
+
+        button[aria-label="Flags"] {
+            display: none !important;
+        }
+
+        input[aria-label="Type to search for an emoji"] {
+            padding-left: 30px; // tạo khoảng trống cho icon kính lúp
+        }
+
+        .epr-icn-search {
+            position: absolute;
+            left: 8px; // khoảng cách từ trái, chỉnh cho phù hợp
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none; // để icon không bắt sự kiện chuột, tránh gây cản trở input          
+        }
+    }
 
     input {
         flex: 1;
@@ -441,8 +446,8 @@
 
         &:focus {
             border-color: #fff;
-            background: #111112; 
-            box-shadow: none; 
+            background: #111112;
+            box-shadow: none;
         }
     }
 
@@ -532,9 +537,60 @@
 .conversation-header {
     display: flex;
     justify-content: space-between;
-    align-items: center; 
+    align-items: center;
 }
 
-.chat-page~ #footer {
+.back-btn {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    .chat-page .chat-main {
+        position: fixed;
+        top: 129px; // 81px header + 48px back-btn
+        left: 0;
+        width: 100%;
+        height: calc(100vh - 129px - 72px); // 72px là chiều cao chat-input, chỉnh lại nếu khác
+        background: #232326;
+        z-index: 1000;
+        overflow-y: auto;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .back-btn {
+        display: block;
+        position: fixed;
+        top: 81px;
+        left: 0;
+        width: 100%;
+        z-index: 1001;
+        background: #232326;
+        color: #b91c1c;
+        border: none;
+        font-size: 1.2rem;
+        padding: 1rem 0;
+        text-align: left;
+        cursor: pointer;
+        border-bottom: 1px solid #b91c1c;
+        height: 48px;
+    }
+
+    .chat-input {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        z-index: 1002;
+        border-top: 1px solid #3f3f46;
+        background: #1f1f23;
+        padding: 1rem;
+        display: flex;
+        gap: 0.5rem;
+    }
+}
+
+.chat-page~#footer {
     display: none;
 }

@@ -23,7 +23,7 @@ export default function Chat({ receiverId, receiverName }) {
     const scale = 3;
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [unreadCounts, setUnreadCounts] = useState({});
-
+    const [showChatWindow, setShowChatWindow] = useState(false);
 
     // Đăng ký socket với user ID
     useEffect(() => {
@@ -115,7 +115,7 @@ export default function Chat({ receiverId, receiverName }) {
             socket.off('private_message', handler);
         };
     }, [socket, user?.id, selectedUser?.id]);
-    
+
 
     // Fetch message history on select
     useEffect(() => {
@@ -142,13 +142,13 @@ export default function Chat({ receiverId, receiverName }) {
             })
             .catch((err) => console.error('Lỗi khi load hoặc mark read:', err));
     }, [user?.id, selectedUser?.id]);
-    
+
 
     // Scroll to bottom
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
-      
+
     // Focus input
     useEffect(() => {
         inputRef.current?.focus();
@@ -216,144 +216,170 @@ export default function Chat({ receiverId, receiverName }) {
         socket.emit('private_message', payload);
         updateSidebar(payload);
         setInput('');
-    };          
+    };
+
+    // Khi chọn user trên mobile, set showChatWindow = true
+    const handleSelectUser = (conv) => {
+        setSelectedUser(conv);
+        // Nếu là mobile thì chuyển sang chat window
+        if (window.innerWidth <= 900) setShowChatWindow(true);
+    };
+
+    // Khi bấm nút "Quay lại" trong chat window trên mobile
+    const handleBack = () => {
+        setShowChatWindow(false);
+    };
+
+    const isMobile = window.innerWidth <= 900;
 
     return (
         <div className="chat-page">
             <div className="chat-container">
-                <div className="chat-sidebar">
-                    <div className="sidebar-header">
-                        <h2>Tin nhắn</h2>
-                    </div>
-                    <div className="conversations-list">
-                        {conversations.map((conv) => {
-                            const unreadCount = unreadCounts[conv.id] || 0;
-                            return (
-                                <div
-                                    key={conv.id}
-                                    onClick={() => setSelectedUser(conv)}
-                                    className={`conversation-item ${selectedUser?.id === conv.id ? 'active' : ''}`}
-                                >
-                                    <div className="user-avatar">
-                                        {conv.avatarUrl ? (
-                                            <img src={conv.avatarUrl} alt={conv.userName} className="avatar-img" />
-                                        ) : (
-                                            <span>{conv.userName.charAt(0).toUpperCase()}</span>
-                                        )}
-                                        {onlineUsers.includes(String(conv.id)) && <span className="online-dot"></span>}
-                                    </div>
-                                    <div className="conversation-info">
-                                        <div className="conversation-header">
-                                            <h3>{conv.userName}</h3>
-                                            {unreadCount > 0 && <span className="unread-count">{unreadCount}</span>}
+                {/* Sidebar chỉ hiện trên desktop hoặc khi chưa chọn user trên mobile */}
+                {(!isMobile || !showChatWindow) && (
+                    <div className="chat-sidebar">
+                        <div className="sidebar-header">
+                            <h2>Tin nhắn</h2>
+                        </div>
+                        <div className="conversations-list">
+                            {conversations.map((conv) => {
+                                const unreadCount = unreadCounts[conv.id] || 0;
+                                return (
+                                    <div
+                                        key={conv.id}
+                                        onClick={() => handleSelectUser(conv)}
+                                        className={`conversation-item ${selectedUser?.id === conv.id ? 'active' : ''}`}
+                                    >
+                                        <div className="user-avatar">
+                                            {conv.avatarUrl ? (
+                                                <img src={conv.avatarUrl} alt={conv.userName} className="avatar-img" />
+                                            ) : (
+                                                <span>{conv.userName.charAt(0).toUpperCase()}</span>
+                                            )}
+                                            {onlineUsers.includes(String(conv.id)) && <span className="online-dot"></span>}
                                         </div>
-                                        <p>{conv.lastMessage || 'Chưa có tin nhắn'}</p>
+                                        <div className="conversation-info">
+                                            <div className="conversation-header">
+                                                <h3>{conv.userName}</h3>
+                                                {unreadCount > 0 && <span className="unread-count">{unreadCount}</span>}
+                                            </div>
+                                            <p>{conv.lastMessage || 'Chưa có tin nhắn'}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            })}
+                        </div>
                     </div>
-                </div>
-                <div className="chat-main">
-                    {selectedUser ? (
-                        <div className="chat-window">
-                           
-                            <div className="messages">
-                                {messages.map((m, i) => {
-                                    const isImage = m.message.startsWith('data:image');
-                                    const isMine = m.sender_id === user.id;
+                )}
+                {/* Chat window chỉ hiện trên desktop hoặc khi đã chọn user trên mobile */}
+                {(!isMobile || showChatWindow) && (
+                    <div className="chat-main">
+                        {/* Nút back chỉ hiện trên mobile */}
+                        {isMobile && (
+                            <button className="back-btn" onClick={handleBack}>
+                                ← Quay lại
+                            </button>
+                        )}
+                        {selectedUser ? (
+                            <div className="chat-window">
 
-                                    if (isImage) {
-                                        return (
-                                            <div
-                                                key={i}
-                                                style={{
-                                                    display: 'flex',
-                                                    justifyContent: isMine ? 'flex-end' : 'flex-start',
-                                                    margin: '10px 0'
-                                                }}
-                                            >
-                                                <div>
-                                                    <img
-                                                        src={m.message}
-                                                        alt="sent-img"
-                                                        className="chat-image"
-                                                        onClick={(e) => {
-                                                            setZoomedImage(m.message);
-                                                            setZoomedImageSize({ width: e.target.naturalWidth, height: e.target.naturalHeight });
-                                                          }}
-                                                        style={{ cursor: 'zoom-in' }}
-                                                    />
+                                <div className="messages">
+                                    {messages.map((m, i) => {
+                                        const isImage = m.message.startsWith('data:image');
+                                        const isMine = m.sender_id === user.id;
 
-                                                    <small style={{ display: 'block', textAlign: isMine ? 'right' : 'left' }}>
-                                                        {new Date(m.created_at).toLocaleString('vi-VN', {
-                                                            hour: '2-digit',
-                                                            minute: '2-digit',
-                                                            second: '2-digit',
-                                                        })}
-                                                    </small>
+                                        if (isImage) {
+                                            return (
+                                                <div
+                                                    key={i}
+                                                    style={{
+                                                        display: 'flex',
+                                                        justifyContent: isMine ? 'flex-end' : 'flex-start',
+                                                        margin: '10px 0'
+                                                    }}
+                                                >
+                                                    <div>
+                                                        <img
+                                                            src={m.message}
+                                                            alt="sent-img"
+                                                            className="chat-image"
+                                                            onClick={(e) => {
+                                                                setZoomedImage(m.message);
+                                                                setZoomedImageSize({ width: e.target.naturalWidth, height: e.target.naturalHeight });
+                                                            }}
+                                                            style={{ cursor: 'zoom-in' }}
+                                                        />
+
+                                                        <small style={{ display: 'block', textAlign: isMine ? 'right' : 'left' }}>
+                                                            {new Date(m.created_at).toLocaleString('vi-VN', {
+                                                                hour: '2-digit',
+                                                                minute: '2-digit',
+                                                                second: '2-digit',
+                                                            })}
+                                                        </small>
+                                                    </div>
                                                 </div>
+                                            );
+                                        }
+
+                                        return (
+                                            <div key={i} className={isMine ? 'mine' : 'theirs'}>
+                                                <span>{m.message}</span>
+                                                <small>
+                                                    {new Date(m.created_at).toLocaleString('vi-VN', {
+                                                        hour: '2-digit',
+                                                        minute: '2-digit',
+                                                        second: '2-digit',
+                                                    })}
+                                                </small>
                                             </div>
                                         );
-                                    }
+                                    })}
+                                    <div ref={messagesEndRef} />
+                                </div>
+                                <form onSubmit={send} className="chat-input">
+                                    <button
+                                        type="button"
+                                        className="emoji-toggle"
+                                        onClick={() => setShowEmojiPicker((prev) => !prev)}
+                                    >
+                                        😊
+                                    </button>
 
-                                    return (
-                                        <div key={i} className={isMine ? 'mine' : 'theirs'}>
-                                            <span>{m.message}</span>
-                                            <small>
-                                                {new Date(m.created_at).toLocaleString('vi-VN', {
-                                                    hour: '2-digit',
-                                                    minute: '2-digit',
-                                                    second: '2-digit',
-                                                })}
-                                            </small>
+                                    <button
+                                        type="button"
+                                        className="image-upload-toggle"
+                                        onClick={() => fileInputRef.current.click()}
+                                    >
+                                        📷
+                                    </button>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        style={{ display: 'none' }}
+                                        ref={fileInputRef}
+                                        onChange={handleImageChange}
+                                    />
+
+                                    {showEmojiPicker && (
+                                        <div className="emoji-picker-container">
+                                            <EmojiPicker onEmojiClick={(emojiData) => setInput((prev) => prev + emojiData.emoji)} />
                                         </div>
-                                    );
-                                })}
-                                <div ref={messagesEndRef} />
+                                    )}
+                                    <input
+                                        ref={inputRef}
+                                        value={input}
+                                        onChange={(e) => setInput(e.target.value)}
+                                        placeholder="Nhập tin nhắn..."
+                                    />
+                                    <button type="submit">Gửi</button>
+                                </form>
                             </div>
-                            <form onSubmit={send} className="chat-input">
-                                <button
-                                    type="button"
-                                    className="emoji-toggle"
-                                    onClick={() => setShowEmojiPicker((prev) => !prev)}
-                                >
-                                    😊
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className="image-upload-toggle"
-                                    onClick={() => fileInputRef.current.click()}
-                                >
-                                    📷
-                                </button>
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    style={{ display: 'none' }}
-                                    ref={fileInputRef}
-                                    onChange={handleImageChange}
-                                />
-
-                                {showEmojiPicker && (
-                                    <div className="emoji-picker-container">
-                                        <EmojiPicker onEmojiClick={(emojiData) => setInput((prev) => prev + emojiData.emoji)} />
-                                    </div>
-                                )}
-                                <input
-                                    ref={inputRef}
-                                    value={input}
-                                    onChange={(e) => setInput(e.target.value)} 
-                                    placeholder="Nhập tin nhắn..."
-                                />
-                                <button type="submit">Gửi</button>
-                            </form>
-                        </div>
-                    ) : (
-                        <div className="no-chat-selected">Chọn một cuộc trò chuyện để bắt đầu</div>
-                    )}
-                </div>
+                        ) : (
+                            <div className="no-chat-selected">Chọn một cuộc trò chuyện để bắt đầu</div>
+                        )}
+                    </div>
+                )}
             </div>
             {zoomedImage && (
                 <div className="zoomed-image-overlay" onClick={() => setZoomedImage(null)}>
