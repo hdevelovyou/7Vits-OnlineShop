@@ -154,16 +154,6 @@ export default function Chat({ receiverId, receiverName }) {
         inputRef.current?.focus();
     }, [selectedUser]);
 
-    useEffect(() => {
-        const setVh = () => {
-            const vh = window.innerHeight * 0.01;
-            document.documentElement.style.setProperty('--vh', `${vh}px`);
-        };
-        window.addEventListener('resize', setVh);
-        setVh();
-        return () => window.removeEventListener('resize', setVh);
-    }, []);
-
     // Update sidebar conversations with new message
     const updateSidebar = (msg) => {
         setConversations((prev) => {
