@@ -275,10 +275,20 @@ export default function Chat({ receiverId, receiverName }) {
                 {(!isMobile || showChatWindow) && (
                     <div className="chat-main">
                         {/* Nút back chỉ hiện trên mobile */}
-                        {isMobile && (
-                            <button className="back-btn" onClick={handleBack}>
-                                ← Quay lại
-                            </button>
+                        {isMobile && selectedUser && (
+                            <div className="chat-mobile-header">
+                                <button className="back-btn" onClick={handleBack}>
+                                    ←
+                                </button>
+                                <div className="mobile-header-user">
+                                    {selectedUser.avatarUrl ? (
+                                        <img src={selectedUser.avatarUrl} alt={selectedUser.userName} className="avatar-img" />
+                                    ) : (
+                                        <span className="avatar-placeholder">{selectedUser.userName?.charAt(0).toUpperCase()}</span>
+                                    )}
+                                    <span className="user-name">{selectedUser.userName}</span>
+                                </div>
+                            </div>
                         )}
                         {selectedUser ? (
                             <div className="chat-window">
