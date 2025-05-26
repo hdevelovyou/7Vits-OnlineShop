@@ -1,6 +1,7 @@
 import { memo, useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import {formatVND} from "../../../utils/formatprice";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./style.scss";
 
@@ -280,7 +281,7 @@ const StorePage = () => {
                                             </div>
                                             <div className="product-price">
                                                 
-                                                <span className="current-price">{formatPrice(product.price)}đ</span>
+                                                <span className="current-price">{formatVND(product.price)}</span>
                                             </div>
                                         </div>
                                     </Link>

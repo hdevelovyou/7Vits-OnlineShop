@@ -5,7 +5,7 @@ import { FaInstagram, FaShoppingCart, FaWallet, FaStore, FaGamepad, FaKey,FaBook
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../../../assets/images/logo.png";
 import { ROUTES } from "../../../../utils/router.js";
-import { IoSearchCircleSharp } from "react-icons/io5";
+import { IoChatbubbleSharp } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
 import { AiOutlineMenu, AiOutlineSearch, AiOutlineUser } from "react-icons/ai";
 import { AiOutlineDown } from "react-icons/ai";
@@ -36,15 +36,16 @@ const menuItems = [
     path: "/chinh-sach",
   },
   {
+    name:"Sự kiện",
+    icon:<MdEmojiEvents />,
+    path:"/event",
+  },
+  {
     name: "Đăng xuất",
     icon: <MdLogout />,
     path: "/",
   },
-  {
-    name:"Sự kiện",
-    icon:<MdEmojiEvents />,
-    path:"/event",
-  }
+ 
 
 ];
 
@@ -302,11 +303,15 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
             <div className="row">
               <div className="col-lg-3 col-sm-6">
                 <div className="header-logo">
-                  <Link to={ROUTES.USER.HOME} onClick={() => window.scrollTo(0, 0)} style={{ textDecoration: "none" }}>
+                  <Link to={ROUTES.USER.HOME} onClick={() => window.scrollTo(0, 0)} style={{
+                      textDecoration: "none" ,
+                      display: "flex",
+                      alignItems: "center",
+                  }}>
                     <img src={logo} alt="7vits-logo" />
-                    <h1>7VITS</h1>
+                   <h1>7VITS</h1>
                   </Link>
-                  
+                   
                 </div>
               </div>
               <div className="col-lg-3  " >
@@ -375,9 +380,14 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
 
                   {
                     isActuallyLoggedIn() ? (
+                      <>
                       <Link to="/profile" onClick={() => window.scrollTo(0, 0)} className="login-btn-mobile">
                         <CgProfile />
                       </Link>
+                      <Link to="/chat" onClick={() => window.scrollTo(0, 0)} className="chat-btn-mobile">
+                        <IoChatbubbleSharp />
+                      </Link>
+                      </>
                     ) : (
                       <Link to="/login" onClick={() => window.scrollTo(0, 0)} className="login-btn-mobile">
                         <AiOutlineUser />

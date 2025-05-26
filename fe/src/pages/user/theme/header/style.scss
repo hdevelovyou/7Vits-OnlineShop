@@ -53,7 +53,8 @@ input[type="text"] {
 }
 .humberger_menu_wrapper,
 .hamergur_open,
-.login-btn-mobile
+.login-btn-mobile,
+.chat-btn-mobile
 {
     display: none;
 }
@@ -278,6 +279,7 @@ html {
     .header-menu,
     .header-top,
     .login-btn-mobile,
+    .chat-btn-mobile,
     .sig-btn-mobile,
     .logout-mobile,
     .wallet-btn,.input-search-mobile {
@@ -467,7 +469,7 @@ html {
         font-size: 1.2rem;
     }
 
-    .login-btn-mobile {
+    .login-btn-mobile,.chat-btn-mobile {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -479,6 +481,7 @@ html {
             font-size: 25px;
         }
     }
+
 
     .mobile-menu {
         display: flex;

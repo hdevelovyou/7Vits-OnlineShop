@@ -1,6 +1,7 @@
 import { memo, useState, useEffect } from "react";
 import Header from "../header";
 import Footer from "../footer";
+import "./style.scss";
 import { useNavigate, useLocation } from "react-router-dom";
 import ChatbotComponent from "../../../../components/ChatBot/ChatBot";
 import chat from "../../../../components/logochat"
@@ -138,20 +139,8 @@ const MasterLayout = ({ children }) => {
             {/* Ẩn Footer và Chatbot nếu đang ở /chat */}
             {!isChatPage && <Footer />}
 
-            {!isChatPage && (
-                <div style={{
-                    position: 'fixed',
-                    right: '20px',
-                    top: '660px',
-                    zIndex: 1000,
-                    width: '50px',
-                    height: '50px',
-                    backgroundColor: 'red',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}>
+            {!isChatPage && isLoggedIn &&(
+                <div className="chat" >
                     <ChatButton />
                 </div>
             )}

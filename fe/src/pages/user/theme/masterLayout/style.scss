@@ -1,0 +1,20 @@
+@import "../../../../style/pages/all";
+
+.chat {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 1000;
+  width: 50px;
+  height: 50px;
+  background-color: red;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+@media (max-width: 480px) {
+  .chat {
+    display: none;
+  }
+}
