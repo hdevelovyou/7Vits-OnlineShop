@@ -1,6 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { memo, useState, useEffect, useRef, use } from "react";
+import "./style.scss";
+import { CiFacebook } from "react-icons/ci";
+import { FaInstagram, FaShoppingCart, FaWallet, FaStore, FaGamepad, FaKey,FaBook } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import logo from "../../assets/images/logo.png";
+import { ROUTES } from "../../utils/router.js";
+import { IoChatbubbleSharp } from "react-icons/io5";
+import { CgProfile } from "react-icons/cg";
+import { AiOutlineMenu, AiOutlineSearch, AiOutlineUser } from "react-icons/ai";
+import { AiOutlineDown } from "react-icons/ai";
+import { FaHouse } from "react-icons/fa6";
+import { MdEmojiEvents, MdLogout } from "react-icons/md";
+import axios from "axios";
+
 
 const AdminPage = () => {
     const [isAdmin, setIsAdmin] = useState(null);
@@ -33,16 +45,87 @@ const AdminPage = () => {
         }
     }, [isAdmin, navigate]);
 
+    const [userName, setUserName] = useState("Admin");
+    useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      const parsedUser = JSON.parse(userData);
+      if (parsedUser?.userName) {
+        setUserName(parsedUser.userName);
+      }
+    }
+  }, []);
+    
+    const [showDropdown, setShowDropdown] = useState(false);
+    const toggleDropdown = () => {
+        setShowDropdown(!showDropdown);
+    }
+
+    const handleSwitchRole = () => {
+        navigate("/");
+    }
+
+    const handleLogOut = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/login");
+    }
+
     if (isAdmin === null)
         return <div>Đang kiểm tra quyền truy cập...</div>;
     if (isAdmin === false)
         return null;
 
     return (
-        <div>
-            <h1>Chào mừng Admin</h1>
-            <p>Quản lý người dùng, sản phẩm, đơn hàng tại đây.</p>
+        <div className="admin-layout">
+            <div className="header-main">
+                      <div className="container">
+                        <div className="row">
+                          <div className="col-lg-3 col-sm-6">
+                            <div className="header-logo">
+                              <Link to={ROUTES.USER.HOME} onClick={() => window.scrollTo(0, 0)} style={{
+                                  textDecoration: "none" ,
+                                  display: "flex",
+                                  alignItems: "center",
+                              }}>
+                                <img src={logo} alt="7vits-logo" />
+                               <h1>7VITS</h1>
+                              </Link>
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <div className="admin-body">
+            <aside className="sidebar">
+            <ul>
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="#">Users</a></li>
+                <li><a href="#">Products</a></li>
+                <li><a href="#">Orders</a></li>
+                <li><a href="#">Events</a></li>
+                <li><a href="#">Messages</a></li>
+                <li className="dropdown" onClick={toggleDropdown}>
+                    <label className="dropdown">Settings</label>
+            {showDropdown && (
+              <ul className="dropdown-menu">
+                <li onClick={handleSwitchRole}><label>Switch Role</label></li>
+                <li onClick={handleLogOut}><label>Log out</label></li>
+              </ul>
+            )}
+          </li>
+            </ul>
+            </aside>
+
+            <main className="main-content">
+            <h1>Welcome, {userName}! You're on 7VITS as administrator!!</h1>
+            <p>Stats, charts, and controls go here...</p>
+            </main>
         </div>
+    </div>
+
     );
 };
 

@@ -264,7 +264,7 @@ app.use((err, req, res, next) => {
 });
 
 // Server start
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 
 // Debug route logging
 console.log('--- Các route đang được khai báo ---');
