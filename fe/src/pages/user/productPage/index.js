@@ -239,11 +239,7 @@ const ProductPage = ({ cart, setCart }) => {
                                         e.target.src = "https://via.placeholder.com/300x300?text=No+Image";
                                     }}
                                 />
-                                {discount > 0 && (
-                                    <div className="discount-badge">
-                                        <span>-{discount}%</span>
-                                    </div>
-                                )}
+                               
                             </div>
                             {product.images && product.images.length > 1 && (
                                 <div className="thumbnail-list">
@@ -313,12 +309,10 @@ const ProductPage = ({ cart, setCart }) => {
 
                             <div className="product-price">
                                 <div className="price-info">
-                                    <span className="old-price">{formatPrice(product.originalPrice)}</span>
+                                    
                                     <span className="new-price">{formatPrice(product.price)}</span>
                                 </div>
-                                {discount > 0 && (
-                                    <span className="discount">{discount}% GIẢM</span>
-                                )}
+                               
                             </div>
 
                             {product.description && (

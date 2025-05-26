@@ -258,9 +258,7 @@ const StorePage = () => {
                                                 alt={product.name} 
                                             />
                                             {/* Hiển thị badge giảm giá - giả lập */}
-                                            <div className="discount-badge">
-                                                -20%
-                                            </div>
+                                            
                                         </div>
                                         <div className="product-info">
                                             <h3 className="product-name">{product.name}</h3>
@@ -281,9 +279,7 @@ const StorePage = () => {
                                                 <span className="rating-number">({product.rating || 4})</span>
                                             </div>
                                             <div className="product-price">
-                                                <span className="original-price">
-                                                    <s>{formatPrice(getOriginalPrice(product.price))}đ</s>
-                                                </span>
+                                                
                                                 <span className="current-price">{formatPrice(product.price)}đ</span>
                                             </div>
                                         </div>

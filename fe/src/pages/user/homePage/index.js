@@ -123,21 +123,23 @@ const Homepage = ({user}) => {
                                                             <i className="fa-solid fa-store"></i> {product.seller_name || "Unknown Seller"}
                                                         </p>
                                                         <p className="mota-name home-product-item_rating">
+                                                            <div children="home-product-item_rating-star">
                                                             <i className="fa-solid fa-star active"></i>
                                                             <i className="fa-solid fa-star active"></i>
                                                             <i className="fa-solid fa-star active"></i>
                                                             <i className="fa-solid fa-star active"></i>
                                                             <i className="fa-solid fa-star"></i>
                                                             <span className="rating-number">(4)</span>
-                                                        </p>
+                                                            </div>
+                                                          
+                                                        
                                                         <div className="home-product-item_price">
-                                                            <span className="mota-name home-product-item_price-old">
-                                                                <s>{formatVND(product.price)}</s>
-                                                            </span>
                                                             <span className="mota-name home-product-item_price-new">
                                                                 {formatVND(product.price)}
                                                             </span>
                                                         </div>
+                                                        </p>
+                                                        
                                                     </div>
                                                 </Link>
                                             </div>

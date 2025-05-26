@@ -186,7 +186,7 @@ $border-radius: 8px;
 .product-info {
   flex: 1.5;
   min-width: 0;
-  @include flex($direction: column, $align: flex-start, $gap: 25px);
+  @include flex($direction: column, $align: flex-start);
 }
 
 .product-title {
@@ -220,7 +220,7 @@ $border-radius: 8px;
 }
 
 .product-rating {
-  @include flex($gap: 10px);
+ 
   font-size: 14px;
   .stars {
     @include flex($gap: 4px);
@@ -250,10 +250,9 @@ $border-radius: 8px;
 .product-price {
   @include flex($justify: space-between);
   background-color: rgba(0, 0, 0, 0.2);
-  padding: 20px;
   border-radius: $border-radius;
   width: 100%;
-  
+  padding-bottom: 15px;
   .price-info {
     @include flex($direction: row, $align: flex-start ,$gap: 10px);
     

@@ -199,7 +199,7 @@ html {
                 transition: 0.3s;
                 cursor: pointer;
                 text-align: left;
-                height: 450px;
+           
                 .mota-name {
                         font-size: 1.6rem;
                         font-weight: bold;
@@ -251,7 +251,7 @@ html {
                         align-items: center;
                         gap: 0.5rem;
                         padding: 5px;
-
+                        justify-content: space-between;
                         .fa-star {
                                 color: #ddd;
                                 font-size: 1.4rem;

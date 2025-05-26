@@ -99,11 +99,12 @@ input[type="text"] {
     }
 
     h1 {
-        text-align: center;
-        display: inline-block;
+        display: flex;
         font-size: 3rem;
         color: #ff0000;
         letter-spacing: 4px;
+        font-weight: bold;
+        align-items: center;
     }
 }
 

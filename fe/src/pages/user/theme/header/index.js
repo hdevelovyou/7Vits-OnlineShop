@@ -1,7 +1,7 @@
 import { memo, useState, useEffect, useRef, use } from "react";
 import "./style.scss";
 import { CiFacebook } from "react-icons/ci";
-import { FaInstagram, FaShoppingCart, FaWallet, FaStore, FaGamepad, FaKey } from "react-icons/fa";
+import { FaInstagram, FaShoppingCart, FaWallet, FaStore, FaGamepad, FaKey,FaBook } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../../../assets/images/logo.png";
 import { ROUTES } from "../../../../utils/router.js";
@@ -32,7 +32,7 @@ const menuItems = [
   },
   {
     name: "Chính sách",
-    icon: <MdEmojiEvents />,
+    icon: <FaBook />,
     path: "/chinh-sach",
   },
   {
@@ -40,6 +40,11 @@ const menuItems = [
     icon: <MdLogout />,
     path: "/",
   },
+  {
+    name:"Sự kiện",
+    icon:<MdEmojiEvents />,
+    path:"/event",
+  }
 
 ];
 
@@ -299,8 +304,9 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
                 <div className="header-logo">
                   <Link to={ROUTES.USER.HOME} onClick={() => window.scrollTo(0, 0)} style={{ textDecoration: "none" }}>
                     <img src={logo} alt="7vits-logo" />
+                    <h1>7VITS</h1>
                   </Link>
-                  <h1>7VITS</h1>
+                  
                 </div>
               </div>
               <div className="col-lg-3  " >
