@@ -6,12 +6,15 @@ import { useNavigate, useLocation } from "react-router-dom";
 import ChatbotComponent from "../../../../components/ChatBot/ChatBot";
 import chat from "../../../../components/logochat"
 import ChatButton from "../../../../components/logochat";
+import Chat from "../../../../components/Chat";
 
 const MasterLayout = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(() => {
         return localStorage.getItem("token") ? true : false;
     });
     const [isAuthLoading, setIsAuthLoading] = useState(true);
+    const [unreadConversations, setUnreadConversations] = useState(0);
+    const handleUnreadChange = (count) => setUnreadConversations(count);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -129,8 +132,8 @@ const MasterLayout = ({ children }) => {
     return (
         <div>
             {/* Luôn hiện Header */}
-            <Header cart={cart} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} sluong={cart.length} />
-
+            <Header unreadConversations={unreadConversations} cart={cart} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} sluong={cart.length} />
+            <Chat onUnreadChange={handleUnreadChange} isChatPage={isChatPage} style={{ display: isChatPage ? undefined : "none" }} />
             {/* Truyền dữ liệu qua children nếu là function */}
             {children && typeof children === "function"
                 ? children({ isLoggedIn, setIsLoggedIn, cart, setCart, updateCart })

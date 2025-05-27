@@ -49,7 +49,8 @@ const menuItems = [
 
 ];
 
-const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLoggedIn và setIsLoggedIn
+const Header = ({ isLoggedIn, setIsLoggedIn, sluong, unreadConversations }) => { // Nhận props isLoggedIn và setIsLoggedIn
+  console.log('unreadConversations:', unreadConversations);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHumbergerMenuOpen, setIsHumbergerMenuOpen] = useState(false);
   const [isShowSubmenu, setIsShowSubmenu] = useState(false);
@@ -386,6 +387,9 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong }) => { // Nhận props isLo
                       </Link>
                       <Link to="/chat" onClick={() => window.scrollTo(0, 0)} className="chat-btn-mobile">
                         <IoChatbubbleSharp />
+                        {unreadConversations > 0 && (
+                          <span className="chat-unread-badge">{unreadConversations}</span>
+                        )}
                       </Link>
                       </>
                     ) : (
