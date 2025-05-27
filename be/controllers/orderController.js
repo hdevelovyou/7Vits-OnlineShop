@@ -720,8 +720,23 @@ const orderController = {
                 error: error.message
             });
         }
+    },
+
+    getWalletBalance: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const [wallet] = await db.query('SELECT balance FROM user_wallets WHERE user_id = ?', [userId]);
+            res.json({ balance: wallet[0].balance });
+        } catch (error) {
+            console.error('Get wallet balance error:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Lỗi khi lấy số dư ví',
+                error: error.message
+            });
+        }
     }
-};
+    };
 
 // Khởi tạo cron job
 cron.schedule('0 * * * *', async () => {

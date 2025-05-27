@@ -42,6 +42,9 @@ const VnpayReturn = () => {
     // Clean up old transactions data
     cleanupOldTransactions();
     
+    // Xóa vnpay_payment_timestamp ngay khi vào trang return
+    localStorage.removeItem('vnpay_payment_timestamp');
+    
     const fetchPaymentStatus = async () => {
       try {
         console.log('Starting payment verification process...');
@@ -164,11 +167,20 @@ const VnpayReturn = () => {
     fetchPaymentStatus();
   }, []);
 
+  // Thêm cleanup khi component unmount
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem('vnpay_payment_timestamp');
+    };
+  }, []);
+
   const handleBackToPayment = () => {
+    localStorage.removeItem('vnpay_payment_timestamp');
     window.location.href = '/topup';
   };
 
   const handleBackToHome = () => {
+    localStorage.removeItem('vnpay_payment_timestamp');
     window.location.href = '/gio-hang';
   };
 

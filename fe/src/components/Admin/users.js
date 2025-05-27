@@ -60,9 +60,22 @@ const Users = () => {
                 <td>{u.lastName || ""}</td>
                 <td>{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : ""}</td>
                 <td>
-                  <button onClick={e => { e.stopPropagation(); handleSelect(u); }} >
-                    Xem chi tiết
-                  </button>
+                  <button
+                      onClick={async e => {
+                        e.stopPropagation();
+                        if (window.confirm("Are you sure you want to delete this user?")) {
+                          await axios.delete(`/api/users/${u.id}`);
+                          const res = await axios.get("/api/users");
+                          setUsers(res.data); 
+                          setSelected(null);
+                          setUserDetail(null);
+                          setProducts([]);
+                          setComments([]);
+                        }
+                      }}
+                    >
+                      Delete account
+                    </button>
                 </td>
               </tr>
             ))}

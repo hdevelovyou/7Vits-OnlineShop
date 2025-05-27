@@ -9,5 +9,5 @@ router.post('/confirm/:orderId', authMiddleware, orderController.confirmOrder);
 router.post('/reject/:orderId', authMiddleware, orderController.rejectOrder);
 router.get('/:orderId/detail', authMiddleware, orderController.getOrderDetails);
 router.get('/getOrderHistory', authMiddleware, orderController.getOrderHistory);
-
+router.get('/wallet-balance', authMiddleware, orderController.getWalletBalance);
 module.exports = router; 

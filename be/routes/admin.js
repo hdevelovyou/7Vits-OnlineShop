@@ -91,6 +91,14 @@ router.get("/users/:id/comments", async (req, res) => {
   console.log(rows);
   res.json(rows);
 });
+router.delete("/users/:id", async (req, res) => {
+  try {
+    await db.query("DELETE FROM users WHERE id = ?", [req.params.id]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete user" });
+  }
+});
 
 
 module.exports = router;

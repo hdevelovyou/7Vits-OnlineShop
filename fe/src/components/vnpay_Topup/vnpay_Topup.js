@@ -15,9 +15,21 @@ const VnpayTopup = () => {
             const urlParams = new URLSearchParams(window.location.search);
             // Nếu URL có chứa VNPay params, chuyển hướng đến trang return
             if (urlParams.has('vnp_ResponseCode')) {
-                console.log('Detected VNPay params, redirecting to result page...');
-                // Xóa flag thanh toán vì trình duyệt đang trong quá trình xử lý kết quả
+                // Xóa timestamp ngay khi có response từ VNPay
                 localStorage.removeItem('vnpay_payment_timestamp');
+                
+                const responseCode = urlParams.get('vnp_ResponseCode');
+                if (responseCode === '00') {
+                    // Thanh toán thành công
+                    console.log('Payment successful');
+                    // Có thể thêm thông báo thành công
+                } else {
+                    // Thanh toán thất bại hoặc hủy
+                    console.log('Payment failed or cancelled');
+                    // Có thể thêm thông báo thất bại
+                }
+                
+                // Chuyển hướng đến trang kết quả
                 window.location.replace('/payment/vnpay_return' + window.location.search);
                 return true;
             }
@@ -35,16 +47,20 @@ const VnpayTopup = () => {
                 const currentTime = new Date().getTime();
                 const timeSincePayment = currentTime - parseInt(paymentTimestamp);
                 
-                // Nếu đã quá 5 phút (300000ms), xóa flag thanh toán
+                // Xóa timestamp nếu đã quá 5 phút
                 if (timeSincePayment > 300000) {
                     localStorage.removeItem('vnpay_payment_timestamp');
-                } 
-                // Nếu trong vòng 5 phút, có thể là refresh trang sau khi thanh toán
-                else {
-                    console.log('Payment in progress detected, preventing new payment requests');
                 }
             }
         }
+    }, []);
+    
+    // Thêm hàm xử lý khi component unmount
+    useEffect(() => {
+        return () => {
+            // Xóa timestamp khi component unmount
+            localStorage.removeItem('vnpay_payment_timestamp');
+        };
     }, []);
     
     // Tách việc load thông tin user thành hàm riêng
@@ -82,6 +98,9 @@ const VnpayTopup = () => {
             if (timeSincePayment < 300000) {
                 alert('Đã có yêu cầu thanh toán đang xử lý. Vui lòng đợi hoặc làm mới trang sau 5 phút.');
                 return;
+            } else {
+                // Nếu đã quá 5 phút, xóa timestamp cũ
+                localStorage.removeItem('vnpay_payment_timestamp');
             }
         }
 
@@ -139,7 +158,7 @@ const VnpayTopup = () => {
         } catch (error) {
           console.error('❌ Payment error:', error);
           alert('Có lỗi xảy ra khi tạo thanh toán: ' + (error.response?.data?.message || error.message));
-          // Xóa flag thanh toán nếu có lỗi
+          // Xóa timestamp khi có lỗi
           localStorage.removeItem('vnpay_payment_timestamp');
         } finally {
           setLoading(false);
