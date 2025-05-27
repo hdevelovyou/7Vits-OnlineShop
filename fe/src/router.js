@@ -28,6 +28,7 @@ import SetupAccount from "./pages/user/SetupAccount";
 import AdminPage from "./components/Admin";
 import Dashboard from "./components/Admin/dashboard";
 import Users from "./components/Admin/users";
+import Products from "./components/Admin/products";
 
 const renderUserRoutes = () => {
     return (
@@ -79,6 +80,7 @@ const RouterCustom = () => {
                 <Route path="/admin" element={<AdminPage />}>
                     <Route path="/admin/dashboard" element={<Dashboard />} /> 
                     <Route path="/admin/users" element={<Users />} />
+                    <Route path="/admin/products" element={<Products />} />
                     {/* Add other admin components here */}
                 </Route>
                 {/* Add other admin routes here */}

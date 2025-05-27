@@ -94,7 +94,7 @@ const AdminPage = () => {
             <ul>
                 <li><Link to="/admin/dashboard">Dashboard</Link></li>
                 <li><Link to="/admin/users">Users</Link></li>
-                <li><a href="#">Products</a></li>
+                <li><Link to="/admin/products">Products</Link></li>
                 <li><a href="#">Orders</a></li>
                 <li><a href="#">Events</a></li>
                 <li><a href="#">Messages</a></li>
