@@ -64,6 +64,33 @@ router.get("/dashboard/users-monthly", async (req, res) => {
   }
 });
 
+router.get("/users", async (req, res) => {
+  const [rows] = await db.query("SELECT id, userName, email, firstName, lastName, createdAt FROM users");
+  res.json(rows);
+});
+router.get("/users/:id", async (req, res) => {
+  const [rows] = await db.query("SELECT userName, firstName, lastName, email, createdAt FROM users WHERE id = ?", [req.params.id]);
+  res.json(rows[0]);
+});
+router.get("/users/:id/products", async (req, res) => {
+  const [rows] = await db.query("SELECT * FROM products WHERE seller_id = ?", [req.params.id]);
+  res.json(rows);
+});
+router.get("/users/:id/comments", async (req, res) => {
+  const [rows] = await db.query(`
+    SELECT 
+      comments.id, comments.user_id, comments.product_id, comments.content, comments.created_at,
+      products.name AS productName,
+      users.userName AS sellerName
+    FROM comments
+    JOIN products ON comments.product_id = products.id
+    JOIN users ON products.seller_id = users.id
+    WHERE comments.user_id = ?
+    ORDER BY comments.created_at DESC
+  `, [req.params.id]);
+  console.log(rows);
+  res.json(rows);
+});
 
 
 module.exports = router;

@@ -1,0 +1,144 @@
+.user-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 12px; // tạo khoảng cách giữa các row
+  thead th {
+    background: #220a0a;
+    color: #ff0000;
+    border-top: 2px solid #ff0000;
+    border-bottom: 2px solid #ff0000;
+    padding: 12px 16px;
+    font-size: 16px;
+    text-align: left;
+    font-family: "Audiowide", sans-serif;
+  }
+  th:first-child{
+    border-left: 2px solid #ff0000;
+    border-radius: 12px 0 0 12px;
+  }
+  th:last-child {
+    border-right: 2px solid #ff0000;
+    border-radius: 0 12px 12px 0;
+  } 
+  tbody tr {
+    background: #220a0a;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    transition: background 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    td {
+      padding: 14px 18px;
+      border: none;
+      font-size: 18px;
+      font-family: "Exo 2", sans-serif;
+      color: #00d4ff;
+      border-top: 2px solid #00ffff;
+      border-bottom: 2px solid #00ffff;
+    }
+    &:hover {
+      background: #6d0c0c;
+      box-shadow: 0 4px 16px rgba(0,212,255,0.08);
+    }
+    td:first-child{
+        border-left: 2px solid #00ffff;
+        border-radius: 12px 0 0 12px;
+    }
+    td:last-child {
+        border-right: 2px solid #00ffff;
+        border-radius: 0 12px 12px 0;
+    }
+  }
+  tbody tr td:last-child {
+    text-align: center;
+  }
+  button {
+    background: #00d4ff;
+    color: #181818;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+    &:hover {
+      background: #00b3cc;
+      color: #fff;
+    }
+  }
+}
+h2 {
+    color: #00d4ff;
+    font-family: "Audiowide", sans-serif;
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+.info-card {
+  background: #181818;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  padding: 24px 28px;
+  margin-bottom: 24px;
+  color: #00d4ff;
+  border: 2px solid #ff0000;
+  h3 {
+    margin-top: 0;
+    color: #ff0000;
+    font-family: "Audiowide", sans-serif;
+  }
+  ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+  ul b{
+    display: inline-block;
+    color: #ff0000;
+    font-family: "Audiowide", sans-serif;
+    min-width: 140px;
+  }
+  li {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    color: #00d4ff;
+    font-size: 16px;
+    font-family: 'Exo 2', sans-serif;
+  }
+}
+.default-noti{
+    color: #00d4ff;
+    font-family: 'Exo 2', sans-serif;
+    font-size: 16px;
+    margin-bottom: 16px;
+}
+.product-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+  margin-top: 8px;
+  th, td {
+    padding: 8px 14px;
+    text-align: left;
+    font-size: 15px;
+  }
+  th {
+    background: #220a0a;
+    color: #ff0000;
+    font-family: "Audiowide", sans-serif;
+  }
+  th:first-child {
+    border-radius: 12px 0 0 12px;
+  }
+  th:last-child {
+    border-radius: 0 12px 12px 0;
+  }
+  td {
+    background-color: #232323;
+    color: #00d4ff;
+    font-family: 'Exo 2', sans-serif;
+  }
+  td:first-child {
+    border-radius: 12px 0 0 12px;
+  }
+  td:last-child {
+    border-radius: 0 12px 12px 0;
+  }
+}
