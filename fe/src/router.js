@@ -27,6 +27,7 @@ import SocialAuthCallback from "./pages/user/SocialAuthCallback";
 import SetupAccount from "./pages/user/SetupAccount";
 import AdminPage from "./components/Admin";
 import Dashboard from "./components/Admin/dashboard";
+import Users from "./components/Admin/users";
 
 const renderUserRoutes = () => {
     return (
@@ -77,6 +78,8 @@ const RouterCustom = () => {
             <Routes>
                 <Route path="/admin" element={<AdminPage />}>
                     <Route path="/admin/dashboard" element={<Dashboard />} /> 
+                    <Route path="/admin/users" element={<Users />} />
+                    {/* Add other admin components here */}
                 </Route>
                 {/* Add other admin routes here */}
             </Routes>

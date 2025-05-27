@@ -93,7 +93,7 @@ const AdminPage = () => {
             <aside className="sidebar">
             <ul>
                 <li><Link to="/admin/dashboard">Dashboard</Link></li>
-                <li><a href="#">Users</a></li>
+                <li><Link to="/admin/users">Users</Link></li>
                 <li><a href="#">Products</a></li>
                 <li><a href="#">Orders</a></li>
                 <li><a href="#">Events</a></li>
