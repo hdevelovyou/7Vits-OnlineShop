@@ -32,6 +32,7 @@ import Products from "./components/Admin/products";
 import Orders from "./components/Admin/orders";
 import Events from "./components/Admin/events";
 import Messages from "./components/Admin/messages";
+import HomeAdminPage from "./components/Admin/home";
 
 const renderUserRoutes = () => {
     return (
@@ -81,6 +82,7 @@ const RouterCustom = () => {
         return (
             <Routes>
                 <Route path="/admin" element={<AdminPage />}>
+                    <Route index element={<HomeAdminPage />} />
                     <Route path="/admin/dashboard" element={<Dashboard />} /> 
                     <Route path="/admin/users" element={<Users />} />
                     <Route path="/admin/products" element={<Products />} />

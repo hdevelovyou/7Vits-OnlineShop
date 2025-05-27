@@ -35,17 +35,6 @@ const AdminPage = () => {
             navigate('/');
         }
     }, [isAdmin, navigate]);
-
-    const [userName, setUserName] = useState("Admin");
-    useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      const parsedUser = JSON.parse(userData);
-      if (parsedUser?.userName) {
-        setUserName(parsedUser.userName);
-      }
-    }
-  }, []);
     
     const [showDropdown, setShowDropdown] = useState(false);
     const toggleDropdown = () => {
@@ -74,7 +63,7 @@ const AdminPage = () => {
                         <div className="row">
                           <div className="col-lg-3 col-sm-6">
                             <div className="header-logo">
-                              <Link to={ROUTES.USER.HOME} onClick={() => window.scrollTo(0, 0)} style={{
+                              <Link to="/admin" onClick={() => window.scrollTo(0, 0)} style={{
                                   textDecoration: "none" ,
                                   display: "flex",
                                   alignItems: "center",
@@ -111,9 +100,7 @@ const AdminPage = () => {
             </aside>
 
             <main className="main-content">
-            {/* <h1>Welcome, {userName}! You're on 7VITS as administrator!!</h1>
-            <p>Stats, charts, and controls go here...</p> */}
-            <Outlet />
+                <Outlet />
             </main>
         </div>
     </div>
