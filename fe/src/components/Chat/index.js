@@ -235,7 +235,15 @@ export default function Chat({ receiverId, receiverName, onUnreadChange, isChatP
     // Khi bấm nút "Quay lại" trong chat window trên mobile
     const handleBack = () => {
         setShowChatWindow(false);
+        setSelectedUser(null);
     };
+
+    useEffect(() => {
+        if (!isChatPage) {
+            setSelectedUser(null);
+            setShowChatWindow(false);
+        }
+    }, [isChatPage]);
 
     const isMobile = window.innerWidth <= 900;
     if (!isChatPage) {
