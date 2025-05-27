@@ -96,8 +96,8 @@ const AdminPage = () => {
                 <li><Link to="/admin/users">Users</Link></li>
                 <li><Link to="/admin/products">Products</Link></li>
                 <li><Link to="/admin/orders">Orders</Link></li>
-                <li><a href="#">Events</a></li>
-                <li><a href="#">Messages</a></li>
+                <li><Link to="/admin/events">Events</Link></li>
+                <li><Link to="/admin/messages">Messages</Link></li>
                 <li className="dropdown" onClick={toggleDropdown}>
                     <label className="dropdown">Settings</label>
             {showDropdown && (

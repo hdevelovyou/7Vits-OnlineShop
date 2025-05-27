@@ -30,6 +30,8 @@ import Dashboard from "./components/Admin/dashboard";
 import Users from "./components/Admin/users";
 import Products from "./components/Admin/products";
 import Orders from "./components/Admin/orders";
+import Events from "./components/Admin/events";
+import Messages from "./components/Admin/messages";
 
 const renderUserRoutes = () => {
     return (
@@ -83,6 +85,8 @@ const RouterCustom = () => {
                     <Route path="/admin/users" element={<Users />} />
                     <Route path="/admin/products" element={<Products />} />
                     <Route path="/admin/orders" element={<Orders />} />
+                    <Route path="/admin/events" element={<Events />} />
+                    <Route path="/admin/messages" element={<Messages />} />
                     {/* Add other admin components here */}
                 </Route>
                 {/* Add other admin routes here */}
