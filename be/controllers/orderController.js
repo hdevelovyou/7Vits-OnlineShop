@@ -137,8 +137,6 @@ const orderController = {
                 
                 const sellerId = productResult[0].seller_id;
                 const itemPrice = productResult[0].price;
-                const itemQuantity = 1; // Mỗi sản phẩm chỉ mua được 1 cái
-                const itemTotal = itemPrice * itemQuantity;
                 
                 if (!sellerMap[sellerId]) {
                     sellerMap[sellerId] = {
@@ -147,14 +145,13 @@ const orderController = {
                     };
                 }
                 
-                sellerMap[sellerId].amount += itemTotal;
+                sellerMap[sellerId].amount += itemPrice;
                 sellerMap[sellerId].items.push({
                     productId: item.productId,
-                    quantity: itemQuantity,
                     price: itemPrice
                 });
             }
-            
+                
             return sellerMap;
         } catch (error) {
             console.error('Error creating seller map:', error);
@@ -210,9 +207,9 @@ const orderController = {
             for (const item of seller.items) {
                 await db.query(
                     `INSERT INTO order_items 
-                    (order_id, product_id, quantity, price) 
-                    VALUES (?, ?, ?, ?)`,
-                    [orderId, item.productId, item.quantity, item.price]
+                    (order_id, product_id, price) 
+                    VALUES (?, ?, ?)`,
+                    [orderId, item.productId, item.price]
                 );
             }
             
@@ -320,9 +317,8 @@ const orderController = {
                         p.id as product_id,
                         p.name as product_name,
                         p.image_url,
-                        oi.quantity,
                         oi.price,
-                        (oi.quantity * oi.price) as total
+                        oi.price as total
                     FROM order_items oi
                     JOIN products p ON oi.product_id = p.id
                     WHERE oi.order_id IN (?)
@@ -491,7 +487,7 @@ const orderController = {
                     // Cộng tiền vào locked_balance người bán
                     await db.query(
                         'UPDATE user_wallets SET locked_balance = locked_balance + ? WHERE user_id = ?',
-                        [item.price * item.quantity, sellerId]
+                        [item.price, sellerId]
                     );
 
                     // 4. Cập nhật trạng thái sản phẩm thành inactive
@@ -504,7 +500,7 @@ const orderController = {
                     const [order] = await db.query(
                         `INSERT INTO orders (user_id, seller_id, total_amount, status)
                          VALUES (?, ?, ?, 'pending')`,
-                        [buyerId, sellerId, item.price * item.quantity]
+                        [buyerId, sellerId, item.price]
                     );
 
                     // 6. Cập nhật reference_id cho transaction người mua
@@ -518,16 +514,16 @@ const orderController = {
                     // 7. Tạo transaction cho người bán
                     await orderController.createSellerTransaction(
                         sellerId, 
-                        item.price * item.quantity,
+                        item.price,
                         order.insertId
                     );
 
                     // 8. Thêm chi tiết đơn hàng
                     await db.query(
                         `INSERT INTO order_items 
-                        (order_id, product_id, quantity, price) 
-                        VALUES (?, ?, ?, ?)`,
-                        [order.insertId, item.productId, item.quantity, item.price]
+                        (order_id, product_id, price) 
+                        VALUES (?, ?, ?)`,
+                        [order.insertId, item.productId, item.price]
                     );
                 }
 

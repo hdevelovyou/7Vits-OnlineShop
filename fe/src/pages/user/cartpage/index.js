@@ -128,7 +128,7 @@ const CartPage = ({ cart, setCart }) => {
         };
         
         // Gọi API để tạo đơn hàng và thanh toán từ ví
-        const response = await axios.post("/api/orders/createOrder", orderData, {
+        const response = await axios.post("/api/orders/create", orderData, {
           headers: {
             Authorization: `Bearer ${token}`
           },
