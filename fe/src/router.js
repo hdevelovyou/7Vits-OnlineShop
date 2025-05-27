@@ -26,6 +26,13 @@ import ChinhSachPage from "./pages/user/chinhSachPage";
 import SocialAuthCallback from "./pages/user/SocialAuthCallback";
 import SetupAccount from "./pages/user/SetupAccount";
 import AdminPage from "./components/Admin";
+import Dashboard from "./components/Admin/dashboard";
+import Users from "./components/Admin/users";
+import Products from "./components/Admin/products";
+import Orders from "./components/Admin/orders";
+import Events from "./components/Admin/events";
+import Messages from "./components/Admin/messages";
+import HomeAdminPage from "./components/Admin/home";
 
 const renderUserRoutes = () => {
     return (
@@ -74,7 +81,16 @@ const RouterCustom = () => {
     if (location.pathname.startsWith("/admin")) {
         return (
             <Routes>
-                <Route path="/admin" element={<AdminPage />} />
+                <Route path="/admin" element={<AdminPage />}>
+                    <Route index element={<HomeAdminPage />} />
+                    <Route path="/admin/dashboard" element={<Dashboard />} /> 
+                    <Route path="/admin/users" element={<Users />} />
+                    <Route path="/admin/products" element={<Products />} />
+                    <Route path="/admin/orders" element={<Orders />} />
+                    <Route path="/admin/events" element={<Events />} />
+                    <Route path="/admin/messages" element={<Messages />} />
+                    {/* Add other admin components here */}
+                </Route>
                 {/* Add other admin routes here */}
             </Routes>
         );

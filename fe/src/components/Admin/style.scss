@@ -1,0 +1,115 @@
+/* Admin Layout */
+.admin-layout {
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  .navbar {
+    background-color: #1e1e2f;
+    color: white;
+    padding: 15px 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  .admin-body {
+    display: flex;
+    flex: 1;
+  }
+
+  .sidebar {
+    width: 220px;
+    background-color: #000000;
+    color: #ff0000;
+    padding-top: 20px;
+    border-right: 3px solid #ff0000;
+
+    ul {
+      list-style: none;
+    }
+
+    li {
+      padding: 15px 20px;
+      color: #ff0000;
+      font-family: 'Audiowide', sans-serif;
+
+      a, label {
+        color: #ff0000;
+        font-family: 'Audiowide', sans-serif;
+        text-decoration: none;
+        display: block;
+      }
+
+      &:hover {
+        background-color: #ff0000;
+        transition: background-color 0.4s ease;
+
+        a, label {
+          color: #ffffff !important;
+        }
+      }
+    }
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    color: #ffffff;
+    background-color: #000000;
+
+    h1 {
+      font-family: 'Russo One', sans-serif;
+      font-size: 2rem;
+      font-weight: 300;
+      color: #ffffff;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      font-weight: 300;
+      font-family: 'Russo One', sans-serif;
+      color: #ffffff;
+    }
+  }
+
+  .header-logo {
+    width: fit-content;
+    display: flex;
+    align-items: center;
+
+    img {
+      width: 10rem;
+    }
+
+    h1 {
+      display: flex;
+      font-family: 'Audiowide', sans-serif;
+      font-size: 3rem;
+      color: #ff0000;
+      letter-spacing: 4px;
+      font-weight: bold;
+      align-items: center;
+    }
+  }
+
+  .header-main {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 1rem;
+    background-color: #111;
+    border-bottom: 3px solid #ff0000;
+  }
+
+  .dropdown-menu li {
+    &:hover {
+      background-color: #ffffff;
+      label {
+      color: #ff0000 !important;
+    }
+    }
+  }
+
+}

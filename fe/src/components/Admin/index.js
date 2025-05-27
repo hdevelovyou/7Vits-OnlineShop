@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { memo, useState, useEffect} from "react";
+import "./style.scss";
+import { Link, useNavigate, Outlet } from "react-router-dom";
+import logo from "../../assets/images/logo.png";
+import { ROUTES } from "../../utils/router.js";
+import axios from "axios";
 
 const AdminPage = () => {
     const [isAdmin, setIsAdmin] = useState(null);
@@ -32,6 +35,21 @@ const AdminPage = () => {
             navigate('/');
         }
     }, [isAdmin, navigate]);
+    
+    const [showDropdown, setShowDropdown] = useState(false);
+    const toggleDropdown = () => {
+        setShowDropdown(!showDropdown);
+    }
+
+    const handleSwitchRole = () => {
+        navigate("/");
+    }
+
+    const handleLogOut = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/login");
+    }
 
     if (isAdmin === null)
         return <div>Đang kiểm tra quyền truy cập...</div>;
@@ -39,10 +57,54 @@ const AdminPage = () => {
         return null;
 
     return (
-        <div>
-            <h1>Chào mừng Admin</h1>
-            <p>Quản lý người dùng, sản phẩm, đơn hàng tại đây.</p>
+        <div className="admin-layout">
+            <div className="header-main">
+                      <div className="container">
+                        <div className="row">
+                          <div className="col-lg-3 col-sm-6">
+                            <div className="header-logo">
+                              <Link to="/admin" onClick={() => window.scrollTo(0, 0)} style={{
+                                  textDecoration: "none" ,
+                                  display: "flex",
+                                  alignItems: "center",
+                              }}>
+                                <img src={logo} alt="7vits-logo" />
+                               <h1>7VITS</h1>
+                              </Link>
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <div className="admin-body">
+            <aside className="sidebar">
+            <ul>
+                <li><Link to="/admin/dashboard">Dashboard</Link></li>
+                <li><Link to="/admin/users">Users</Link></li>
+                <li><Link to="/admin/products">Products</Link></li>
+                <li><Link to="/admin/orders">Orders</Link></li>
+                <li><Link to="/admin/events">Events</Link></li>
+                <li><Link to="/admin/messages">Messages</Link></li>
+                <li className="dropdown" onClick={toggleDropdown}>
+                    <label className="dropdown">Settings</label>
+            {showDropdown && (
+              <ul className="dropdown-menu">
+                <li onClick={handleSwitchRole}><label>Switch Role</label></li>
+                <li onClick={handleLogOut}><label>Log out</label></li>
+              </ul>
+            )}
+          </li>
+            </ul>
+            </aside>
+
+            <main className="main-content">
+                <Outlet />
+            </main>
         </div>
+    </div>
+
     );
 };
 
