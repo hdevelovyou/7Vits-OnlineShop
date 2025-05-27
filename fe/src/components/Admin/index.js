@@ -1,18 +1,9 @@
-import { memo, useState, useEffect, useRef, use } from "react";
+import { memo, useState, useEffect} from "react";
 import "./style.scss";
-import { CiFacebook } from "react-icons/ci";
-import { FaInstagram, FaShoppingCart, FaWallet, FaStore, FaGamepad, FaKey,FaBook } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, Outlet } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
 import { ROUTES } from "../../utils/router.js";
-import { IoChatbubbleSharp } from "react-icons/io5";
-import { CgProfile } from "react-icons/cg";
-import { AiOutlineMenu, AiOutlineSearch, AiOutlineUser } from "react-icons/ai";
-import { AiOutlineDown } from "react-icons/ai";
-import { FaHouse } from "react-icons/fa6";
-import { MdEmojiEvents, MdLogout } from "react-icons/md";
 import axios from "axios";
-
 
 const AdminPage = () => {
     const [isAdmin, setIsAdmin] = useState(null);
@@ -101,7 +92,7 @@ const AdminPage = () => {
         <div className="admin-body">
             <aside className="sidebar">
             <ul>
-                <li><a href="#">Dashboard</a></li>
+                <li><Link to="/admin/dashboard">Dashboard</Link></li>
                 <li><a href="#">Users</a></li>
                 <li><a href="#">Products</a></li>
                 <li><a href="#">Orders</a></li>
@@ -120,8 +111,9 @@ const AdminPage = () => {
             </aside>
 
             <main className="main-content">
-            <h1>Welcome, {userName}! You're on 7VITS as administrator!!</h1>
-            <p>Stats, charts, and controls go here...</p>
+            {/* <h1>Welcome, {userName}! You're on 7VITS as administrator!!</h1>
+            <p>Stats, charts, and controls go here...</p> */}
+            <Outlet />
             </main>
         </div>
     </div>

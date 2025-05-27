@@ -26,6 +26,7 @@ import ChinhSachPage from "./pages/user/chinhSachPage";
 import SocialAuthCallback from "./pages/user/SocialAuthCallback";
 import SetupAccount from "./pages/user/SetupAccount";
 import AdminPage from "./components/Admin";
+import Dashboard from "./components/Admin/dashboard";
 
 const renderUserRoutes = () => {
     return (
@@ -74,7 +75,9 @@ const RouterCustom = () => {
     if (location.pathname.startsWith("/admin")) {
         return (
             <Routes>
-                <Route path="/admin" element={<AdminPage />} />
+                <Route path="/admin" element={<AdminPage />}>
+                    <Route path="/admin/dashboard" element={<Dashboard />} /> 
+                </Route>
                 {/* Add other admin routes here */}
             </Routes>
         );
