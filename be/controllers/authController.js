@@ -119,15 +119,47 @@ exports.login = async (req, res) => {
 
 // Middleware xác thực JWT
 exports.authMiddleware = (req, res, next) => {
-  const token = req.header('Authorization');
-  if (!token) return res.status(401).json({ error: 'Truy cập bị từ chối' });
-
-  jwt.verify(token.replace('Bearer ', ''), process.env.JWT_SECRET || 'secretkey', (err, verified) => {
-    if (err) {
-      return res.status(400).json({ error: 'Token không hợp lệ' });
+  try {
+    console.log('Auth headers:', req.headers);
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      console.log('No authorization header found');
+      return res.status(401).json({ error: 'Không tìm thấy token' });
     }
 
-    req.user = verified;
-    next();
-  });
+    console.log('Auth header:', authHeader);
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      console.log('No token found in auth header');
+      return res.status(401).json({ error: 'Token không đúng định dạng' });
+    }
+
+    console.log('Verifying token with secret:', process.env.JWT_SECRET || 'secretkey');
+    jwt.verify(token, process.env.JWT_SECRET || 'secretkey', (err, decoded) => {
+      if (err) {
+        console.log('Token verification failed:', {
+          error: err,
+          errorName: err.name,
+          errorMessage: err.message
+        });
+        
+        if (err.name === 'TokenExpiredError') {
+          return res.status(401).json({ error: 'Token đã hết hạn' });
+        }
+        
+        if (err.name === 'JsonWebTokenError') {
+          return res.status(401).json({ error: 'Token không hợp lệ: ' + err.message });
+        }
+        
+        return res.status(401).json({ error: 'Token không hợp lệ' });
+      }
+
+      console.log('Token verified successfully:', decoded);
+      req.user = decoded;
+      next();
+    });
+  } catch (error) {
+    console.error('Auth middleware error:', error);
+    return res.status(500).json({ error: 'Lỗi xác thực' });
+  }
 };
