@@ -10,4 +10,5 @@ router.post('/reject/:orderId', authMiddleware, orderController.rejectOrder);
 router.get('/:orderId/detail', authMiddleware, orderController.getOrderDetails);
 router.get('/getOrderHistory', authMiddleware, orderController.getOrderHistory);
 router.get('/wallet-balance', authMiddleware, orderController.getWalletBalance);
+router.get('/wallet-locked-balance', authMiddleware, orderController.getWalletLockedBalance);
 module.exports = router; 

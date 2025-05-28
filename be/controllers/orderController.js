@@ -731,6 +731,20 @@ const orderController = {
                 error: error.message
             });
         }
+    },
+    getWalletLockedBalance: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const [wallet] = await db.query('SELECT locked_balance FROM user_wallets WHERE user_id = ?', [userId]);
+            res.json({ locked_balance: wallet[0].locked_balance });
+        } catch (error) {
+            console.error('Get wallet locked balance error:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Lỗi khi lấy số dư ví bị khóa',
+                error: error.message
+            });
+        }
     }
     };
 
