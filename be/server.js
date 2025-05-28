@@ -6,7 +6,6 @@ require('dotenv').config();
 const passport = require('./config/passport');
 const db = require('./config/connectDB');
 const axios = require('axios');
-const { getBestAnswer, searchFaq } = require('./utils/faqUtils');
 const productRoutes = require('./routes/productRoutes');
 const commentRoutes = require("./routes/comments");
 const ratingRoutes = require('./routes/rating');
@@ -19,6 +18,7 @@ const { bodyParserMiddleware, urlEncodedMiddleware } = require('./middleware/bod
 const vnpayRoutes = require('./routes/vnpay_routes');
 const adminRouter = require('./routes/admin');
 const bodyParser = require('body-parser');
+const chatbotRoutes = require('./routes/chatbot');
 
 const app = express();
 
@@ -116,6 +116,7 @@ app.use('/api', require('./routes/api'));
 app.post('/api/messages/read', messageController.markMessagesAsRead);
 app.get('/api/messages/unread-counts/:userId', messageController.getUnreadCounts);
 app.use('/api', adminRouter);
+app.use('/api/chatbot', chatbotRoutes);
 
 // Test route for checking if the API is working
 app.get('/api/test', (req, res) => {
@@ -123,47 +124,6 @@ app.get('/api/test', (req, res) => {
     message: 'API is working',
     timestamp: new Date().toISOString(),
     cors: 'enabled'
-  });
-});
-
-// Chat route for handling FAQ and messages
-app.post('/api/chat', async (req, res) => {
-  const { message } = req.body;
-
-  const faqResults = searchFaq(message);
-
-  if (faqResults && faqResults.length > 0) {
-    const bestMatch = faqResults[0];
-    return res.json({
-      reply: `Em xin phép trả lời câu hỏi của anh/chị: "${bestMatch.question}"\n\n${bestMatch.answer}\n\nAnh/chị có cần em hỗ trợ thêm thông tin gì không ạ?`
-    });
-  }
-
-  return res.json({
-    reply: "Em xin lỗi, em chưa được đào tạo để trả lời câu hỏi này. Để được hỗ trợ tốt nhất, anh/chị vui lòng liên hệ trực tiếp với chúng tôi qua:\n\n- Hotline: 0839171005\n- Facebook: https://www.facebook.com/caPta1ntynn\n\nCảm ơn anh/chị đã sử dụng dịch vụ của 7VITS."
-  });
-});
-
-// API endpoint for FAQ search
-app.get('/api/faq/search', (req, res) => {
-  const { query } = req.query;
-  if (!query) {
-    return res.status(400).json({ error: 'Query parameter is required' });
-  }
-  const results = searchFaq(query);
-  res.json({ results });
-});
-
-// Test image route for static files
-app.get('/test-image/:filename', (req, res) => {
-  const { filename } = req.params;
-  const filePath = path.join(__dirname, 'public/images/products', filename);
-
-  res.sendFile(filePath, (err) => {
-    if (err) {
-      console.error('Error sending file:', err);
-      res.status(404).send('File not found');
-    }
   });
 });
 
@@ -277,6 +237,5 @@ app._router.stack.forEach(function (r) {
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log(`Static files served at: http://localhost:${PORT}/images`);
-  console.log(`FAQ system loaded and active`);
   console.log(`CORS enabled for origins:`, allowedOrigins);
 });

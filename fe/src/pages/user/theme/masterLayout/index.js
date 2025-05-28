@@ -3,8 +3,6 @@ import Header from "../header";
 import Footer from "../footer";
 import "./style.scss";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import ChatbotComponent from "../../../../components/ChatBot/ChatBot";
-import chat from "../../../../components/logochat"
 import ChatButton from "../../../../components/logochat";
 import Chat from "../../../../components/Chat";
 
@@ -141,23 +139,12 @@ const MasterLayout = ({ children }) => {
                 ? children({ isLoggedIn, setIsLoggedIn, cart, setCart, updateCart })
                 : children}
 
-            {/* Ẩn Footer và Chatbot nếu đang ở /chat */}
+            {/* Ẩn Footer nếu đang ở /chat */}
             {!isChatPage && <Footer />}
 
             {!isChatPage && isLoggedIn &&(
                 <div className="chat" >
                     <ChatButton />
-                </div>
-            )}
-
-            {!isChatPage && (
-                <div style={{
-                    position: 'fixed',
-                    right: '20px',
-                    bottom: '20px',
-                    zIndex: 1000
-                }}>
-                    <ChatbotComponent />
                 </div>
             )}
         </div>

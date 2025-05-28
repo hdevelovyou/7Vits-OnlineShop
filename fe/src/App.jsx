@@ -6,18 +6,22 @@ import LoginPage from './pages/user/loginPage';
 import RegisterPage from './pages/user/registerPage'; 
 import Homepage from './pages/user/homePage';
 import { useAuth } from './contexts/AuthContext';
+import Chatbot from './components/Chatbot';
 
 function App() {
     const { user, isLoggedIn } = useAuth();
 
     return(
-        <Routes>
-            <Route path="/topup" element={<VnpayTopup />} />
-            <Route path="/payment/vnpay_return" element={<VnpayReturn />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/" element={<Homepage user={user} />} />
-        </Routes>
+        <>
+            <Routes>
+                <Route path="/topup" element={<VnpayTopup />} />
+                <Route path="/payment/vnpay_return" element={<VnpayReturn />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/" element={<Homepage user={user} />} />
+            </Routes>
+            <Chatbot />
+        </>
     );
 }
 
