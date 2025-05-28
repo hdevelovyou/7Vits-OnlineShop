@@ -10,7 +10,7 @@ export default function Chat({ receiverId, receiverName, onUnreadChange, isChatP
     const { socket } = useSocket();
     const [conversations, setConversations] = useState([]);
     const [selectedUser, setSelectedUser] = useState(
-        receiverId ? { id: receiverId, userName: receiverName || 'Người nhận' } : null
+        receiverId ? { id: String(receiverId), userName: receiverName || 'Người nhận' } : null
     );
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
@@ -70,8 +70,8 @@ export default function Chat({ receiverId, receiverName, onUnreadChange, isChatP
     // If passed receiverId, set selectedUser once conversations load
     useEffect(() => {
         if (receiverId && conversations.length > 0) {
-            const target = conversations.find((conv) => conv.id === receiverId);
-            setSelectedUser(target || { id: receiverId, userName: receiverName || 'Người nhận' });
+            const target = conversations.find((conv) => String(conv.id) === String(receiverId))
+            setSelectedUser(target || { id: String(receiverId), userName: receiverName || 'Người nhận' });
         }
     }, [receiverId, receiverName, conversations]);
 
@@ -161,6 +161,13 @@ export default function Chat({ receiverId, receiverName, onUnreadChange, isChatP
             onUnreadChange(count);
         }
     }, [unreadCounts, onUnreadChange]);
+
+    // Tự động mở chat window khi có receiverId trên mobile
+    useEffect(() => {
+        if (receiverId && window.innerWidth <= 900) {
+            setShowChatWindow(true);
+        }
+    }, [receiverId]);
 
     // Update sidebar conversations with new message
     const updateSidebar = (msg) => {
@@ -268,7 +275,7 @@ export default function Chat({ receiverId, receiverName, onUnreadChange, isChatP
                                     <div
                                         key={conv.id}
                                         onClick={() => handleSelectUser(conv)}
-                                        className={`conversation-item ${selectedUser?.id === conv.id ? 'active' : ''}`}
+                                        className={`conversation-item ${String(selectedUser?.id) === String(conv.id) ? 'active' : ''}`}
                                     >
                                         <div className="user-avatar">
                                             {conv.avatarUrl ? (

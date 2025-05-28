@@ -2,7 +2,7 @@ import { memo, useState, useEffect } from "react";
 import Header from "../header";
 import Footer from "../footer";
 import "./style.scss";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import ChatbotComponent from "../../../../components/ChatBot/ChatBot";
 import chat from "../../../../components/logochat"
 import ChatButton from "../../../../components/logochat";
@@ -19,6 +19,8 @@ const MasterLayout = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const isChatPage = location.pathname.startsWith('/chat');
+    const receiverId = isChatPage ? location.pathname.split('/')[2] : null;
+    const receiverName = isChatPage ? new URLSearchParams(location.search).get('receiverName') : null;
 
     const [cart, setCart] = useState(() => {
         try {
@@ -133,7 +135,7 @@ const MasterLayout = ({ children }) => {
         <div>
             {/* Luôn hiện Header */}
             <Header unreadConversations={unreadConversations} cart={cart} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} sluong={cart.length} />
-            <Chat onUnreadChange={handleUnreadChange} isChatPage={isChatPage} style={{ display: isChatPage ? undefined : "none" }} />
+            <Chat receiverId={receiverId} receiverName={receiverName} onUnreadChange={handleUnreadChange} isChatPage={isChatPage} style={{ display: isChatPage ? undefined : "none" }} />
             {/* Truyền dữ liệu qua children nếu là function */}
             {children && typeof children === "function"
                 ? children({ isLoggedIn, setIsLoggedIn, cart, setCart, updateCart })
