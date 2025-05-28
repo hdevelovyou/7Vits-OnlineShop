@@ -2,6 +2,7 @@ import { memo, useState, useEffect, useRef } from "react";
 import "./style.scss";
 import { FaUser, FaCheck, FaHistory } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import axios from 'axios';
 
 const ProfilePage = () => {
     const [user, setUser] = useState({
@@ -13,6 +14,10 @@ const ProfilePage = () => {
         avatarUrl: "",
         displayName: "",
     });
+    const [walletInfo, setWalletInfo] = useState({
+        balance: 0,
+        lockedBalance: 0
+    });
     const [isEditing, setIsEditing] = useState(false);
     const [newUserName, setNewUserName] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
@@ -21,9 +26,38 @@ const ProfilePage = () => {
     
     const fileInputRef = useRef(null);
 
+    // Format currency function
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        }).format(amount);
+    };
+
+    useEffect(() => {
+        // Fetch wallet information
+        const fetchWalletInfo = async () => {
+            try {
+                const [balanceRes, lockedBalanceRes] = await Promise.all([
+                    axios.get(`${process.env.REACT_APP_API_URL}/api/orders/wallet-balance`),
+                    axios.get(`${process.env.REACT_APP_API_URL}/api/orders/wallet-locked-balance`)
+                ]);
+
+                setWalletInfo({
+                    balance: balanceRes.data.balance,
+                    lockedBalance: lockedBalanceRes.data.locked_balance
+                });
+            } catch (error) {
+                console.error('Error fetching wallet info:', error);
+            }
+        };
+
+        fetchWalletInfo();
+    }, []);
+
     const handleChooseFile = () => {
         if (fileInputRef.current) {
-            fileInputRef.current.click(); // Kích hoạt input file
+            fileInputRef.current.click();
         }
     };
 
@@ -88,7 +122,7 @@ const ProfilePage = () => {
             if (parsedUser.avatarUrl) {
                 setAvatarUrl(parsedUser.avatarUrl);
             } else {
-                setAvatarUrl(defaultAvatarUrl); // Đặt ảnh mặc định nếu không có
+                setAvatarUrl(defaultAvatarUrl);
             }
         }
     }, []);
@@ -108,7 +142,6 @@ const ProfilePage = () => {
                     setAvatarUrl(defaultAvatarUrl);
                 }
                 
-                // Kết hợp dữ liệu từ API với dữ liệu hiện tại, giữ lại các trường từ state hiện tại nếu API không trả về
                 setUser(prevUser => ({
                     ...prevUser,
                     userName: data.userName || prevUser.userName,
@@ -132,27 +165,17 @@ const ProfilePage = () => {
 
     const handleSaveUserName = () => {
         if (newUserName.trim() !== "") {
-            // Get existing user data
             const userData = localStorage.getItem("user");
             if (userData) {
                 const parsedUser = JSON.parse(userData);
-                
-                // Update userName
                 parsedUser.userName = newUserName;
-                
-                // Save back to localStorage
                 localStorage.setItem("user", JSON.stringify(parsedUser));
-                
-                // Update user state
                 setUser(prev => ({
                     ...prev,
                     userName: newUserName
                 }));
-                
                 setIsEditing(false);
                 setSuccessMessage("Tên người dùng đã được cập nhật thành công!");
-                
-                // Clear success message after 3 seconds
                 setTimeout(() => {
                     setSuccessMessage("");
                 }, 3000);
@@ -161,7 +184,6 @@ const ProfilePage = () => {
     };
 
     const handleCancelEdit = () => {
-        // Reset to current userName
         setNewUserName(user.userName);
         setIsEditing(false);
     };
@@ -170,8 +192,6 @@ const ProfilePage = () => {
         const confirmRemove = window.confirm("Bạn có chắc chắn muốn gỡ ảnh đại diện không?");
         if (confirmRemove) {
             setAvatarUrl(defaultAvatarUrl);
-
-            // Cập nhật lại localStorage
             const userData = localStorage.getItem("user");
             if (userData) {
                 const parsedUser = JSON.parse(userData);
@@ -234,7 +254,7 @@ const ProfilePage = () => {
                                     accept="image/*" 
                                     ref={fileInputRef} 
                                     onChange={handleAvaterChange} 
-                                    style={{ display: 'none' }} // Ẩn input file
+                                    style={{ display: 'none' }}
                                 />
                                 <button 
                                     type="button" 
@@ -275,6 +295,21 @@ const ProfilePage = () => {
                             <div className="info-value">
                                 <span>{user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : ''}</span>
                             </div>                         
+                        </div>
+                        <div className="wallet-info">
+                            <h2>Thông tin ví</h2>
+                            <div className="info-row">
+                                <label>Số dư khả dụng:</label>
+                                <div className="info-value">
+                                    <span className="balance available">{formatCurrency(walletInfo.balance)}</span>
+                                </div>
+                            </div>
+                            <div className="info-row">
+                                <label>Số dư tạm khóa:</label>
+                                <div className="info-value">
+                                    <span className="balance locked">{formatCurrency(walletInfo.lockedBalance)}</span>
+                                </div>
+                            </div>
                         </div>
                         <div className="profile-action-buttons">
                             <Link to="/sell-product" className="nav-link sell-product-button">

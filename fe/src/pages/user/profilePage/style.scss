@@ -311,6 +311,35 @@ $success-color: #4caf50;  // Green for success messages
             }
         }
     }
+
+    .wallet-info {
+        margin-top: 24px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+
+        h2 {
+            font-size: 1.2rem;
+            color: #212529;
+            margin-bottom: 16px;
+        }
+
+        .info-row {
+            .balance {
+                font-weight: bold;
+                font-size: 1.1rem;
+
+                &.available {
+                    color: #28a745;
+                }
+
+                &.locked {
+                    color: #dc3545;
+                }
+            }
+        }
+    }
 }
 
 .remove-avatar-button {

@@ -33,6 +33,7 @@ import Orders from "./components/Admin/orders";
 import Events from "./components/Admin/events";
 import Messages from "./components/Admin/messages";
 import HomeAdminPage from "./components/Admin/home";
+import OrderHistoryPage from "./pages/user/orderHistory/OrderHistoryPage";
 
 const renderUserRoutes = () => {
     return (
@@ -67,6 +68,7 @@ const renderUserRoutes = () => {
                     <Route path="/otp-for-signup" element={<Otpregister />} />
                     {/* Policy page */}
                     <Route path={ROUTES.USER.CHINH_SACH} element={<ChinhSachPage />} />
+                    <Route path="/user/purchase-history" element={<OrderHistoryPage />} />
                     {/* Add other routes here */}
                 </Routes>
             )}
