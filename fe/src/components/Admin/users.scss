@@ -1,3 +1,4 @@
+.admin-users {
 .user-table {
   width: 100%;
   border-collapse: separate;
@@ -35,7 +36,7 @@
       border-bottom: 2px solid #00ffff;
     }
     &:hover {
-      background: #6d0c0c;
+      background: #1c4853;
       box-shadow: 0 4px 16px rgba(0,212,255,0.08);
     }
     td:first-child{
@@ -57,10 +58,12 @@
     border-radius: 6px;
     padding: 6px 14px;
     font-weight: bold;
+    font-family: "Exo 2", sans-serif;
+    font-size: 16px;
     cursor: pointer;
     transition: background 0.2s;
     &:hover {
-      background: #00b3cc;
+      background: #ff0000;
       color: #fff;
     }
   }
@@ -141,4 +144,5 @@ h2 {
   td:last-child {
     border-radius: 0 12px 12px 0;
   }
+}
 }
