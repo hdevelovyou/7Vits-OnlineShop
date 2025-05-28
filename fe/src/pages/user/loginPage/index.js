@@ -92,6 +92,7 @@ const LoginPage = ({ setIsLoggedIn }) => {
                 navigate("/admin");
             } else {
                 navigate("/");
+                window.location.reload(); 
             }
              
         } catch (err) {
