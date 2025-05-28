@@ -52,107 +52,117 @@ async function saveTransaction(userId, amount, txnRef, orderInfo){
 }
 
 async function updateTransactionStatus(txnRef, status, responseData) {
-    try {
-        console.log('⚙️ Starting updateTransactionStatus for txnRef:', txnRef, 'status:', status);
-        
-        // Find transaction by reference ID
-        const [transactions] = await db.query(
-            `SELECT id, status FROM transactions WHERE reference_id = ?`,
-            [txnRef]
-        );
-        
-        console.log('🔍 Found transactions:', JSON.stringify(transactions));
-        
-        if (transactions.length === 0) {
-            console.error('⚠️ Transaction not found for txnRef:', txnRef);
-            throw new Error('Transaction not found');
-        }
-        
-        const transactionId = transactions[0].id;
-        
-        // Check if transaction is already processed (completed or failed)
-        if (transactions[0].status === 'completed' || transactions[0].status === 'failed') {
-            console.log('🚫 Transaction already processed, txnRef:', txnRef, 'current status:', transactions[0].status);
-            return {
-                alreadyProcessed: true,
-                transactionId: transactionId,
-                currentStatus: transactions[0].status
-            };
-        }
-        
-        const transactionStatus = status === '00' ? 'completed' : 'failed';
-        
-        console.log('📝 Updating transaction status to:', transactionStatus, 'for ID:', transactionId);
-        
-        // Update transaction status
-        await db.query(
-            `UPDATE transactions SET status = ? WHERE id = ?`,
-            [transactionStatus, transactionId]
-        );
-        
-        // Update user wallet if payment successful
-        if (status === '00') {
-            const [transaction] = await db.query(
-                `SELECT user_id, amount FROM transactions WHERE id = ?`,
-                [transactionId]
+    const maxRetries = 3;
+    let retryCount = 0;
+    
+    while (retryCount < maxRetries) {
+        try {
+            console.log('⚙️ Starting updateTransactionStatus for txnRef:', txnRef, 'status:', status);
+            
+            // Find transaction by reference ID
+            const [transactions] = await db.query(
+                `SELECT id, status FROM transactions WHERE reference_id = ?`,
+                [txnRef]
             );
             
-            console.log('💰 Adding funds to wallet for user:', transaction[0].user_id, 'amount:', transaction[0].amount);
+            console.log('🔍 Found transactions:', JSON.stringify(transactions));
             
-            try {
-                // Check if user has a wallet
-                const [userWallet] = await db.query(
-                    `SELECT * FROM user_wallets WHERE user_id = ?`,
-                    [transaction[0].user_id]
+            if (transactions.length === 0) {
+                console.error('⚠️ Transaction not found for txnRef:', txnRef);
+                throw new Error('Transaction not found');
+            }
+            
+            const transactionId = transactions[0].id;
+            
+            // Check if transaction is already processed (completed or failed)
+            if (transactions[0].status === 'completed' || transactions[0].status === 'failed') {
+                console.log('🚫 Transaction already processed, txnRef:', txnRef, 'current status:', transactions[0].status);
+                return {
+                    alreadyProcessed: true,
+                    transactionId: transactionId,
+                    currentStatus: transactions[0].status
+                };
+            }
+            
+            const transactionStatus = status === '00' ? 'completed' : 'failed';
+            
+            console.log('📝 Updating transaction status to:', transactionStatus, 'for ID:', transactionId);
+            
+            // Update transaction status
+            await db.query(
+                `UPDATE transactions SET status = ? WHERE id = ?`,
+                [transactionStatus, transactionId]
+            );
+            
+            // Update user wallet if payment successful
+            if (status === '00') {
+                const [transaction] = await db.query(
+                    `SELECT user_id, amount FROM transactions WHERE id = ?`,
+                    [transactionId]
                 );
                 
-                if (userWallet.length === 0) {
-                    console.log('🔧 Creating new wallet for user:', transaction[0].user_id);
-                    // Create wallet if it doesn't exist
-                    await db.query(
-                        `INSERT INTO user_wallets (user_id, balance) VALUES (?, ?)`,
-                        [transaction[0].user_id, transaction[0].amount]
+                console.log('💰 Adding funds to wallet for user:', transaction[0].user_id, 'amount:', transaction[0].amount);
+                
+                try {
+                    // Check if user has a wallet
+                    const [userWallet] = await db.query(
+                        `SELECT * FROM user_wallets WHERE user_id = ?`,
+                        [transaction[0].user_id]
                     );
-                } else {
-                    // Update existing wallet
-                    await db.query(
-                        `UPDATE user_wallets 
-                        SET balance = balance + ? 
-                        WHERE user_id = ?`,
-                        [transaction[0].amount, transaction[0].user_id]
-                    );
+                    
+                    if (userWallet.length === 0) {
+                        console.log('🔧 Creating new wallet for user:', transaction[0].user_id);
+                        // Create wallet if it doesn't exist
+                        await db.query(
+                            `INSERT INTO user_wallets (user_id, balance) VALUES (?, ?)`,
+                            [transaction[0].user_id, transaction[0].amount]
+                        );
+                    } else {
+                        // Update existing wallet
+                        await db.query(
+                            `UPDATE user_wallets 
+                            SET balance = balance + ? 
+                            WHERE user_id = ?`,
+                            [transaction[0].amount, transaction[0].user_id]
+                        );
+                    }
+                    console.log('✅ Wallet updated successfully');
+                } catch (walletError) {
+                    console.error('❌ Error updating wallet:', walletError);
+                    throw walletError;
                 }
-                console.log('✅ Wallet updated successfully');
-            } catch (walletError) {
-                console.error('❌ Error updating wallet:', walletError);
-                throw walletError;
             }
+            
+            console.log('📝 Updating VNPay payment details for transaction:', transactionId);
+            
+            // Update VNPay payment info
+            await db.query(
+                `UPDATE payment_vnpay SET 
+                vnp_ResponseCode = ?,
+                vnp_TransactionNo = ?,
+                vnp_BankCode = ?,
+                vnp_PayDate = ?
+                WHERE transaction_id = ?`,
+                [
+                    responseData.vnp_ResponseCode,
+                    responseData.vnp_TransactionNo,
+                    responseData.vnp_BankCode,
+                    responseData.vnp_PayDate,
+                    transactionId
+                ]
+            );
+            
+            console.log('✅ Transaction update completed successfully');
+            return true;
+        } catch (error) {
+            if (error.code === 'ER_LOCK_WAIT_TIMEOUT' && retryCount < maxRetries - 1) {
+                retryCount++;
+                // Đợi một khoảng thời gian tăng dần trước khi thử lại
+                await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retryCount)));
+                continue;
+            }
+            throw error;
         }
-        
-        console.log('📝 Updating VNPay payment details for transaction:', transactionId);
-        
-        // Update VNPay payment info
-        await db.query(
-            `UPDATE payment_vnpay SET 
-            vnp_ResponseCode = ?,
-            vnp_TransactionNo = ?,
-            vnp_BankCode = ?,
-            vnp_PayDate = ?
-            WHERE transaction_id = ?`,
-            [
-                responseData.vnp_ResponseCode,
-                responseData.vnp_TransactionNo,
-                responseData.vnp_BankCode,
-                responseData.vnp_PayDate,
-                transactionId
-            ]
-        );
-        
-        console.log('✅ Transaction update completed successfully');
-        return true;
-    } catch (error) {
-        console.error('❌ Error updating transaction:', error);
-        throw error;
     }
 }
 
