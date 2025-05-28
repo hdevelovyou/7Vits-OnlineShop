@@ -25,6 +25,7 @@ export default function Chat({ receiverId, receiverName, onUnreadChange, isChatP
     const [unreadCounts, setUnreadCounts] = useState({});
     const [showChatWindow, setShowChatWindow] = useState(false);
     const unreadConversations = Object.values(unreadCounts).filter(count => count > 0).length;
+
     // Đăng ký socket với user ID
     useEffect(() => {
         if (socket && user?.id) {

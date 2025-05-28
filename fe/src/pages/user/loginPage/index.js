@@ -5,8 +5,7 @@ import { FaCircleUser } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 
-const LoginPage = ({ setIsLoggedIn }) => {
-    console.log({setIsLoggedIn});
+const LoginPage = () => {
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const [remember, setRemember] = useState(false);
@@ -14,14 +13,6 @@ const LoginPage = ({ setIsLoggedIn }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Kiểm tra xem setIsLoggedIn có phải là hàm không
-    useEffect(() => {
-        if (setIsLoggedIn && typeof setIsLoggedIn !== 'function') {
-            console.error('setIsLoggedIn không phải là hàm:', setIsLoggedIn);
-        }
-    }, [setIsLoggedIn]);
-
-    // Khi component mount, kiểm tra xem có dữ liệu được lưu không
     useEffect(() => {
         const savedUser = localStorage.getItem("rememberedUser");
         const savedPassword = localStorage.getItem("rememberedPassword");
@@ -79,20 +70,12 @@ const LoginPage = ({ setIsLoggedIn }) => {
             localStorage.setItem("token", data.token);
             localStorage.setItem("user", JSON.stringify(mergedUser));
             localStorage.setItem("userId", data.user.id);
-
-            // Kiểm tra setIsLoggedIn trước khi gọi
-            if (setIsLoggedIn && typeof setIsLoggedIn === 'function') {
-                setIsLoggedIn(true);
-            } else {
-                console.error('setIsLoggedIn không phải là hàm:', setIsLoggedIn);
-            }
-            
             
             if(data.user.role === "admin") {
                 navigate("/admin");
             } else {
+                window.dispatchEvent(new Event("userLoggedIn")); 
                 navigate("/");
-                window.location.reload(); 
             }
              
         } catch (err) {

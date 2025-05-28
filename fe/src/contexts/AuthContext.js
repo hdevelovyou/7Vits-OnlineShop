@@ -6,30 +6,28 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const isLoggedIn = !!user;
+
+    const refreshUser = async () => {
+        setLoading(true);
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) throw new Error('No token found');
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/me`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setUser(response.data.user);
+        } catch (error) {
+            setUser(null);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        // Kiểm tra xem người dùng đã đăng nhập chưa
-        const checkAuth = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) throw new Error('No token found');
-
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/me`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-
-                setUser(response.data.user);
-            } catch (error) {
-                console.error('Auth check failed:', error);
-                setUser(null);
-            } finally {
-                setLoading(false);
-            }
-        };          
-
-        checkAuth();
+        refreshUser();
+        window.addEventListener("userLoggedIn", refreshUser);
+        return () => window.removeEventListener("userLoggedIn", refreshUser);
     }, []);
 
     const login = async (email, password) => {
@@ -38,12 +36,11 @@ export const AuthProvider = ({ children }) => {
                 email,
                 password
             });
-
             const token = response.data.token;
             if (token) {
                 localStorage.setItem('token', token);
+                window.dispatchEvent(new Event("userLoggedIn")); // Gọi refreshUser toàn app
             }
-
             setUser(response.data.user);
             return { success: true };
         } catch (error) {
@@ -60,8 +57,9 @@ export const AuthProvider = ({ children }) => {
                 withCredentials: true
             });
             setUser(null);
-            return { success: true };
+            localStorage.removeItem('token');
             window.location.reload();
+            return { success: true };
         } catch (error) {
             return {
                 success: false,
@@ -72,9 +70,11 @@ export const AuthProvider = ({ children }) => {
 
     const value = {
         user,
+        isLoggedIn,
         loading,
         login,
-        logout
+        logout,
+        refreshUser
     };
 
     return (
@@ -90,4 +90,4 @@ export const useAuth = () => {
         throw new Error('useAuth must be used within an AuthProvider');
     }
     return context;
-}; 
+};

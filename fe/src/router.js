@@ -4,7 +4,7 @@ import ProfilePage from "./pages/user/profilePage";
 import RegisterPage from "./pages/user/registerPage";
 import MasterLayout from "./pages/user/theme/masterLayout";
 import { ROUTES } from "./utils/router";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import OtpPage from "./pages/user/otpPage";
 import ForgotPage from "./pages/user/forgotPage";
 import NewPassword from "./pages/user/newPassword";
@@ -51,7 +51,7 @@ const renderUserRoutes = () => {
                     <Route path={ROUTES.USER.STORE} element={<StorePage />} />
                     <Route path={ROUTES.USER.CART} element={<CartPage cart={cart} setCart={setCart} />} />
                     <Route path="/reset-password" element={<ResetPassword />} />                    
-                    <Route path="/chat/:id" element={<ChatPage />} />
+                    <Route path="/chat/:id" element={localStorage.getItem("token") ? <ChatPage /> : <Navigate to="/login" />} />
                     <Route path="/chat" element={<Chat />} />
                     {/* Social auth callback route */}
                     <Route path="/auth/social" element={<SocialAuthCallback setIsLoggedIn={setIsLoggedIn} />} />
