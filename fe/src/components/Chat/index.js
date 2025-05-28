@@ -5,7 +5,7 @@ import { useSocket } from '../../contexts/SocketContext';
 import EmojiPicker from 'emoji-picker-react';
 import './style.scss';
 
-export default function Chat({ receiverId, receiverName }) {
+export default function Chat({ receiverId, receiverName, onUnreadChange, isChatPage }) {
     const { user } = useAuth();
     const { socket } = useSocket();
     const [conversations, setConversations] = useState([]);
@@ -24,7 +24,7 @@ export default function Chat({ receiverId, receiverName }) {
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [unreadCounts, setUnreadCounts] = useState({});
     const [showChatWindow, setShowChatWindow] = useState(false);
-
+    const unreadConversations = Object.values(unreadCounts).filter(count => count > 0).length;
     // Đăng ký socket với user ID
     useEffect(() => {
         if (socket && user?.id) {
@@ -154,6 +154,13 @@ export default function Chat({ receiverId, receiverName }) {
         inputRef.current?.focus();
     }, [selectedUser]);
 
+    useEffect(() => {
+        const count = Object.values(unreadCounts).filter(c => c > 0).length;
+        if (typeof onUnreadChange === 'function') {
+            onUnreadChange(count);
+        }
+    }, [unreadCounts, onUnreadChange]);
+
     // Update sidebar conversations with new message
     const updateSidebar = (msg) => {
         setConversations((prev) => {
@@ -228,9 +235,21 @@ export default function Chat({ receiverId, receiverName }) {
     // Khi bấm nút "Quay lại" trong chat window trên mobile
     const handleBack = () => {
         setShowChatWindow(false);
+        setSelectedUser(null);
     };
 
+    useEffect(() => {
+        if (!isChatPage) {
+            setSelectedUser(null);
+            setShowChatWindow(false);
+        }
+    }, [isChatPage]);
+
     const isMobile = window.innerWidth <= 900;
+    if (!isChatPage) {
+        // Chỉ chạy logic, không render giao diện
+        return null;
+    }
 
     return (
         <div className="chat-page">
