@@ -19,5 +19,6 @@ export const ROUTES = {
         PAYMENT_SUCCESS: '/user/payment-success',
         CHINH_SACH: '/chinh-sach',
         SETUP_ACCOUNT: '/setup-account',
+        PURCHASE_HISTORY: '/purchase-history',
     }
 }
