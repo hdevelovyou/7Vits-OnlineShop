@@ -414,6 +414,7 @@ const orderController = {
             try {
                 const { items, totalAmount } = req.body;
                 const buyerId = req.user.id;
+                const sellerId = items[0].sellerId;
 
                 console.log('Creating order:', { items, totalAmount, buyerId });
 
@@ -461,6 +462,11 @@ const orderController = {
                     await db.query(
                         'UPDATE user_wallets SET balance = balance - ? WHERE user_id = ?',
                         [totalAmount, buyerId]
+                    );
+                    // Cộng tiền vào locked_balance người bán
+                    await db.query(
+                        'UPDATE user_wallets SET locked_balance = locked_balance + ? WHERE user_id = ?',
+                        [totalAmount, sellerId]
                     );
 
                     // Tạo seller map để xử lý gộp các sản phẩm cùng người bán
