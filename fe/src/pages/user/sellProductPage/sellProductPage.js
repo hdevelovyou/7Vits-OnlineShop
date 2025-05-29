@@ -44,9 +44,9 @@ const SellProductPage = () => {
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            // Kiểm tra kích thước file (giới hạn 5MB)
-            if (file.size > 5 * 1024 * 1024) {
-                setError('Kích thước ảnh không được vượt quá 5MB');
+            // Kiểm tra kích thước file (giới hạn 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                setError('Kích thước ảnh không được vượt quá 2MB');
                 return;
             }
             

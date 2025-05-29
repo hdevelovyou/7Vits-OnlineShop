@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS products (
     name VARCHAR(255) NOT NULL,
     description TEXT,
     price DECIMAL(10, 2) NOT NULL,
+    category_id INT DEFAULT NULL,
     category VARCHAR(255),
     stock INT DEFAULT 0,
     seller_id INT NOT NULL,
