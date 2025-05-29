@@ -7,7 +7,7 @@ import { SocketProvider } from './contexts/SocketContext';
 import "./style/style.scss";
 // Import cấu hình Axios
 import './utils/axiosConfig';
-
+import Chatbot from './components/Chatbot';
 const root = createRoot(document.getElementById('root'));
 root.render(
     <div>
@@ -17,6 +17,7 @@ root.render(
                     <RouterCustom />
                 </SocketProvider>
             </AuthProvider>
+            <Chatbot/>
         </BrowserRouter>
     </div>
 );
