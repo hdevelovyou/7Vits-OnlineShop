@@ -403,149 +403,97 @@ const orderController = {
     },
 
     createOrder: async (req, res) => {
-        try {
-            const { items, totalAmount } = req.body;
-            const buyerId = req.user.id;
+        const maxRetries = 3;
+        let retryCount = 0;
 
-            console.log('Creating order:', { items, totalAmount, buyerId });
-
-            if (!items || !Array.isArray(items) || items.length === 0) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Thiếu thông tin sản phẩm hoặc format không đúng'
-                });
-            }
-
-            if (!totalAmount) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Thiếu thông tin tổng tiền'
-                });
-            }
-
-            await db.query('START TRANSACTION');
-
+        while (retryCount < maxRetries) {
             try {
-                // Tạo transaction cho người mua trước
-                const buyerTransactionId = await orderController.createBuyerTransaction(buyerId, totalAmount);
+                const { items, totalAmount } = req.body;
+                const buyerId = req.user.id;
 
-                // Kiểm tra số dư ví người mua
-                const [buyerWallet] = await db.query(
-                    'SELECT balance FROM user_wallets WHERE user_id = ?',
-                    [buyerId]
-                );
+                console.log('Creating order:', { items, totalAmount, buyerId });
 
-                if (buyerWallet.length === 0 || buyerWallet[0].balance < totalAmount) {
-                    await db.query('ROLLBACK');
+                if (!items || !Array.isArray(items) || items.length === 0) {
                     return res.status(400).json({
                         success: false,
-                        message: 'Số dư không đủ'
+                        message: 'Thiếu thông tin sản phẩm hoặc format không đúng'
                     });
                 }
 
-                //  Trừ tiền từ ví người mua
-                await db.query(
-                    'UPDATE user_wallets SET balance = balance - ? WHERE user_id = ?',
-                    [totalAmount, buyerId]
-                );
-
-                // Xử lý từng sản phẩm
-                for (const item of items) {
-                    const [productResult] = await db.query(
-                        'SELECT id, seller_id, price, status FROM products WHERE id = ?',
-                        [item.productId]
-                    );
-
-                    if (productResult.length === 0) {
-                        await db.query('ROLLBACK');
-                        return res.status(404).json({
-                            success: false,
-                            message: `Sản phẩm với ID ${item.productId} không tồn tại`
-                        });
-                    }
-
-                    const product = productResult[0];
-                    const sellerId = product.seller_id;
-
-                    // Kiểm tra trạng thái sản phẩm
-                    if (product.status === 'sold_out' || product.status === 'inactive') {
-                        await db.query('ROLLBACK');
-                        return res.status(400).json({
-                            success: false,
-                            message: `Sản phẩm ${item.productId} đã hết hàng hoặc không còn bán`
-                        });
-                    }
-
-                    // Kiểm tra không mua sản phẩm của chính mình
-                    if (sellerId === buyerId) {
-                        await db.query('ROLLBACK');
-                        return res.status(400).json({
-                            success: false,
-                            message: 'Bạn không thể mua sản phẩm của chính mình'
-                        });
-                    }
-
-                    // Cộng tiền vào locked_balance người bán
-                    await db.query(
-                        'UPDATE user_wallets SET locked_balance = locked_balance + ? WHERE user_id = ?',
-                        [item.price, sellerId]
-                    );
-
-                    // 4. Cập nhật trạng thái sản phẩm thành inactive
-                    await db.query(
-                        'UPDATE products SET status = ? WHERE id = ?',
-                        ['inactive', item.productId]
-                    );
-                    
-                    // 5. Tạo đơn hàng
-                    const [order] = await db.query(
-                        `INSERT INTO orders (user_id, seller_id, total_amount, status)
-                         VALUES (?, ?, ?, 'pending')`,
-                        [buyerId, sellerId, item.price]
-                    );
-
-                    // 6. Cập nhật reference_id cho transaction người mua
-                    await db.query(
-                        `UPDATE transactions 
-                         SET reference_id = ? 
-                         WHERE id = ?`,
-                        [order.insertId, buyerTransactionId]
-                    );
-
-                    // 7. Tạo transaction cho người bán
-                    await orderController.createSellerTransaction(
-                        sellerId, 
-                        item.price,
-                        order.insertId
-                    );
-
-                    // 8. Thêm chi tiết đơn hàng
-                    await db.query(
-                        `INSERT INTO order_items 
-                        (order_id, product_id, price) 
-                        VALUES (?, ?, ?)`,
-                        [order.insertId, item.productId, item.price]
-                    );
+                if (!totalAmount) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Thiếu thông tin tổng tiền'
+                    });
                 }
 
-                await db.query('COMMIT');
+                // Validate products first outside transaction
+                const validationResult = await orderController.validateProducts(items, buyerId);
+                if (!validationResult.success) {
+                    return res.status(validationResult.status).json(validationResult);
+                }
 
-                res.json({
-                    success: true,
-                    message: 'Đơn hàng đã được tạo thành công'
-                });
+                await db.query('START TRANSACTION');
 
+                try {
+                    // Tạo transaction cho người mua trước
+                    const buyerTransactionId = await orderController.createBuyerTransaction(buyerId, totalAmount);
+
+                    // Kiểm tra số dư ví người mua với FOR UPDATE để lock row
+                    const [buyerWallet] = await db.query(
+                        'SELECT balance FROM user_wallets WHERE user_id = ? FOR UPDATE',
+                        [buyerId]
+                    );
+
+                    if (buyerWallet.length === 0 || buyerWallet[0].balance < totalAmount) {
+                        await db.query('ROLLBACK');
+                        return res.status(400).json({
+                            success: false,
+                            message: 'Số dư không đủ'
+                        });
+                    }
+
+                    // Trừ tiền từ ví người mua
+                    await db.query(
+                        'UPDATE user_wallets SET balance = balance - ? WHERE user_id = ?',
+                        [totalAmount, buyerId]
+                    );
+
+                    // Tạo seller map để xử lý gộp các sản phẩm cùng người bán
+                    const sellerMap = await orderController.createSellerMap(items);
+
+                    // Xử lý đơn hàng cho từng người bán
+                    await orderController.processSellerOrders(sellerMap, buyerId, buyerTransactionId);
+
+                    await db.query('COMMIT');
+
+                    res.json({
+                        success: true,
+                        message: 'Đơn hàng đã được tạo thành công'
+                    });
+                    return;
+
+                } catch (error) {
+                    await db.query('ROLLBACK');
+                    throw error;
+                }
             } catch (error) {
-                await db.query('ROLLBACK');
-                throw error;
+                console.error(`Create order attempt ${retryCount + 1} failed:`, error);
+                
+                if (error.code === 'ER_LOCK_WAIT_TIMEOUT' && retryCount < maxRetries - 1) {
+                    retryCount++;
+                    // Wait for a random time between 100ms and 1000ms before retrying
+                    await new Promise(resolve => setTimeout(resolve, Math.random() * 900 + 100));
+                    continue;
+                }
+                
+                res.status(500).json({
+                    success: false,
+                    message: 'Lỗi khi tạo đơn hàng',
+                    error: error.message
+                });
+                return;
             }
-        } catch (error) {
-            console.error('Create order error:', error);
-            res.status(500).json({
-                success: false,
-                message: 'Lỗi khi tạo đơn hàng',
-                error: error.message
-            });
         }
     },
 

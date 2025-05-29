@@ -21,7 +21,7 @@ const PaymentSuccessPage = () => {
   }, [navigate, orderData, purchasedItems]);
 
   const handleViewOrders = () => {
-    navigate('/user/orders');
+    navigate('/user/purchase-history');
   };
 
   const handleBackToShopping = () => {
