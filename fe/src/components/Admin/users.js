@@ -172,6 +172,7 @@ const Users = () => {
           </div>
           <div className="info-card">
             <h3>Conversations</h3>
+            <br></br>
             {conversations.length === 0 ? (
               <div className="default-noti">This user has no conversation up to this point.</div>
             ) : (
