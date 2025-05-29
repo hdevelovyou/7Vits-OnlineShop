@@ -5,6 +5,13 @@
   flex-direction: column;
   height: 100vh;
 
+  .header-main {
+    flex-shrink: 0;
+    z-index: 10;
+    position: sticky;
+    top: 0;
+  }
+
   .navbar {
     background-color: #1e1e2f;
     color: white;
@@ -16,6 +23,7 @@
   .admin-body {
     display: flex;
     flex: 1;
+    min-height: 0;
   }
 
   .sidebar {
@@ -24,6 +32,12 @@
     color: #ff0000;
     padding-top: 20px;
     border-right: 3px solid #ff0000;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    left: 0;
+    z-index: 9;
+    overflow-y: auto;
 
     ul {
       list-style: none;
@@ -54,7 +68,9 @@
 
   .main-content {
     flex: 1;
-    padding: 20px;
+    overflow-y: auto;
+    height: 100vh;
+    padding: 24px;
     color: #ffffff;
     background-color: #000000;
 

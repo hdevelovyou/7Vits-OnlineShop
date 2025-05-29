@@ -32,6 +32,7 @@ import Products from "./components/Admin/products";
 import Orders from "./components/Admin/orders";
 import Events from "./components/Admin/events";
 import Messages from "./components/Admin/messages";
+import Transactions from "./components/Admin/transactions";
 import HomeAdminPage from "./components/Admin/home";
 import OrderHistoryPage from "./pages/user/orderHistory/OrderHistoryPage";
 
@@ -91,6 +92,7 @@ const RouterCustom = () => {
                     <Route path="/admin/orders" element={<Orders />} />
                     <Route path="/admin/events" element={<Events />} />
                     <Route path="/admin/messages" element={<Messages />} />
+                    <Route path="/admin/transactions" element={<Transactions />} />
                     {/* Add other admin components here */}
                 </Route>
                 {/* Add other admin routes here */}

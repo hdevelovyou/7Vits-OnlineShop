@@ -11,6 +11,9 @@ const Users = () => {
   const [userDetail, setUserDetail] = useState(null);
   const [products, setProducts] = useState([]);
   const [comments, setComments] = useState([]);
+  const [conversations, setConversations] = useState([]);
+  const [selectedConversation, setSelectedConversation] = useState(null);
+  const [messages, setMessages] = useState([]);
   const detailRef = useRef(null);
 
   useEffect(() => {
@@ -19,25 +22,41 @@ const Users = () => {
 
   const handleSelect = async (user) => {
     setSelected(user);
-    const [detail, prods, comms] = await Promise.all([
+    const [detail, prods, comms, convs] = await Promise.all([
       axios.get(`/api/users/${user.id}`),
       axios.get(`/api/users/${user.id}/products`),
       axios.get(`/api/users/${user.id}/comments`),
+      axios.get(`/api/users/${user.id}/conversations`),
     ]);
     setUserDetail(detail.data);
     setProducts(prods.data);
     setComments(comms.data);
-    console.log(comms.data);
+    setConversations(convs.data);
+    setSelectedConversation(null);
+    setMessages([]);
 
     setTimeout(() => {
       detailRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 100);
   };
+  const handleSelectConversation = async (otherUser) => {
+    setSelectedConversation(otherUser);
+    const res = await axios.get(`/api/users/${selected.id}/messages/${otherUser.otherUserId}`);
+    setMessages(res.data);
+  };
+  const handleDeleteConversation = async (otherUserId) => {
+    await axios.delete(`/api/users/${selected.id}/conversations/${otherUserId}`);
+    // Cập nhật lại danh sách conversation
+    const res = await axios.get(`/api/users/${selected.id}/conversations`);
+    setConversations(res.data);
+    setSelectedConversation(null);
+    setMessages([]);
+  };
 
   return (
     <div className="admin-users">
       <div className="user-list">
-        <h2>User list</h2>
+        <h2>Users list</h2>
         <table className="user-table">
           <thead>
             <tr>
@@ -150,6 +169,58 @@ const Users = () => {
                 </tbody>
               </table>
             )}
+          </div>
+          <div className="info-card">
+            <h3>Conversations</h3>
+            {conversations.length === 0 ? (
+              <div className="default-noti">This user has no conversation up to this point.</div>
+            ) : (
+              <ul className="conversation-table">
+                <thead>
+                  <th>No.</th>
+                  <th>UserName</th>
+                  <th>Email</th>
+                  <th>Action</th>
+                </thead>
+                <tbody>
+                  {conversations.map((c, idx) => (
+                    <tr>
+                    <td>{idx + 1}</td>
+                    <td>{c.userName}</td>
+                    <td>{c.email}</td>
+                    <td>
+                      <button className="action-btn" onClick={() => handleSelectConversation(c)}>
+                        View messages
+                      </button>
+                      <button className="action-btn" onClick={async (e) => {
+                                e.stopPropagation();
+                                if (window.confirm("Are you sure you want to delete this conversation?")) {
+                                  await handleDeleteConversation(c.otherUserId);
+                                }
+                              }}
+                            >
+                        Delete
+                      </button>
+                    </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </ul>
+            )}
+            <br></br>
+            {selectedConversation && (
+              <div className="messages-list">
+                <h4>Message history with {selectedConversation.userName}</h4>
+                <ul>
+                  {messages.map((m) => (
+                    <li key={m.id}>
+                      <b>{m.senderUserName}:</b> {m.message} <span className="msg-time">{new Date(m.created_at).toLocaleString()}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+    )}
+
           </div>
         </div>
       )}

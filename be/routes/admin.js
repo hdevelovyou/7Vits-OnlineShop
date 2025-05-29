@@ -3,6 +3,8 @@ const router = express.Router();
 const authenticateToken = require('../middleware/authMiddleware');
 const isAdmin = require('../middleware/isAdmin');
 const db = require('../config/connectDB');
+const messageController = require('../controllers/messageController');
+const getMessagesBetweenUsers = require('../controllers/messageController');
 
 router.get('/admin', authenticateToken, isAdmin, (req, res) => {
     res.json({ 
@@ -97,6 +99,63 @@ router.delete("/users/:id", async (req, res) => {
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: "Failed to delete user" });
+  }
+});
+router.get("/users/:id/conversations", messageController.getConversationsOfUser);
+router.get("/users/:id/messages/:otherId", messageController.getMessagesBetweenUsers);
+router.delete("/users/:id/conversations/:otherId", messageController.deleteConversation);
+
+router.get("/orders", async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT 
+        o.id AS order_id,
+        buyer.userName AS buyer_name,
+        seller.userName AS seller_name,
+        o.total_amount,
+        o.created_at
+      FROM orders o
+      JOIN users buyer ON o.user_id = buyer.id
+      JOIN users seller ON o.seller_id = seller.id
+      ORDER BY o.created_at DESC
+    `);
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch orders" });
+  }
+});
+router.delete("/orders/:id", async (req, res) => {
+  try {
+    await db.query("DELETE FROM orders WHERE id = ?", [req.params.id]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete order" });
+  }
+});
+
+router.get("/transactions", async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT 
+        t.id AS transaction_id,
+        users.userName AS user_name,
+        t.amount, t.transaction_type, t.status,
+        t.created_at
+      FROM transactions t
+      JOIN users ON t.user_id = users.id
+      ORDER BY t.created_at DESC
+    `);
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch transactions" });
+  }
+});
+router.delete("/transactions/:id", async (req, res) => {
+  try {
+    await db.query("DELETE FROM transactions WHERE id = ?", [req.params.id]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete transaction" });
   }
 });
 

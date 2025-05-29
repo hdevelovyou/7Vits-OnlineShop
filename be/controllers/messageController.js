@@ -157,11 +157,74 @@ async function getUnreadCounts(req, res) {
     }
 }
 
+// Lấy danh sách user đã nhắn tin với userId
+async function getConversationsOfUser(req, res) {
+  const userId = req.params.id;
+  try {
+    const [rows] = await db.query(
+      `SELECT DISTINCT 
+          CASE 
+            WHEN sender_id = ? THEN receiver_id
+            ELSE sender_id
+          END AS otherUserId,
+          u.userName, u.email
+        FROM messages m
+        JOIN users u ON u.id = CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END
+        WHERE m.sender_id = ? OR m.receiver_id = ?`,
+      [userId, userId, userId, userId]
+    );
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch conversations" });
+  }
+}
+//Lấy toàn bộ tin nhắn giữa 2 user
+async function getMessagesBetweenUsers(req, res) {
+    const userId1 = req.params.id;
+    const userId2 = req.params.otherId;
+
+    try {
+        const [rows] = await db.query(
+            `SELECT m.id, m.sender_id, m.receiver_id, m.message, m.created_at,
+                    u.userName AS senderUserName, u2.userName AS receiverUserName
+             FROM messages m
+             JOIN users u ON m.sender_id = u.id
+             JOIN users u2 ON m.receiver_id = u2.id
+             WHERE (m.sender_id = ? AND m.receiver_id = ?) 
+             OR (m.sender_id = ? AND m.receiver_id = ?)
+             ORDER BY m.created_at ASC`,
+            [userId1, userId2, userId2, userId1]
+        );
+        res.json(rows);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch messages' });
+    }
+}
+//Xóa cuộc trò chuyện giữa 2 user
+async function deleteConversation(req, res) {
+  const userId1 = req.params.id;
+  const userId2 = req.params.otherId;
+  try {
+    await db.query(
+      `DELETE FROM messages WHERE 
+        (sender_id = ? AND receiver_id = ?) 
+        OR (sender_id = ? AND receiver_id = ?)`,
+      [userId1, userId2, userId2, userId1]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete conversation" });
+  }
+}
+
 module.exports = {
     sendMessage,
     getMessages,
     getConversations,
     saveSocketMessage,
     markMessagesAsRead,
-    getUnreadCounts
+    getUnreadCounts,
+    getConversationsOfUser,
+    getMessagesBetweenUsers,
+    deleteConversation
 };
