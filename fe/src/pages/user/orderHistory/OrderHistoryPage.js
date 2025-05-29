@@ -15,14 +15,6 @@ const OrderHistoryPage = () => {
     totalItems: 0,
     itemsPerPage: 10
   });
-
-  const statusFilters = [
-    { value: 'all', label: 'Tất cả' },
-    { value: 'pending', label: 'Chờ xác nhận' },
-    { value: 'confirmed', label: 'Đã xác nhận' },
-    { value: 'cancelled', label: 'Đã hủy' }
-  ];
-
   const fetchOrders = async (page = 1, status = selectedStatus) => {
     try {
       setLoading(true);
@@ -63,10 +55,6 @@ const OrderHistoryPage = () => {
     fetchOrders(newPage, selectedStatus);
   };
 
-  const handleStatusChange = (status) => {
-    setSelectedStatus(status);
-  };
-
   const handleRetry = () => {
     setError(null);
     fetchOrders(1, selectedStatus);
@@ -100,17 +88,6 @@ const OrderHistoryPage = () => {
     <div className="order-history-page">
       <div className="page-header">
         <h1>Lịch sử đơn hàng</h1>
-        <div className="status-filters">
-          {statusFilters.map(filter => (
-            <button
-              key={filter.value}
-              className={selectedStatus === filter.value ? 'active' : ''}
-              onClick={() => handleStatusChange(filter.value)}
-            >
-              {filter.label}
-            </button>
-          ))}
-        </div>
       </div>
 
       <div className="orders-container">

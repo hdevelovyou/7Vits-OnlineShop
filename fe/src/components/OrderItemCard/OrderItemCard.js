@@ -110,17 +110,13 @@ const OrderItemCard = ({ item, orderStatus }) => {
 
       <div className="item-details">
         <h3 className="item-name">{orderItem.product_name}</h3>
-        <div className="item-info">
-          <div className="price-info">
-            <div className="item-price">
-              <span className="label">Đơn giá:</span>
-              <span className="price">{formatCurrency(orderItem.price)}</span>
-            </div>
-            <div className="item-quantity">
-              <span className="label">Số lượng:</span>
-              <span className="quantity">{orderItem.quantity || 1}</span>
-            </div>
+        {orderItem.notes && (
+          <div className="item-notes">
+            <span className="notes-label">Thông tin sản phẩm:</span>
+            <span className="notes-content">{orderItem.notes}</span>
           </div>
+        )}
+        <div className="item-info">
           <div className="item-total">
             <span className="label">Thành tiền:</span>
             <span className="total">

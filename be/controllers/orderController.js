@@ -318,6 +318,7 @@ const orderController = {
                         p.name as product_name,
                         p.seller_id, 
                         p.image_url,
+                        p.notes,
                         oi.price,
                         oi.price as total
                     FROM order_items oi

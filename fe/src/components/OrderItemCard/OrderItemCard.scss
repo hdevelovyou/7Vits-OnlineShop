@@ -1,34 +1,34 @@
 .order-item-card {
   display: flex;
-  padding: 20px;
+  padding: 2rem;
   background: #000;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-radius: 1.2rem;
+  margin-bottom: 1.6rem;
+  box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.08);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transform: translateY(-0.2rem);
+    box-shadow: 0 0.4rem 1.2rem rgba(0, 0, 0, 0.12);
   }
 
   @media (max-width: 768px) {
     flex-direction: column;
-    gap: 16px;
+    gap: 1.6rem;
   }
 
   .item-image {
-    width: 120px;
-    height: 120px;
+    width: 12rem;
+    height: 12rem;
     flex-shrink: 0;
-    margin-right: 24px;
-    border-radius: 8px;
+    margin-right: 2.4rem;
+    border-radius: 0.8rem;
     overflow: hidden;
-    border: 1px solid #eee;
+    border: 0.1rem solid #eee;
 
     @media (max-width: 768px) {
       width: 100%;
-      height: 200px;
+      height: 20rem;
       margin-right: 0;
     }
 
@@ -50,20 +50,39 @@
     flex-direction: column;
 
     .item-name {
-      font-size: 1.2rem;
+      font-size: 3rem;
       font-weight: 600;
-      color: #2c3e50;
-      margin-bottom: 12px;
+      color: #ff0000;
+      margin-bottom: 1.2rem;
+    }
+
+    .item-notes {
+      margin-bottom: 1.2rem;
+      padding: 1rem;
+      border-radius: 0.6rem;
+
+      .notes-label {
+        font-weight: 600;
+        color: #ff0000;
+        font-size: 1.4rem;
+        margin-right: 0.8rem;
+      }
+
+      .notes-content {
+        color: #ffffff;
+        font-size: 1.4rem;
+        line-height: 1.5;
+      }
     }
 
     .item-info {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 1.2rem;
 
       .price-info {
         display: flex;
-        gap: 24px;
+        gap: 2.4rem;
         flex-wrap: wrap;
       }
 
@@ -72,11 +91,12 @@
       .item-total {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 0.8rem;
 
         .label {
-          color: #666;
-          font-size: 0.9rem;
+          color: #ffffff;
+          font-size: 2rem;
+          font-weight: 600;
         }
 
         .price,
@@ -88,7 +108,7 @@
 
         .total {
           color: #e74c3c;
-          font-size: 1.1rem;
+          font-size: 3rem;
         }
       }
     }
@@ -96,7 +116,7 @@
 
   .item-actions {
     display: flex;
-    gap: 12px;
+    gap: 1.2rem;
     margin-left: auto;
     align-items: flex-start;
 
@@ -106,9 +126,9 @@
     }
 
     button {
-      padding: 8px 16px;
+      padding: 0.8rem 1.6rem;
       border: none;
-      border-radius: 6px;
+      border-radius: 0.6rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
