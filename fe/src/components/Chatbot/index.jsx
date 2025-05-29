@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './style.scss';
 
 const Chatbot = () => {
+    const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
         {
@@ -161,6 +163,11 @@ const Chatbot = () => {
     const handleQuickQuestion = (question) => {
         setInputMessage(question);
     };
+
+    // Ẩn chatbot nếu đang ở trang /chat
+    if (location.pathname.startsWith('/chat')) {
+        return null;
+    }
 
     return (
         <div className="chatbot-container">

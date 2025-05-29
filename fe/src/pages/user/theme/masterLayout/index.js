@@ -144,7 +144,7 @@ const MasterLayout = ({ children }) => {
 
             {!isChatPage && isLoggedIn &&(
                 <div className="chat" >
-                    <ChatButton />
+                    <ChatButton unreadConversations={unreadConversations} />
                 </div>
             )}
         </div>
