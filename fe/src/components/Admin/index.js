@@ -42,7 +42,7 @@ const AdminPage = () => {
     }
 
     const handleSwitchRole = () => {
-        navigate("/");
+        window.location.replace("/");
     }
 
     const handleLogOut = () => {

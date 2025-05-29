@@ -2,16 +2,17 @@ import { memo, useEffect, useState } from "react";
 import axios from "axios";
 import "./style.scss";
 import adobe from '../../../assets/images/adobe.png';
+import Rating from '../../../components/rating/rating'
 import logofc from '../../../assets/images/logofc.png';
 import League_of_Legends_2019_vector from '../../../assets/images/League_of_Legends_2019_vector.png';
 import steam_logo from '../../../assets/images/steam_logo.png';
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { Link } from "react-router-dom";
-import { formatVND } from "../../../utils/formatprice"; 
+import { formatVND } from "../../../utils/formatprice";
 // Danh sách các danh mục
 const categories = ["New Arrivals", "Best Sellers", "Discounted Items"];
 
-const Homepage = ({user}) => {
+const Homepage = ({ user }) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -42,16 +43,16 @@ const Homepage = ({user}) => {
     // Xử lý đường dẫn hình ảnh
     const getImageUrl = (imageUrl) => {
         if (!imageUrl) return "https://via.placeholder.com/300x300?text=No+Image";
-        
+
         // Xử lý ảnh base64
         if (imageUrl.startsWith('data:image')) {
             return imageUrl;
         }
-        
+
         if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
             return imageUrl;
         }
-        
+
         return `${process.env.REACT_APP_API_URL}${imageUrl}`;
     };
 
@@ -66,7 +67,7 @@ const Homepage = ({user}) => {
                             <p className="text-title">We are committed to delivering top quality</p>
                             <a href="#Linkpro" className="btn-shop">SHOP NOW</a>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
@@ -107,10 +108,10 @@ const Homepage = ({user}) => {
                                                     className="home-product-item"
                                                     style={{ display: "block", textDecoration: "none" }}
                                                 >
-                                                    <img 
-                                                        src={getImageUrl(product.image_url)} 
-                                                        alt={product.name} 
-                                                        className="home-product-item_img" 
+                                                    <img
+                                                        src={getImageUrl(product.image_url)}
+                                                        alt={product.name}
+                                                        className="home-product-item_img"
                                                         onError={(e) => {
                                                             console.log("Lỗi hình ảnh:", product.image_url);
                                                             e.target.src = "https://via.placeholder.com/300x300?text=No+Image";
@@ -123,23 +124,41 @@ const Homepage = ({user}) => {
                                                             <i className="fa-solid fa-store"></i> {product.seller_name || "Unknown Seller"}
                                                         </p>
                                                         <p className="mota-name home-product-item_rating">
-                                                            <div children="home-product-item_rating-star">
-                                                            <i className="fa-solid fa-star active"></i>
-                                                            <i className="fa-solid fa-star active"></i>
-                                                            <i className="fa-solid fa-star active"></i>
-                                                            <i className="fa-solid fa-star active"></i>
-                                                            <i className="fa-solid fa-star"></i>
-                                                            <span className="rating-number">(4)</span>
+
+
+                                                            <div className="home-product-item_rating-star">
+                                                                {product.rating_count > 0 ? (
+                                                                    <>
+                                                                        {Array.from({ length: 5 }).map((_, index) => {
+                                                                            const starValue = index + 1;
+                                                                            if (starValue <= Math.floor(product.average_rating)) {
+                                                                                return <span key={index} className="star full">★</span>;
+                                                                            } else if (
+                                                                                starValue === Math.ceil(product.average_rating) &&
+                                                                                product.average_rating % 1 !== 0
+                                                                            ) {
+                                                                                return <span key={index} className="star half">★</span>;
+                                                                            } else {
+                                                                                return <span key={index} className="star empty">★</span>; // dùng sao đầy nhưng màu xám
+                                                                            }
+                                                                        })}
+                                                                        <span className="rating-number">({Number(product.average_rating).toFixed(1)})</span>
+                                                                    </>
+                                                                ) : (
+                                                                    <span>Chưa có đánh giá</span>
+                                                                )}
                                                             </div>
-                                                          
-                                                        
-                                                        <div className="home-product-item_price">
-                                                            <span className="mota-name home-product-item_price-new">
-                                                                {formatVND(product.price)}
-                                                            </span>
-                                                        </div>
+
+
+
+
+                                                            <div className="home-product-item_price">
+                                                                <span className="mota-name home-product-item_price-new">
+                                                                    {formatVND(product.price)}
+                                                                </span>
+                                                            </div>
                                                         </p>
-                                                        
+
                                                     </div>
                                                 </Link>
                                             </div>

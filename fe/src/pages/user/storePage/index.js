@@ -270,18 +270,33 @@ const StorePage = () => {
                                                         product.description) : 
                                                     "Không có mô tả"}
                                             </p>
-                                            <div className="product-rating">
-                                                {[...Array(5)].map((_, i) => (
-                                                    <i 
-                                                        key={i}
-                                                        className={`fa-solid fa-star ${i < (product.rating || 4) ? 'active' : ''}`}
-                                                    ></i>
-                                                ))}
-                                                <span className="rating-number">({product.rating || 4})</span>
+                                            <div className="product-rating-price">
+                                            <div className="product-rating ">
+                                                {product.rating_count > 0 ? (
+                                                                    <>
+                                                                        {Array.from({ length: 5 }).map((_, index) => {
+                                                                            const starValue = index + 1;
+                                                                            if (starValue <= Math.floor(product.average_rating)) {
+                                                                                return <span key={index} className="star full">★</span>;
+                                                                            } else if (
+                                                                                starValue === Math.ceil(product.average_rating) &&
+                                                                                product.average_rating % 1 !== 0
+                                                                            ) {
+                                                                                return <span key={index} className="star half">★</span>;
+                                                                            } else {
+                                                                                return <span key={index} className="star empty">★</span>; // dùng sao đầy nhưng màu xám
+                                                                            }
+                                                                        })}
+                                                                        <span className="rating-number">({Number(product.average_rating).toFixed(1)})</span>
+                                                                    </>
+                                                                ) : (
+                                                                    <span>Chưa có đánh giá</span>
+                                                                )}
                                             </div>
                                             <div className="product-price">
                                                 
                                                 <span className="current-price">{formatVND(product.price)}</span>
+                                            </div>
                                             </div>
                                         </div>
                                     </Link>

@@ -24,7 +24,7 @@ const ProductPage = ({ cart, setCart }) => {
                 const response = await axios.get(`/api/products/${id}`);
                 console.log("Chi tiết sản phẩm:", response.data);
 
-                                if (response.data) {                    setProduct({                        ...response.data,                        images: response.data.image_url ? [response.data.image_url] : [],                        rating: response.data.rating !== undefined ? response.data.rating : 4,                        sold: response.data.sold_count !== undefined ? response.data.sold_count : 0,                        stock: response.data.stock !== undefined ? response.data.stock : 0,                        features: response.data.features ? response.data.features : [],                        originalPrice: response.data.price * 1.2                    });                } else {                    setError("Không tìm thấy thông tin sản phẩm");                    navigate("/");                }
+                if (response.data) { setProduct({ ...response.data, images: response.data.image_url ? [response.data.image_url] : [], rating: response.data.rating !== undefined ? response.data.rating : 4, sold: response.data.sold_count !== undefined ? response.data.sold_count : 0, stock: response.data.stock !== undefined ? response.data.stock : 0, features: response.data.features ? response.data.features : [], originalPrice: response.data.price * 1.2 }); } else { setError("Không tìm thấy thông tin sản phẩm"); navigate("/"); }
             } catch (error) {
                 console.error("Lỗi khi tải sản phẩm:", error);
                 setError("Đã xảy ra lỗi khi tải thông tin sản phẩm");
@@ -122,7 +122,7 @@ const ProductPage = ({ cart, setCart }) => {
 
         // Check if item is already in cart
         const existingItemIndex = cart.findIndex(cartItem => cartItem.id === item.id);
-        
+
         let updatedCart;
         if (existingItemIndex >= 0) {
             // Item already in cart - just replace it
@@ -165,7 +165,7 @@ const ProductPage = ({ cart, setCart }) => {
 
         // Check if item is already in cart
         const existingItemIndex = cart.findIndex(cartItem => cartItem.id === item.id);
-        
+
         let updatedCart;
         if (existingItemIndex >= 0) {
             // Item already in cart - just replace it
@@ -180,7 +180,7 @@ const ProductPage = ({ cart, setCart }) => {
 
         // Save to localStorage for persistence
         localStorage.setItem("cart", JSON.stringify(updatedCart));
-        
+
         // Chuyển đến trang giỏ hàng
         navigate('/gio-hang');
     };
@@ -239,7 +239,7 @@ const ProductPage = ({ cart, setCart }) => {
                                         e.target.src = "https://via.placeholder.com/300x300?text=No+Image";
                                     }}
                                 />
-                               
+
                             </div>
                             {product.images && product.images.length > 1 && (
                                 <div className="thumbnail-list">
@@ -275,28 +275,31 @@ const ProductPage = ({ cart, setCart }) => {
                                     </button>
                                 </div>
                                 <div className="product-rating">
-                                    <div className="rating-section">
-                                        <h3>Đánh giá sản phẩm</h3>
-                                        {userId ? (
-                                            <div className="rating-form">
-                                                {[...Array(5)].map((_, idx) => (
-                                                    <i
-                                                        key={idx}
-                                                        className={`fa-star ${idx < selectedRating ? 'fas active' : 'far'}`}
-                                                        onClick={() => setSelectedRating(idx + 1)}
-                                                        style={{ fontSize: '24px', cursor: 'pointer', color: idx < selectedRating ? '#ffc107' : '#ccc' }}
-                                                    ></i>
-                                                ))}
-                                                <button onClick={submitRating} className="submit-rating-btn">Gửi đánh giá</button>
-                                            </div>
-                                        ) : (
-                                            <p>Vui lòng đăng nhập để đánh giá sản phẩm.</p>
-                                        )}
-                                    </div>
-                                    <span className="rating-number">{product.rating}/5</span>
-                                    <span className="divider">|</span>
-                                    <span className="sold">{product.sold?.toLocaleString() || 0} Đã Bán</span>
+
+                                    {product.rating_count > 0 ? (
+                                        <>
+                                            {Array.from({ length: 5 }).map((_, index) => {
+                                                const starValue = index + 1;
+                                                if (starValue <= Math.floor(product.average_rating)) {
+                                                    return <span key={index} className="star full">★</span>;
+                                                } else if (
+                                                    starValue === Math.ceil(product.average_rating) &&
+                                                    product.average_rating % 1 !== 0
+                                                ) {
+                                                    return <span key={index} className="star half">★</span>;
+                                                } else {
+                                                    return <span key={index} className="star empty">★</span>; // dùng sao đầy nhưng màu xám
+                                                }
+                                            })}
+                                            <span className="rating-number">({Number(product.average_rating).toFixed(1)})</span>
+                                        </>
+                                    ) : (
+                                        <span>Chưa có đánh giá</span>
+                                    )}
+
+
                                 </div>
+
                                 <div className="product-stock-info">
                                     <div className="stock-status">
                                         <i className={`fa-solid ${product.status === 'sold_out' || product.stock <= 0 ? 'fa-xmark' : 'fa-check'}`}></i>
@@ -309,10 +312,10 @@ const ProductPage = ({ cart, setCart }) => {
 
                             <div className="product-price">
                                 <div className="price-info">
-                                    
+
                                     <span className="new-price">{formatPrice(product.price)}</span>
                                 </div>
-                               
+
                             </div>
 
                             {product.description && (
@@ -338,29 +341,29 @@ const ProductPage = ({ cart, setCart }) => {
 
                             <div className="product-actions">
                                 <div className="action-buttons">
-                                    <button 
-                                        className="buy-now-btn" 
+                                    <button
+                                        className="buy-now-btn"
                                         disabled={product.status === 'sold_out' || product.stock <= 0 || (user && user.id === product.seller_id)}
                                         onClick={handleBuyNow}
                                     >
                                         <i className="fa-solid fa-bolt-lightning"></i>
-                                        {user && user.id === product.seller_id 
+                                        {user && user.id === product.seller_id
                                             ? 'Không thể tự mua'
-                                            : (product.status === 'sold_out' || product.stock <= 0) 
-                                                ? 'Hết hàng' 
+                                            : (product.status === 'sold_out' || product.stock <= 0)
+                                                ? 'Hết hàng'
                                                 : 'Mua ngay'
                                         }
                                     </button>
-                                    <button 
-                                        onClick={addToCart} 
+                                    <button
+                                        onClick={addToCart}
                                         className="add-to-cart-btn"
                                         disabled={product.status === 'sold_out' || product.stock <= 0 || (user && user.id === product.seller_id)}
                                     >
                                         <i className="fa-solid fa-cart-plus"></i>
-                                        {user && user.id === product.seller_id 
+                                        {user && user.id === product.seller_id
                                             ? 'Không thể tự mua'
-                                            : (product.status === 'sold_out' || product.stock <= 0) 
-                                                ? 'Hết hàng' 
+                                            : (product.status === 'sold_out' || product.stock <= 0)
+                                                ? 'Hết hàng'
                                                 : 'Thêm vào giỏ hàng'
                                         }
                                     </button>

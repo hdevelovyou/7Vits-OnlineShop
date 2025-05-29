@@ -2,32 +2,35 @@ const db = require('../config/connectDB');
 
 // Get all products
 exports.getAllProducts = async (req, res) => {
-    try {
-        // Cập nhật truy vấn để lấy số lượng đã bán cho mỗi sản phẩm
-        const sql = `SELECT p.*, u.userName as seller_name,
-                     (SELECT SUM(oi.quantity) 
-                      FROM order_items oi 
-                      JOIN orders o ON oi.order_id = o.id 
-                      WHERE oi.product_id = p.id AND o.status IN ('completed', 'processing')
-                     ) as sold_count
-                     FROM products p 
-                     JOIN users u ON p.seller_id = u.id 
-                     WHERE p.status = 'active' 
-                     ORDER BY p.created_at DESC`;
-        
-        const [results] = await db.query(sql);
-        
-        // Chuyển đổi null thành 0 cho các sản phẩm chưa có đơn hàng
-        results.forEach(product => {
-            if (product.sold_count === null) {
-                product.sold_count = 0;
-            }
-        });
-        
-        res.json(results);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+  try {
+    const sql = `
+      SELECT p.*, u.userName as seller_name,
+        (SELECT SUM(oi.quantity)
+         FROM order_items oi
+         JOIN orders o ON oi.order_id = o.id
+         WHERE oi.product_id = p.id AND o.status IN ('completed', 'processing')
+        ) as sold_count,
+        COALESCE(AVG(r.rating), 0) as average_rating,
+        COUNT(r.rating) as rating_count
+      FROM products p
+      JOIN users u ON p.seller_id = u.id
+      LEFT JOIN ratings r ON p.id = r.product_id
+      WHERE p.status = 'active'
+      GROUP BY p.id
+      ORDER BY p.created_at DESC
+    `;
+
+    const [results] = await db.query(sql);
+
+    results.forEach(product => {
+      if (product.sold_count === null) product.sold_count = 0;
+      product.average_rating = parseFloat(product.average_rating).toFixed(1);
+    });
+
+    res.json(results);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
 // Get a single product by ID

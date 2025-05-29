@@ -108,8 +108,8 @@ app.use(passport.session());
 // Routes
 app.use("/api/auth", authRouter);
 app.use("/api/comments", commentRoutes);
-app.use('/api/ratings', ratingRoutes);
 app.use('/api', productRoutes);
+app.use('/api/products', ratingRoutes);
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/topup', vnpayRoutes);
 app.use('/api', require('./routes/api'));

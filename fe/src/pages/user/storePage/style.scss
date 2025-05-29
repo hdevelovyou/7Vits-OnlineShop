@@ -1,8 +1,44 @@
 // Store Page Styles
+.product-rating-price{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
 .store-page {
     padding-top: 200px;
     min-height: 100vh;
     background-color: #000000;
+}
+.product-rating .star {
+  font-size: 18px;
+  position: relative;
+  color: #ccc; /* màu xám cho sao rỗng */
+  display: inline-block;
+  margin-right: 2px;
+}
+
+/* Sao đầy màu vàng */
+.product-rating .star.full {
+  color: gold;
+}
+
+/* Nửa sao - dùng linear-gradient để tô 50% màu vàng */
+.product-rating .star.half {
+  color: #ccc; /* màu xám nền */
+}
+
+.product-rating .star.half::before {
+  content: '★';
+  color: gold;
+  position: absolute;
+  left: 0;
+  width: 50%;
+  overflow: hidden;
+  top: 0;
+  height: 100%;
+  display: inline-block;
+  pointer-events: none;
 }
 
 .store-container {
@@ -252,7 +288,7 @@
                 }
                 
                 .product-rating {
-                    margin-bottom: 10px;
+              
                     display: flex;
                     align-items: center;
                     

@@ -251,8 +251,6 @@ $border-radius: 8px;
   @include flex($justify: space-between);
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: $border-radius;
-  width: 100%;
-  padding-bottom: 15px;
   .price-info {
     @include flex($direction: row, $align: flex-start ,$gap: 10px);
     

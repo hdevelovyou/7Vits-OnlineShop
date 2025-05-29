@@ -8,6 +8,36 @@ html {
         max-width: 100%;
         position: relative;
 }
+.home-product-item_rating-star .star {
+  font-size: 18px;
+  position: relative;
+  color: #ccc; /* màu xám cho sao rỗng */
+  display: inline-block;
+  margin-right: 2px;
+}
+
+/* Sao đầy màu vàng */
+.home-product-item_rating-star .star.full {
+  color: gold;
+}
+
+/* Nửa sao - dùng linear-gradient để tô 50% màu vàng */
+.home-product-item_rating-star .star.half {
+  color: #ccc; /* màu xám nền */
+}
+
+.home-product-item_rating-star .star.half::before {
+  content: '★';
+  color: gold;
+  position: absolute;
+  left: 0;
+  width: 50%;
+  overflow: hidden;
+  top: 0;
+  height: 100%;
+  display: inline-block;
+  pointer-events: none;
+}
 
 #section-1 {
         position: absolute;

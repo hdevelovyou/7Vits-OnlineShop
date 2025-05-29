@@ -115,7 +115,7 @@ const OrderItemCard = ({ item, orderStatus }) => {
             onClick={() => handleConfirmOrder(item.order_id)}
           >
             Xác nhận
-          </button>
+          </button> 
         </div>
       )}
     </div>
