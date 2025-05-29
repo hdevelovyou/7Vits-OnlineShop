@@ -723,6 +723,14 @@ const orderController = {
         try {
             const userId = req.user.id;
             const [wallet] = await db.query('SELECT balance FROM user_wallets WHERE user_id = ?', [userId]);
+            
+            // Kiểm tra nếu người dùng chưa có ví
+            if (!wallet || wallet.length === 0) {
+                // Tạo ví mới với số dư 0
+                await db.query('INSERT INTO user_wallets (user_id, balance, locked_balance) VALUES (?, 0, 0)', [userId]);
+                return res.json({ balance: 0 });
+            }
+
             res.json({ balance: wallet[0].balance });
         } catch (error) {
             console.error('Get wallet balance error:', error);

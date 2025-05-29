@@ -2,7 +2,7 @@ import React from 'react';
 import OrderItemCard from '../OrderItemCard/OrderItemCard';
 import './OrderCard.scss';
 
-const OrderCard = ({ order, onViewDetails }) => {
+const OrderCard = ({ order, onViewDetails, onConfirm, onReject }) => {
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('vi-VN', {
       year: 'numeric',
@@ -23,10 +23,12 @@ const OrderCard = ({ order, onViewDetails }) => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'pending':
+      case 'processing':
         return 'status-pending';
       case 'completed':
         return 'status-completed';
       case 'cancelled':
+      case 'refunded':
         return 'status-cancelled';
       default:
         return '';
@@ -36,14 +38,20 @@ const OrderCard = ({ order, onViewDetails }) => {
   const getStatusText = (status) => {
     switch (status) {
       case 'pending':
-        return 'Chờ xác nhận';
+      case 'processing':
+        return 'Đang chờ xác nhận';
       case 'completed':
         return 'Đã hoàn thành';
       case 'cancelled':
+      case 'refunded':
         return 'Đã hủy';
       default:
         return status;
     }
+  };
+
+  const showActionButtons = (status) => {
+    return status === 'pending' || status === 'processing';
   };
 
   return (
@@ -76,12 +84,30 @@ const OrderCard = ({ order, onViewDetails }) => {
           <span>Tổng tiền:</span>
           <span className="total-amount">{formatCurrency(order.total_amount)}</span>
         </div>
-        <button 
-          className="view-details-btn"
-          onClick={() => onViewDetails(order.order_id)}
-        >
-          Xem chi tiết
-        </button>
+        <div className="order-actions">
+          {showActionButtons(order.order_status) && (
+            <>
+              <button 
+                className="confirm-btn"
+                onClick={() => onConfirm(order.order_id)}
+              >
+                Xác nhận
+              </button>
+              <button 
+                className="reject-btn"
+                onClick={() => onReject(order.order_id)}
+              >
+                Từ chối
+              </button>
+            </>
+          )}
+          <button 
+            className="view-details-btn"
+            onClick={() => onViewDetails(order.order_id)}
+          >
+            Xem chi tiết
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -87,6 +87,10 @@ const OrderItemCard = ({ item, orderStatus }) => {
     }
   };
 
+  const showActionButtons = (status) => {
+    return status === 'pending' || status === 'processing';
+  };
+
   if (!item || !orderItem) {
     return null;
   }
@@ -146,7 +150,7 @@ const OrderItemCard = ({ item, orderStatus }) => {
         </div>
       )}
 
-      {orderStatus === 'pending' && (
+      {showActionButtons(orderStatus) && (
         <div className="item-actions">
           <button
             className="reject-btn"

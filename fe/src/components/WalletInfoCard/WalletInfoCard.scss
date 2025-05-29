@@ -1,1 +1,140 @@
- 
+.wallet-info-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+
+  .wallet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e9ecef;
+
+    h2 {
+      color: #212529;
+      margin: 0;
+      font-size: 1.5rem;
+    }
+  }
+
+  .wallet-balance {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+
+    .balance-label {
+      color: #6c757d;
+      font-size: 1rem;
+    }
+
+    .balance-amount {
+      color: #28a745; // Màu xanh lá cho số dư
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .insufficient-balance {
+      color: #dc3545; // Màu đỏ cho thông báo lỗi
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+  }
+
+  .wallet-actions {
+    display: flex;
+    gap: 12px;
+
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+
+      &.topup-btn {
+        background-color: #28a745;
+        color: white;
+
+        &:hover {
+          background-color: #218838;
+        }
+      }
+
+      &.withdraw-btn {
+        background-color: #dc3545;
+        color: white;
+
+        &:hover {
+          background-color: #c82333;
+        }
+      }
+    }
+  }
+
+  .transaction-history {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+
+    h3 {
+      color: #212529;
+      margin-bottom: 12px;
+      font-size: 1.2rem;
+    }
+
+    .transaction-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .transaction-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px;
+        border-radius: 4px;
+        background-color: #f8f9fa;
+
+        .transaction-info {
+          .transaction-type {
+            font-weight: 500;
+            color: #212529;
+          }
+
+          .transaction-date {
+            font-size: 0.875rem;
+            color: #6c757d;
+          }
+        }
+
+        .transaction-amount {
+          font-weight: 500;
+
+          &.deposit {
+            color: #28a745; // Màu xanh lá cho nạp tiền
+          }
+
+          &.withdraw {
+            color: #dc3545; // Màu đỏ cho rút tiền
+          }
+        }
+      }
+    }
+  }
+
+  // Responsive styles
+  @media (max-width: 768px) {
+    .wallet-actions {
+      flex-direction: column;
+      
+      button {
+        width: 100%;
+      }
+    }
+  }
+} 
