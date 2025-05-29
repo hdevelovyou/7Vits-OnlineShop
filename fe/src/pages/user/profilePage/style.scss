@@ -315,13 +315,12 @@ $success-color: #4caf50;  // Green for success messages
     .wallet-info {
         margin-top: 24px;
         padding: 20px;
-        background: #f8f9fa;
+        background: #555555;
         border-radius: 8px;
-        border: 1px solid #e9ecef;
 
         h2 {
             font-size: 1.2rem;
-            color: #212529;
+            color: #ffffff;
             margin-bottom: 16px;
         }
 
@@ -423,14 +422,14 @@ $success-color: #4caf50;  // Green for success messages
     align-items: center;
     gap: 10px;
     padding: 12px 20px;
-    background-color: #f8f9fa;
+    background-color: #555555;
     border-radius: 8px;
     color: #333;
     text-decoration: none;
     transition: all 0.3s ease;
 
     &:hover {
-      background-color: #e9ecef;
+      background-color: #666666;
       transform: translateY(-2px);
     }
 
