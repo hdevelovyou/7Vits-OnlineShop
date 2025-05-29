@@ -4,6 +4,9 @@
   border-collapse: separate;
   border-spacing: 0 12px; // tạo khoảng cách giữa các row
   thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
     background: #220a0a;
     color: #ff0000;
     border-top: 2px solid #ff0000;
