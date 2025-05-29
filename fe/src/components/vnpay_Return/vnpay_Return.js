@@ -181,7 +181,7 @@ const VnpayReturn = () => {
 
   const handleBackToHome = () => {
     localStorage.removeItem('vnpay_payment_timestamp');
-    window.location.href = '/gio-hang';
+    window.location.href = '/';
   };
 
   if (paymentResult.loading) {
