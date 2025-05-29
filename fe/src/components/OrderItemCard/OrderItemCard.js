@@ -8,6 +8,8 @@ const OrderItemCard = ({ item, orderStatus }) => {
   const [userRating, setUserRating] = useState(0);
   const [ratingSent, setRatingSent] = useState(false);
 
+  // Lấy thông tin sản phẩm từ order_items array
+  const orderItem = item.order_items && item.order_items[0];
   const formatCurrency = (amount) => {
     if (!amount || isNaN(amount)) {
       return '0 ₫';
@@ -17,12 +19,13 @@ const OrderItemCard = ({ item, orderStatus }) => {
       currency: 'VND'
     }).format(amount);
   };
-
-  const handleVoteProduct = async (sellerId) => {
+  const handleVoteProduct = async () => {
     try {
+      console.log('orderItem:', orderItem);
+
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/sellers/${sellerId}/rating`,
+        `${process.env.REACT_APP_API_URL}/api/sellers/${orderItem.seller_id}/rating`,
         { rating: userRating },
         {
           headers: {
@@ -36,6 +39,7 @@ const OrderItemCard = ({ item, orderStatus }) => {
       alert(err.response?.data?.error || 'Lỗi khi gửi đánh giá');
     }
   };
+
 
   const handleRejectOrder = async (orderId) => {
     try {
@@ -87,41 +91,22 @@ const OrderItemCard = ({ item, orderStatus }) => {
     return status === 'pending' || status === 'processing';
   };
 
-  if (!item || !item.order_items || item.order_items.length === 0) {
+  if (!item || !orderItem) {
     return null;
   }
 
-  const totalAmount = item.order_items.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
-
   return (
     <div className="order-item-card">
-      <div className="order-header">
-        <div className="order-info">
-          <span className="order-id">Đơn hàng #{item.order_id}</span>
-          <span className="order-date">{new Date(item.order_date).toLocaleDateString('vi-VN')}</span>
-        </div>
-        <div className="order-status">
-          <span className={`status-badge ${item.order_status}`}>
-            {item.order_status === 'pending' ? 'Chờ xác nhận' :
-             item.order_status === 'completed' ? 'Đã hoàn thành' :
-             item.order_status === 'cancelled' ? 'Đã hủy' : item.order_status}
-          </span>
-        </div>
+      <div className="item-image">
+        <img
+          src={orderItem.image_url || placeholderImg}
+          alt={orderItem.product_name || 'Sản phẩm'}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = placeholderImg;
+          }}
+        />
       </div>
-
-      <div className="items-list">
-        {item.order_items.map((orderItem, index) => (
-          <div key={index} className="item-row">
-            <div className="item-image">
-              <img
-                src={orderItem.image_url || placeholderImg}
-                alt={orderItem.product_name || 'Sản phẩm'}
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = placeholderImg;
-                }}
-              />
-            </div>
 
       <div className="item-details">
         <h3 className="item-name">{orderItem.product_name}</h3>
@@ -161,23 +146,24 @@ const OrderItemCard = ({ item, orderStatus }) => {
         </div>
       )}
 
-        {showActionButtons(item.order_status) && (
-          <div className="item-actions">
-            <button
-              className="reject-btn"
-              onClick={() => handleRejectOrder(item.order_id)}
-            >
-              Từ chối
-            </button>
-            <button
-              className="confirm-btn"
-              onClick={() => handleConfirmOrder(item.order_id)}
-            >
-              Xác nhận
-            </button>
-          </div>
-        )}
-      </div>
+      {showActionButtons(orderStatus) && (
+        <div className="item-actions">
+          <button
+            className="reject-btn"
+            onClick={() => handleRejectOrder(item.order_id)}
+          >
+            Từ chối
+          </button>
+          <button
+            className="confirm-btn"
+            onClick={() => handleConfirmOrder(item.order_id)}
+          >
+            Xác nhận
+          </button>
+
+
+        </div>
+      )}
     </div>
   );
 };
