@@ -6,7 +6,7 @@ import CommentSection from "../../../components/comment/comment";
 import "./style.scss";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { formatVND } from "../../../utils/formatprice";
-
+import SellerRatingDisplay from "../../../components/rating/rating"
 const ProductPage = ({ cart, setCart }) => {
     const { id } = useParams();
     const { user } = useAuth();
@@ -275,28 +275,9 @@ const ProductPage = ({ cart, setCart }) => {
                                     </button>
                                 </div>
                                 <div className="product-rating">
-
-                                    {product.rating_count > 0 ? (
-                                        <>
-                                            {Array.from({ length: 5 }).map((_, index) => {
-                                                const starValue = index + 1;
-                                                if (starValue <= Math.floor(product.average_rating)) {
-                                                    return <span key={index} className="star full">★</span>;
-                                                } else if (
-                                                    starValue === Math.ceil(product.average_rating) &&
-                                                    product.average_rating % 1 !== 0
-                                                ) {
-                                                    return <span key={index} className="star half">★</span>;
-                                                } else {
-                                                    return <span key={index} className="star empty">★</span>; // dùng sao đầy nhưng màu xám
-                                                }
-                                            })}
-                                            <span className="rating-number">({Number(product.average_rating).toFixed(1)})</span>
-                                        </>
-                                    ) : (
-                                        <span>Chưa có đánh giá</span>
-                                    )}
-
+                                    
+                                 <span>Đánh giá từ shop</span>
+                                 <SellerRatingDisplay sellerId={product.seller_id}/>
 
                                 </div>
 

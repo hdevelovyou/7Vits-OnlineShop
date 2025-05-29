@@ -97,9 +97,9 @@ const RouterCustom = () => {
             </Routes>
         );
     }
-
-    //Các routes còn lại
+  //Các routes còn lại
     return renderUserRoutes();
+  
 }
 
 export default RouterCustom;

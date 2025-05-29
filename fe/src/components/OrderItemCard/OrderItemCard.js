@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './OrderItemCard.scss';
+import Rating from '../../components/rating/rating'
 import placeholderImg from '../../assets/images/placeholder.png';
 
 const OrderItemCard = ({ item, orderStatus }) => {
+  const [userRating, setUserRating] = useState(0);
+  const [ratingSent, setRatingSent] = useState(false);
+
   // Lấy thông tin sản phẩm từ order_items array
   const orderItem = item.order_items && item.order_items[0];
-
   const formatCurrency = (amount) => {
     if (!amount || isNaN(amount)) {
       return '0 ₫';
@@ -16,6 +19,27 @@ const OrderItemCard = ({ item, orderStatus }) => {
       currency: 'VND'
     }).format(amount);
   };
+  const handleVoteProduct = async () => {
+    try {
+      console.log('orderItem:', orderItem);
+
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/sellers/${orderItem.seller_id}/rating`,
+        { rating: userRating },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      alert('Cảm ơn bạn đã đánh giá!');
+      setRatingSent(true);
+    } catch (err) {
+      alert(err.response?.data?.error || 'Lỗi khi gửi đánh giá');
+    }
+  };
+
 
   const handleRejectOrder = async (orderId) => {
     try {
@@ -29,7 +53,7 @@ const OrderItemCard = ({ item, orderStatus }) => {
           }
         }
       );
-      
+
       if (response.data.success) {
         alert('Đã từ chối đơn hàng thành công');
         window.location.reload();
@@ -52,7 +76,7 @@ const OrderItemCard = ({ item, orderStatus }) => {
           }
         }
       );
-      
+
       if (response.data.success) {
         alert('Đã xác nhận đơn hàng thành công');
         window.location.reload();
@@ -70,16 +94,16 @@ const OrderItemCard = ({ item, orderStatus }) => {
   return (
     <div className="order-item-card">
       <div className="item-image">
-        <img 
-          src={orderItem.image_url || placeholderImg} 
-          alt={orderItem.product_name || 'Sản phẩm'} 
+        <img
+          src={orderItem.image_url || placeholderImg}
+          alt={orderItem.product_name || 'Sản phẩm'}
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = placeholderImg;
           }}
         />
       </div>
-      
+
       <div className="item-details">
         <h3 className="item-name">{orderItem.product_name}</h3>
         <div className="item-info">
@@ -101,21 +125,43 @@ const OrderItemCard = ({ item, orderStatus }) => {
           </div>
         </div>
       </div>
+      { !ratingSent && (
+        <div className="rating-product">
+          <p>Đánh giá sản phẩm:</p>
+          {Array.from({ length: 5 }).map((_, index) => (
+            <i
+              key={index}
+              className={index < userRating ? 'fa-solid fa-star active' : 'fa-regular fa-star'}
+              style={{ cursor: 'pointer', color: '#fbc02d', fontSize: '18px', marginRight: 4 }}
+              onClick={() => setUserRating(index + 1)}
+            />
+          ))}
+          <button
+            onClick={handleVoteProduct}
+            disabled={userRating === 0}
+            style={{ marginLeft: 8, padding: '4px 10px' }}
+          >
+            Gửi
+          </button>
+        </div>
+      )}
 
       {orderStatus === 'pending' && (
         <div className="item-actions">
-          <button 
+          <button
             className="reject-btn"
             onClick={() => handleRejectOrder(item.order_id)}
           >
             Từ chối
           </button>
-          <button 
+          <button
             className="confirm-btn"
             onClick={() => handleConfirmOrder(item.order_id)}
           >
             Xác nhận
-          </button> 
+          </button>
+
+
         </div>
       )}
     </div>

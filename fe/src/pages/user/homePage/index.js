@@ -2,7 +2,7 @@ import { memo, useEffect, useState } from "react";
 import axios from "axios";
 import "./style.scss";
 import adobe from '../../../assets/images/adobe.png';
-import Rating from '../../../components/rating/rating'
+import SellerRatingDisplay from '../../../components/rating/rating'
 import logofc from '../../../assets/images/logofc.png';
 import League_of_Legends_2019_vector from '../../../assets/images/League_of_Legends_2019_vector.png';
 import steam_logo from '../../../assets/images/steam_logo.png';
@@ -15,6 +15,7 @@ const categories = ["New Arrivals", "Best Sellers", "Discounted Items"];
 const Homepage = ({ user }) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [sellerRatings, setSellerRatings] = useState({}); // lưu rating theo sellerId
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -39,7 +40,30 @@ const Homepage = ({ user }) => {
 
         fetchProducts();
     }, []);
+    useEffect(() => {
+        // Giả sử bạn đã có danh sách sản phẩm (có seller_id)
+        const fetchProducts = async () => {
+            try {
+                const res = await axios.get('/api/products');
+                setProducts(res.data);
 
+                // Lấy danh sách seller_id duy nhất
+                const sellerIds = [...new Set(res.data.map(p => p.seller_id))];
+
+                if (sellerIds.length > 0) {
+                    // Gọi API lấy rating của các seller
+                    const ratingRes = await axios.get(`/api/sellers/ratings?ids=${sellerIds.join(',')}`);
+                    setSellerRatings(ratingRes.data);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+    // Hàm lấy rating để truyền vào component con
+    const getSellerRating = (sellerId) => sellerRatings[sellerId] || { average: 0, count: 0 };
     // Xử lý đường dẫn hình ảnh
     const getImageUrl = (imageUrl) => {
         if (!imageUrl) return "https://via.placeholder.com/300x300?text=No+Image";
@@ -57,6 +81,7 @@ const Homepage = ({ user }) => {
     };
 
     return (
+
         <div id="content">
             {/* Banner Section */}
             <div className="banner">
@@ -124,34 +149,26 @@ const Homepage = ({ user }) => {
                                                             <i className="fa-solid fa-store"></i> {product.seller_name || "Unknown Seller"}
                                                         </p>
                                                         <p className="mota-name home-product-item_rating">
+                                                            <div className="seller-stars">
+                                                                {Array.from({ length: 5 }).map((_, index) => {
+                                                                    const avg = sellerRatings[product.seller_id]?.average || 0;
+                                                                    const value = index + 1;
 
+                                                                    let className = "star empty";
+                                                                    if (avg >= value) {
+                                                                        className = "star full";
+                                                                    } else if (avg >= value - 0.5) {
+                                                                        className = "star half";
+                                                                    }
 
-                                                            <div className="home-product-item_rating-star">
-                                                                {product.rating_count > 0 ? (
-                                                                    <>
-                                                                        {Array.from({ length: 5 }).map((_, index) => {
-                                                                            const starValue = index + 1;
-                                                                            if (starValue <= Math.floor(product.average_rating)) {
-                                                                                return <span key={index} className="star full">★</span>;
-                                                                            } else if (
-                                                                                starValue === Math.ceil(product.average_rating) &&
-                                                                                product.average_rating % 1 !== 0
-                                                                            ) {
-                                                                                return <span key={index} className="star half">★</span>;
-                                                                            } else {
-                                                                                return <span key={index} className="star empty">★</span>; // dùng sao đầy nhưng màu xám
-                                                                            }
-                                                                        })}
-                                                                        <span className="rating-number">({Number(product.average_rating).toFixed(1)})</span>
-                                                                    </>
-                                                                ) : (
-                                                                    <span>Chưa có đánh giá</span>
-                                                                )}
+                                                                    return (
+                                                                        <span key={index} className={className}>★</span>
+                                                                    );
+                                                                })}
+                                                                <p className="rating-number">
+                                                                    ({sellerRatings[product.seller_id]?.count || 0} reviews)
+                                                                </p>
                                                             </div>
-
-
-
-
                                                             <div className="home-product-item_price">
                                                                 <span className="mota-name home-product-item_price-new">
                                                                     {formatVND(product.price)}

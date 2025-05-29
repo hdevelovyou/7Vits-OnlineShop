@@ -1,7 +1,7 @@
 import { memo, useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import {formatVND} from "../../../utils/formatprice";
+import { formatVND } from "../../../utils/formatprice";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./style.scss";
 
@@ -16,23 +16,24 @@ const StorePage = () => {
     const [sortOption, setSortOption] = useState("default");
     const [minPrice, setMinPrice] = useState(0);
     const [maxPrice, setMaxPrice] = useState(10000000);
-
+    const [sellerRatings, setSellerRatings] = useState({});
+  
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 setLoading(true);
                 const response = await axios.get("/api/products");
-                
+
                 if (Array.isArray(response.data)) {
                     const productList = response.data;
                     setProducts(productList);
                     setFilteredProducts(productList);
-                    
+
                     // Extract categories from products
-                    const uniqueCategories = [...new Set(productList.map(product => 
+                    const uniqueCategories = [...new Set(productList.map(product =>
                         product.category || "Uncategorized"))];
                     setCategories(uniqueCategories);
-                    
+
                     // Find min and max prices
                     if (productList.length > 0) {
                         const prices = productList.map(product => product.price);
@@ -52,7 +53,28 @@ const StorePage = () => {
 
         fetchProducts();
     }, []);
+  useEffect(() => {
+    // Giả sử bạn đã có danh sách sản phẩm (có seller_id)
+    const fetchProducts = async () => {
+      try {
+        const res = await axios.get('/api/products');
+        setProducts(res.data);
 
+        // Lấy danh sách seller_id duy nhất
+        const sellerIds = [...new Set(res.data.map(p => p.seller_id))];
+
+        if (sellerIds.length > 0) {
+          // Gọi API lấy rating của các seller
+          const ratingRes = await axios.get(`/api/sellers/ratings?ids=${sellerIds.join(',')}`);
+          setSellerRatings(ratingRes.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
     useEffect(() => {
         filterProducts();
     }, [searchQuery, selectedCategory, priceRange, sortOption, products]);
@@ -63,21 +85,21 @@ const StorePage = () => {
         // Filter by search query
         if (searchQuery) {
             const query = searchQuery.toLowerCase();
-            result = result.filter(product => 
-                product.name.toLowerCase().includes(query) || 
+            result = result.filter(product =>
+                product.name.toLowerCase().includes(query) ||
                 (product.description && product.description.toLowerCase().includes(query))
             );
         }
 
         // Filter by category
         if (selectedCategory !== "all") {
-            result = result.filter(product => 
+            result = result.filter(product =>
                 product.category === selectedCategory
             );
         }
 
         // Filter by price range
-        result = result.filter(product => 
+        result = result.filter(product =>
             product.price >= priceRange[0] && product.price <= priceRange[1]
         );
 
@@ -138,7 +160,7 @@ const StorePage = () => {
     const getOriginalPrice = (price) => {
         return price * 1.2; // Giả lập giá gốc cao hơn 20%
     };
-    
+
     // Xử lý đường dẫn hình ảnh
     const getImageUrl = (imageUrl) => {
         if (!imageUrl) {
@@ -166,9 +188,9 @@ const StorePage = () => {
                     <div className="filter-section">
                         <h3>Tìm kiếm</h3>
                         <div className="search-box">
-                            <input 
-                                type="text" 
-                                placeholder="Tìm kiếm sản phẩm..." 
+                            <input
+                                type="text"
+                                placeholder="Tìm kiếm sản phẩm..."
                                 value={searchQuery}
                                 onChange={handleSearchChange}
                             />
@@ -196,18 +218,18 @@ const StorePage = () => {
                         <h3>Giá</h3>
                         <div className="price-filter">
                             <div className="price-inputs">
-                                <input 
-                                    type="number" 
-                                    placeholder="Giá thấp nhất" 
+                                <input
+                                    type="number"
+                                    placeholder="Giá thấp nhất"
                                     value={priceRange[0]}
                                     onChange={(e) => handlePriceChange(e, 0)}
                                     min={minPrice}
                                     max={maxPrice}
                                 />
                                 <span>-</span>
-                                <input 
-                                    type="number" 
-                                    placeholder="Giá cao nhất" 
+                                <input
+                                    type="number"
+                                    placeholder="Giá cao nhất"
                                     value={priceRange[1]}
                                     onChange={(e) => handlePriceChange(e, 1)}
                                     min={minPrice}
@@ -237,7 +259,7 @@ const StorePage = () => {
 
                 <div className="products-section">
                     <h2>Tất cả sản phẩm</h2>
-                    
+
                     {loading ? (
                         <div className="loading">
                             <i className="fas fa-spinner fa-spin"></i>
@@ -254,49 +276,50 @@ const StorePage = () => {
                                 <div className="product-card" key={product.id}>
                                     <Link to={`/product/${product.id}`} className="product-link">
                                         <div className="product-image">
-                                            <img 
-                                                src={getImageUrl(product.image_url)} 
-                                                alt={product.name} 
+                                            <img
+                                                src={getImageUrl(product.image_url)}
+                                                alt={product.name}
                                             />
                                             {/* Hiển thị badge giảm giá - giả lập */}
-                                            
+
                                         </div>
                                         <div className="product-info">
                                             <h3 className="product-name">{product.name}</h3>
                                             <p className="product-description">
-                                                {product.description ? 
-                                                    (product.description.length > 100 ? 
-                                                        product.description.substring(0, 100) + "..." : 
-                                                        product.description) : 
+                                                {product.description ?
+                                                    (product.description.length > 100 ?
+                                                        product.description.substring(0, 100) + "..." :
+                                                        product.description) :
                                                     "Không có mô tả"}
                                             </p>
                                             <div className="product-rating-price">
-                                            <div className="product-rating ">
-                                                {product.rating_count > 0 ? (
-                                                                    <>
-                                                                        {Array.from({ length: 5 }).map((_, index) => {
-                                                                            const starValue = index + 1;
-                                                                            if (starValue <= Math.floor(product.average_rating)) {
-                                                                                return <span key={index} className="star full">★</span>;
-                                                                            } else if (
-                                                                                starValue === Math.ceil(product.average_rating) &&
-                                                                                product.average_rating % 1 !== 0
-                                                                            ) {
-                                                                                return <span key={index} className="star half">★</span>;
-                                                                            } else {
-                                                                                return <span key={index} className="star empty">★</span>; // dùng sao đầy nhưng màu xám
-                                                                            }
-                                                                        })}
-                                                                        <span className="rating-number">({Number(product.average_rating).toFixed(1)})</span>
-                                                                    </>
-                                                                ) : (
-                                                                    <span>Chưa có đánh giá</span>
-                                                                )}
-                                            </div>
-                                            <div className="product-price">
-                                                
-                                                <span className="current-price">{formatVND(product.price)}</span>
-                                            </div>
+                                                <div className="product-rating ">
+                                                    <div className="seller-stars">
+                                                        {Array.from({ length: 5 }).map((_, index) => {
+                                                            const avg = sellerRatings[product.seller_id]?.average || 0;
+                                                            const value = index + 1;
+
+                                                            let className = "star empty";
+                                                            if (avg >= value) {
+                                                                className = "star full";
+                                                            } else if (avg >= value - 0.5) {
+                                                                className = "star half";
+                                                            }
+
+                                                            return (
+                                                                <span key={index} className={className}>★</span>
+                                                            );
+                                                        })}
+                                                        <span className="rating-number">
+                                                            ({sellerRatings[product.seller_id]?.count || 0} reviews)
+                                                        </span>
+                                                    </div>
+
+                                                </div>
+                                                <div className="product-price">
+
+                                                    <span className="current-price">{formatVND(product.price)}</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </Link>

@@ -1,101 +1,110 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/connectDB');
-const authmiddleware=require('../middleware/authMiddleware');
-async function getRatingStats(productId) {
+const authMiddleware = require('../middleware/authMiddleware');
+
+async function getSellerRatingStats(sellerId) {
   const sql = `
-    SELECT
-      AVG(rating) AS average,
-      COUNT(*) AS count
-    FROM ratings
-    WHERE product_id = ?
+    SELECT AVG(rating) AS average, COUNT(*) AS count
+    FROM seller_ratings
+    WHERE seller_id = ?
+  `;
+  const [rows] = await db.query(sql, [sellerId]);
+  const row = rows[0] || {};
+  const avg = row.average;
+  const count = row.count || 0;
+
+  const average = avg !== null && avg !== undefined ? Number(parseFloat(avg).toFixed(1)) : 0;
+
+  return { average, count };
+}
+router.get('/ratings', async (req, res) => {
+  const ids = req.query.ids?.split(',').map(Number).filter(id => !isNaN(id));
+  if (!ids || ids.length === 0) {
+    return res.status(400).json({ error: 'Danh sách sellerId không hợp lệ' });
+  }
+
+  const placeholders = ids.map(() => '?').join(',');
+  const sql = `
+    SELECT seller_id, AVG(rating) AS average, COUNT(*) AS count
+    FROM seller_ratings
+    WHERE seller_id IN (${placeholders})
+    GROUP BY seller_id
   `;
 
   try {
-    const [result] = await db.query(sql, [productId]);
-    const row = result[0] || {};
-    const rawAverage = row.average;
-    const average = rawAverage !== null ? parseFloat(rawAverage).toFixed(1) : 0;
+    const [rows] = await db.query(sql, ids);
+    const result = {};
 
-    return {
-      average: Number(average),
-      count: row.count || 0
-    };
+    for (const row of rows) {
+      result[row.seller_id] = {
+        average: row.average !== null ? Number(parseFloat(row.average).toFixed(1)) : 0,
+        count: row.count || 0
+      };
+    }
+
+    // Bổ sung seller không có rating
+    ids.forEach(id => {
+      if (!result[id]) {
+        result[id] = { average: 0, count: 0 };
+      }
+    });
+
+    return res.json(result);
   } catch (err) {
-    throw err;
+    console.error('Lỗi khi lấy nhiều seller ratings:', err);
+    return res.status(500).json({ error: 'Lỗi server' });
   }
-}
+});
 
-router.post('/:productId/rating', authmiddleware, 
-    async (req, res) => {
+// POST /api/sellers/:sellerId/rating - người dùng đánh giá người bán
+router.post('/:sellerId/rating', authMiddleware, async (req, res) => {
   const userId = req.user.id;
-  const { productId } = req.params;
+  const { sellerId } = req.params;
   const { rating } = req.body;
 
-  if (!productId || isNaN(productId)) {
-    return res.status(400).json({ error: 'productId không hợp lệ.' });
+  if (!sellerId || isNaN(sellerId)) {
+    return res.status(400).json({ error: 'sellerId không hợp lệ.' });
   }
+
   if (!rating || rating < 1 || rating > 5) {
-    return res.status(400).json({ error: 'rating (1–5) là bắt buộc.' });
+    return res.status(400).json({ error: 'Rating phải từ 1 đến 5.' });
   }
 
   try {
     const sql = `
-      INSERT INTO ratings (product_id, user_id, rating)
+      INSERT INTO seller_ratings (seller_id, user_id, rating)
       VALUES (?, ?, ?)
       ON DUPLICATE KEY UPDATE
         rating = VALUES(rating),
         updated_at = CURRENT_TIMESTAMP
     `;
-   const [results] = await db.query(sql, [productId, userId, rating]);
+    await db.query(sql, [sellerId, userId, rating]);
 
-    // Lấy thống kê
-    const stats = await getRatingStats(productId);
+    const stats = await getSellerRatingStats(sellerId);
 
-    return res.json({
-      success: true,
-      ...stats
-    });
+    return res.json({ success: true, ...stats });
   } catch (err) {
-    console.error('❌ Lỗi trong try/catch:', err);
-    return res.status(500).json({ error: 'Lỗi khi lưu đánh giá.' });
+    console.error('❌ Lỗi khi lưu đánh giá người bán:', err);
+    return res.status(500).json({ error: 'Lỗi server khi đánh giá.' });
   }
 });
 
-// GET trung bình và số lượng rating cho 1 product
-router.get('/:productId/rating', async (req, res) => {
-  const { productId } = req.params;
-  const productIdNum = Number(productId);
+// GET /api/sellers/:sellerId/rating - lấy điểm trung bình + lượt
+router.get('/:sellerId/rating', async (req, res) => {
+  const { sellerId } = req.params;
 
-  if (!productId || isNaN(productIdNum)) {
-    return res.status(400).json({ error: 'productId không hợp lệ.' });
+  if (!sellerId || isNaN(sellerId)) {
+    return res.status(400).json({ error: 'sellerId không hợp lệ.' });
   }
 
   try {
-    const sql = `
-      SELECT
-        AVG(rating) AS average,
-        COUNT(*) AS count
-      FROM ratings
-      WHERE product_id = ?
-    `;
-    const [results] = await db.query(sql, [productIdNum]);
-
-    if (!results || results.length === 0) {
-      return res.status(404).json({ message: 'Không có đánh giá nào.' });
-    }
-
-    const row = results[0];
-    res.json({
-      average: row.average !== null ? parseFloat(row.average).toFixed(1) : 0,
-      count: row.count || 0
-    });
+    const stats = await getSellerRatingStats(sellerId);
+    return res.json(stats);
   } catch (err) {
-    console.error('Lỗi khi lấy đánh giá:', err);
-    res.status(500).json({ error: 'Lỗi server.' });
+    console.error('❌ Lỗi khi lấy rating người bán:', err);
+    return res.status(500).json({ error: 'Lỗi server.' });
   }
 });
-
-
 
 module.exports = router;

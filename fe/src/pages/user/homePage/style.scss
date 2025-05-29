@@ -8,35 +8,34 @@ html {
         max-width: 100%;
         position: relative;
 }
-.home-product-item_rating-star .star {
-  font-size: 18px;
-  position: relative;
-  color: #ccc; /* màu xám cho sao rỗng */
-  display: inline-block;
-  margin-right: 2px;
-}
+.seller-stars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
 
-/* Sao đầy màu vàng */
-.home-product-item_rating-star .star.full {
-  color: gold;
-}
+  .star {
+    font-size: 18px;
+    color: #ccc;
+    position: relative;
+    display: inline-block;
+  }
 
-/* Nửa sao - dùng linear-gradient để tô 50% màu vàng */
-.home-product-item_rating-star .star.half {
-  color: #ccc; /* màu xám nền */
-}
+  .star.full {
+    color: gold;
+  }
 
-.home-product-item_rating-star .star.half::before {
-  content: '★';
-  color: gold;
-  position: absolute;
-  left: 0;
-  width: 50%;
-  overflow: hidden;
-  top: 0;
-  height: 100%;
-  display: inline-block;
-  pointer-events: none;
+  .star.half {
+    background: linear-gradient(to right, gold 50%, #ccc 50%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: gold;
+  }
+
+  .rating-number {
+    margin-left: 6px;
+    font-size: 14px;
+    color: #666;
+  }
 }
 
 #section-1 {

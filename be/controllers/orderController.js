@@ -316,6 +316,7 @@ const orderController = {
                         oi.order_id,
                         p.id as product_id,
                         p.name as product_name,
+                        p.seller_id, 
                         p.image_url,
                         oi.price,
                         oi.price as total

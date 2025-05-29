@@ -1,94 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const Rating = ({ productId, canVote }) => {
-  const [average, setAverage] = useState(0);
-  const [count, setCount] = useState(0);
-  const [rating, setRating] = useState(0);
-  const [loading, setLoading] = useState(false);
 
-  // Lấy rating trung bình và count ban đầu
+const SellerRatingDisplay = ({ sellerId }) => {
+  const [rating, setRating] = useState({ average: 0, count: 0 });
+
   useEffect(() => {
-    async function fetchRating() {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/products/${productId}/rating`);
-        setAverage(response.data.average);
-        setCount(response.data.count);
-      } catch (error) {
-        console.error('Error fetching rating:', error);
-      }
-    }
-    fetchRating();
-  }, [productId]);
-
-  const handleStarClick = (star) => {
-    if (!canVote) return;
-    setRating(star);
-  };
-
-  const handleSubmit = async () => {
-    if (rating < 1 || rating > 5) {
-      alert('Vui lòng chọn số sao từ 1 đến 5');
-      return;
-    }
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/products/${productId}/rating`,
-        { rating },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      if (response.data.success) {
-        setAverage(response.data.average);
-        setCount(response.data.count);
-        alert('Cảm ơn bạn đã đánh giá!');
-        setRating(0);
-      }
-    } catch (error) {
-      alert(error.response?.data?.error || 'Có lỗi khi gửi đánh giá');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Hiển thị sao (có thể click hoặc không)
-  const renderStars = (value, clickable = false) => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <span
-          key={i}
-          onClick={() => clickable && handleStarClick(i)}
-          style={{
-            cursor: clickable ? 'pointer' : 'default',
-            color: i <= value ? '#ffc107' : '#e4e5e9',
-            fontSize: '24px',
-            marginRight: 4,
-            userSelect: 'none',
-          }}
-          aria-label={`${i} star`}
-        >
-          ★
-        </span>
-      );
-    }
-    return stars;
-  };
+    if (!sellerId) return;
+    axios.get(`/api/sellers/${sellerId}/rating`)
+      .then(res => setRating(res.data))
+      .catch(err => {
+        console.error(`Lỗi lấy rating seller ${sellerId}:`, err);
+        setRating({ average: 0, count: 0 });
+      });
+  }, [sellerId]);
 
   return (
-    <div>
-      <div>
-        {renderStars(canVote ? rating : Math.round(average), canVote)}
-        <span style={{ marginLeft: 8 }}>({count} đánh giá)</span>
-      </div>
-      {canVote && (
-        <button onClick={handleSubmit} disabled={loading} style={{ marginTop: 8 }}>
-          {loading ? 'Đang gửi...' : 'Gửi đánh giá'}
-        </button>
+    <div className="seller-rating-display">
+      {rating.count > 0 ? (
+        <>
+          {Array.from({ length: 5 }).map((_, index) => {
+            const starValue = index + 1;
+            if (starValue <= Math.floor(rating.average)) {
+              return <span key={index} className="star full">★</span>;
+            } else if (
+              starValue === Math.ceil(rating.average) &&
+              rating.average % 1 !== 0
+            ) {
+              return <span key={index} className="star half">★</span>;
+            } else {
+              return <span key={index} className="star empty">★</span>;
+            }
+          })}
+          <span className="rating-number">({Number(rating.average).toFixed(1)})</span>
+        </>
+      ) : (
+        <span className="no-rating">Chưa có đánh giá</span>
       )}
     </div>
   );
 };
 
-export default Rating;
+export default SellerRatingDisplay;
