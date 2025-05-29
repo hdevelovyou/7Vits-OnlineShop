@@ -15,9 +15,9 @@ root.render(
             <AuthProvider>
                 <SocketProvider>
                     <RouterCustom />
+                    <Chatbot/>
                 </SocketProvider>
             </AuthProvider>
-            <Chatbot/>
         </BrowserRouter>
     </div>
 );
