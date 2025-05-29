@@ -7,6 +7,7 @@ import placeholderImg from '../../assets/images/placeholder.png';
 const OrderItemCard = ({ item, orderStatus }) => {
   const [userRating, setUserRating] = useState(0);
   const [ratingSent, setRatingSent] = useState(false);
+  const [showNotesModal, setShowNotesModal] = useState(false);
 
   // Lấy thông tin sản phẩm từ order_items array
   const orderItem = item.order_items && item.order_items[0];
@@ -113,7 +114,13 @@ const OrderItemCard = ({ item, orderStatus }) => {
         {orderItem.notes && (
           <div className="item-notes">
             <span className="notes-label">Thông tin sản phẩm:</span>
-            <span className="notes-content">{orderItem.notes}</span>
+           
+            <button 
+              className="view-details-btn"
+              onClick={() => setShowNotesModal(true)}
+            >
+              Xem chi tiết
+            </button>
           </div>
         )}
         <div className="item-info">
@@ -162,6 +169,20 @@ const OrderItemCard = ({ item, orderStatus }) => {
           </button>
 
 
+        </div>
+      )}
+
+      {showNotesModal && (
+        <div className="notes-modal-overlay" onClick={() => setShowNotesModal(false)}>
+          <div className="notes-modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Chi tiết sản phẩm</h3>
+              <button className="close-btn" onClick={() => setShowNotesModal(false)}>×</button>
+            </div>
+            <div className="modal-content">
+              <p>{orderItem.notes}</p>
+            </div>
+          </div>
         </div>
       )}
     </div>

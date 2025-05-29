@@ -78,7 +78,7 @@ const MyProductsPage = () => {
   );
 
   const formatPrice = price => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
-  const getStatusLabel = status => ({ active: 'Đang bán', inactive: 'Đã ẩn', sold_out: 'Đã bán hết' }[status] || 'Không xác định');
+  const getStatusLabel = status => ({ active: 'Đang bán', inactive: 'Đang chờ', sold_out: 'Đã bán hết' }[status] || 'Không xác định');
   const getStatusClass = status => ({ active: 'status-active', inactive: 'status-inactive', sold_out: 'status-soldout' }[status] || '');
 
   // Xử lý đường dẫn hình ảnh
@@ -146,7 +146,7 @@ const MyProductsPage = () => {
                         <button className="change-status-btn">Thay đổi trạng thái</button>
                         <div className="dropdown-content">
                           <button onClick={() => handleStatusChange(p.id, 'active')}>Đang bán</button>
-                          <button onClick={() => handleStatusChange(p.id, 'inactive')}>Ẩn sản phẩm</button>
+                          <button onClick={() => handleStatusChange(p.id, 'inactive')}>Đang chờ</button>
                           <button onClick={() => handleStatusChange(p.id, 'sold_out')}>Đã bán hết</button>
                         </div>
                       </div>

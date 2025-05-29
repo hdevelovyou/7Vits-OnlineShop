@@ -60,6 +60,7 @@
       margin-bottom: 1.2rem;
       padding: 1rem;
       border-radius: 0.6rem;
+      position: relative;
 
       .notes-label {
         font-weight: 600;
@@ -68,10 +69,21 @@
         margin-right: 0.8rem;
       }
 
-      .notes-content {
-        color: #ffffff;
+
+      .view-details-btn {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 0.4rem;
         font-size: 1.4rem;
-        line-height: 1.5;
+        cursor: pointer;
+        margin-top: 1rem;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background-color: #2980b9;
+        }
       }
     }
 
@@ -155,6 +167,72 @@
         background-color: #95a5a6;
         cursor: not-allowed;
       }
+    }
+  }
+}
+
+.notes-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.notes-modal {
+  background-color: #1a1a1a;
+  border-radius: 1.2rem;
+  padding: 2rem;
+  width: 90%;
+  max-width: 60rem;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  border: 1px solid #333;
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #333;
+
+    h3 {
+      color: #ff0000;
+      font-size: 2.4rem;
+      margin: 0;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: #ffffff;
+      font-size: 2.4rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      line-height: 1;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #ff0000;
+      }
+    }
+  }
+
+  .modal-content {
+    color: #ffffff;
+    font-size: 1.6rem;
+    line-height: 1.6;
+
+    p {
+      margin: 0;
+      white-space: pre-wrap;
     }
   }
 }

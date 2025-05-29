@@ -414,7 +414,6 @@ const orderController = {
             try {
                 const { items, totalAmount } = req.body;
                 const buyerId = req.user.id;
-                const sellerId = items[0].sellerId;
 
                 console.log('Creating order:', { items, totalAmount, buyerId });
 
@@ -437,6 +436,9 @@ const orderController = {
                 if (!validationResult.success) {
                     return res.status(validationResult.status).json(validationResult);
                 }
+
+                // Tạo seller map để xử lý gộp các sản phẩm cùng người bán
+                const sellerMap = await orderController.createSellerMap(items);
 
                 await db.query('START TRANSACTION');
 
@@ -463,17 +465,79 @@ const orderController = {
                         'UPDATE user_wallets SET balance = balance - ? WHERE user_id = ?',
                         [totalAmount, buyerId]
                     );
-                    // Cộng tiền vào locked_balance người bán
-                    await db.query(
-                        'UPDATE user_wallets SET locked_balance = locked_balance + ? WHERE user_id = ?',
-                        [totalAmount, sellerId]
-                    );
-
-                    // Tạo seller map để xử lý gộp các sản phẩm cùng người bán
-                    const sellerMap = await orderController.createSellerMap(items);
 
                     // Xử lý đơn hàng cho từng người bán
-                    await orderController.processSellerOrders(sellerMap, buyerId, buyerTransactionId);
+                    for (const sellerId in sellerMap) {
+                        const seller = sellerMap[sellerId];
+                        
+                        // Lock ví người bán
+                        const [sellerWallet] = await db.query(
+                            'SELECT * FROM user_wallets WHERE user_id = ? FOR UPDATE',
+                            [sellerId]
+                        );
+
+                        // Tạo đơn hàng mới với trạng thái 'pending'
+                        const [orderResult] = await db.query(
+                            `INSERT INTO orders 
+                            (user_id, seller_id, total_amount, status) 
+                            VALUES (?, ?, ?, 'pending')`,
+                            [buyerId, sellerId, seller.amount]
+                        );
+                        
+                        const orderId = orderResult.insertId;
+                        
+                        // Thêm các sản phẩm vào đơn hàng và cập nhật trạng thái sản phẩm
+                        for (const item of seller.items) {
+                            await db.query(
+                                `INSERT INTO order_items 
+                                (order_id, product_id, price) 
+                                VALUES (?, ?, ?)`,
+                                [orderId, item.productId, item.price]
+                            );
+
+                            // Cập nhật trạng thái sản phẩm thành inactive
+                            await db.query(
+                                'UPDATE products SET status = ? WHERE id = ?',
+                                ['inactive', item.productId]
+                            );
+                        }
+                        
+                        // Tạo giao dịch cho người bán (pending)
+                        const [sellerTransaction] = await db.query(
+                            `INSERT INTO transactions 
+                            (user_id, amount, transaction_type, status, description, reference_id) 
+                            VALUES (?, ?, 'sale_income', 'pending', ?, ?)`,
+                            [sellerId, seller.amount, `Thu nhập từ đơn hàng #${orderId}`, orderId]
+                        );
+
+                        // Cập nhật locked_balance của người bán
+                        if (sellerWallet.length === 0) {
+                            await db.query(
+                                'INSERT INTO user_wallets (user_id, balance, locked_balance) VALUES (?, 0, ?)',
+                                [sellerId, seller.amount]
+                            );
+                        } else {
+                            await db.query(
+                                'UPDATE user_wallets SET locked_balance = locked_balance + ? WHERE user_id = ?',
+                                [seller.amount, sellerId]
+                            );
+                        }
+                        
+                        // Lưu thông tin chuyển tiền
+                        await db.query(
+                            `INSERT INTO wallet_transfers
+                            (order_id, buyer_id, seller_id, amount, buyer_transaction_id, seller_transaction_id, status)
+                            VALUES (?, ?, ?, ?, ?, ?, 'pending')`,
+                            [
+                                orderId,
+                                buyerId,
+                                sellerId,
+                                seller.amount,
+                                buyerTransactionId,
+                                sellerTransaction.insertId
+                            ]
+                        );
+                    }
 
                     await db.query('COMMIT');
 
