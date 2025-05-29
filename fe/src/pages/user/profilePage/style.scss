@@ -1,3 +1,5 @@
+@use "sass:color";
+
 // Profile Page Styles
 // Main colors: Black, Gray, Red
 
@@ -161,7 +163,7 @@ $success-color: #4caf50;  // Green for success messages
                 color: $text-color;
                 
                 &:hover {
-                    background-color: darken($highlight-color, 10%);
+                    background-color: color.scale($highlight-color, $lightness: -20%);
                 }
             }
             
@@ -170,7 +172,7 @@ $success-color: #4caf50;  // Green for success messages
                 color: $text-color;
                 
                 &:hover {
-                    background-color: darken($light-gray, 10%);
+                    background-color: color.scale($light-gray, $lightness: -10%);
                 }
             }
         }
@@ -273,7 +275,7 @@ $success-color: #4caf50;  // Green for success messages
                         color: $text-color;
                         
                         &:hover {
-                            background-color: darken($highlight-color, 10%);
+                            background-color: color.scale($highlight-color, $lightness: -20%);
                         }
                     }
                     
@@ -282,7 +284,7 @@ $success-color: #4caf50;  // Green for success messages
                         color: $text-color;
                         
                         &:hover {
-                            background-color: darken($light-gray, 10%);
+                            background-color: color.scale($light-gray, $lightness: -10%);
                         }
                     }
                 }

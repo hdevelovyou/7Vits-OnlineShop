@@ -326,6 +326,9 @@ const orderController = {
                 `;
                 
                 const [allItems] = await db.query(itemsQuery, [orderIds]);
+                
+                console.log('Order IDs:', orderIds);
+                console.log('All Items:', allItems);
 
                 // Group items by order_id
                 const groupedItems = {};
