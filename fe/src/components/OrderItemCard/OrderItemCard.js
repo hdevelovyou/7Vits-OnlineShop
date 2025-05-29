@@ -123,57 +123,43 @@ const OrderItemCard = ({ item, orderStatus }) => {
               />
             </div>
 
-            <div className="item-details">
-              <h3 className="item-name">{orderItem.product_name}</h3>
-              <div className="item-info">
-                <div className="price-info">
-                  <div className="item-price">
-                    <span className="label">Đơn giá:</span>
-                    <span className="price">{formatCurrency(orderItem.price)}</span>
-                  </div>
-                  <div className="item-quantity">
-                    <span className="label">Số lượng:</span>
-                    <span className="quantity">{orderItem.quantity || 1}</span>
-                  </div>
-                </div>
-                <div className="item-total">
-                  <span className="label">Thành tiền:</span>
-                  <span className="total">
-                    {formatCurrency(orderItem.price * (orderItem.quantity || 1))}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="order-footer">
-        <div className="total-amount">
-          <span className="label">Tổng tiền:</span>
-          <span className="amount">{formatCurrency(totalAmount)}</span>
-        </div>
-
-        {!ratingSent && item.order_status === 'completed' && (
-          <div className="rating-product">
-            <p>Đánh giá người bán:</p>
-            {Array.from({ length: 5 }).map((_, index) => (
-              <i
-                key={index}
-                className={index < userRating ? 'fa-solid fa-star active' : 'fa-regular fa-star'}
-                style={{ cursor: 'pointer', color: '#fbc02d', fontSize: '18px', marginRight: 4 }}
-                onClick={() => setUserRating(index + 1)}
-              />
-            ))}
-            <button
-              onClick={() => handleVoteProduct(item.order_items[0].seller_id)}
-              disabled={userRating === 0}
-              style={{ marginLeft: 8, padding: '4px 10px' }}
-            >
-              Gửi
-            </button>
+      <div className="item-details">
+        <h3 className="item-name">{orderItem.product_name}</h3>
+        {orderItem.notes && (
+          <div className="item-notes">
+            <span className="notes-label">Thông tin sản phẩm:</span>
+            <span className="notes-content">{orderItem.notes}</span>
           </div>
         )}
+        <div className="item-info">
+          <div className="item-total">
+            <span className="label">Thành tiền:</span>
+            <span className="total">
+              {formatCurrency(orderItem.price * (orderItem.quantity || 1))}
+            </span>
+          </div>
+        </div>
+      </div>
+      { !ratingSent && (
+        <div className="rating-product">
+          <p>Đánh giá sản phẩm:</p>
+          {Array.from({ length: 5 }).map((_, index) => (
+            <i
+              key={index}
+              className={index < userRating ? 'fa-solid fa-star active' : 'fa-regular fa-star'}
+              style={{ cursor: 'pointer', color: '#fbc02d', fontSize: '18px', marginRight: 4 }}
+              onClick={() => setUserRating(index + 1)}
+            />
+          ))}
+          <button
+            onClick={handleVoteProduct}
+            disabled={userRating === 0}
+            style={{ marginLeft: 8, padding: '4px 10px' }}
+          >
+            Gửi
+          </button>
+        </div>
+      )}
 
         {showActionButtons(item.order_status) && (
           <div className="item-actions">
