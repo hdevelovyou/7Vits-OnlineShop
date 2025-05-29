@@ -82,6 +82,13 @@ const SellProductPage = () => {
                 return;
             }
 
+            // Validate notes field
+            if (!formData.notes || formData.notes.trim() === '') {
+                setError('Ghi chú không được để trống');
+                setLoading(false);
+                return;
+            }
+
             // Format price as number (remove dots and convert to number)
             const priceValue = parseFloat(formData.price.replace(/\./g, ''));
             
@@ -181,12 +188,13 @@ const SellProductPage = () => {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="notes">Ghi chú</label>
+                    <label htmlFor="notes">Ghi chú *</label>
                     <textarea
                         id="notes"
                         name="notes"
                         value={formData.notes}
                         onChange={handleChange}
+                        required
                         placeholder="Nhập thông tin key, tài khoản, mật khẩu hoặc các thông tin khác"
                         rows={3}
                     />
