@@ -1,5 +1,5 @@
 {
-  "proxy": "https://sevenvits-be.onrender.com",
+  "proxy": "http://localhost:5000",
   "name": "fe",
   "version": "0.1.0",
   "private": true,
