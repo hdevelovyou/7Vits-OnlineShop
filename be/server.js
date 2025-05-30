@@ -36,6 +36,7 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:3001',
   'http://localhost:5000',
+  'http://14.225.212.12:3000',
   'https://7-vits-online-shop-frontend.vercel.app'
 ];
 
