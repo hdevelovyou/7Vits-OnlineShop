@@ -159,5 +159,32 @@ router.delete("/transactions/:id", async (req, res) => {
   }
 });
 
+router.get("/products", async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT 
+        products.id,
+        products.name,
+        products.price,
+        products.category,
+        products.status,
+        users.userName AS sellerName
+      FROM products
+      JOIN users ON products.seller_id = users.id
+      ORDER BY products.created_at DESC
+    `);
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch products" });
+  }
+});
+router.delete("/products/:id", async (req, res) => {
+  try {
+    await db.query("DELETE FROM products WHERE id = ?", [req.params.id]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete product" });
+  }
+});
 
 module.exports = router;
