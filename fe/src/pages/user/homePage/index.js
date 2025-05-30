@@ -2,86 +2,60 @@ import { memo, useEffect, useState } from "react";
 import axios from "axios";
 import "./style.scss";
 import adobe from '../../../assets/images/adobe.png';
-import SellerRatingDisplay from '../../../components/rating/rating'
+import SellerRatingDisplay from '../../../components/rating/rating';
 import logofc from '../../../assets/images/logofc.png';
 import League_of_Legends_2019_vector from '../../../assets/images/League_of_Legends_2019_vector.png';
 import steam_logo from '../../../assets/images/steam_logo.png';
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { Link } from "react-router-dom";
 import { formatVND } from "../../../utils/formatprice";
-// Danh sách các danh mục
+
 const categories = ["New Arrivals", "Best Sellers", "Discounted Items"];
 
 const Homepage = ({ user }) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [sellerRatings, setSellerRatings] = useState({}); // lưu rating theo sellerId
+    const [sellerRatings, setSellerRatings] = useState({});
+    const [visibleCount, setVisibleCount] = useState(8); // hiển thị ban đầu 8 sản phẩm
 
     useEffect(() => {
-        const fetchProducts = async () => {
+        const fetchAllData = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get("/api/products");
-                console.log("Dữ liệu API:", response.data); // Kiểm tra dữ liệu trả về từ API
-
-                // Lấy dữ liệu từ API
-                if (Array.isArray(response.data)) {
-                    setProducts(response.data);
-                    console.log("Đã lấy được", response.data.length, "sản phẩm");
+                const res = await axios.get("/api/products");
+                if (Array.isArray(res.data)) {
+                    setProducts(res.data);
+                    const sellerIds = [...new Set(res.data.map(p => p.seller_id))];
+                    if (sellerIds.length > 0) {
+                        const ratingRes = await axios.get(
+                            `/api/sellers/ratings?ids=${sellerIds.join(',')}`
+                        );
+                        setSellerRatings(ratingRes.data);
+                    }
                 } else {
-                    console.error("Dữ liệu không đúng định dạng:", response.data);
+                    console.error("Dữ liệu không đúng định dạng:", res.data);
                 }
             } catch (error) {
-                console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
+                console.error("Lỗi khi lấy dữ liệu sản phẩm hoặc đánh giá:", error);
             } finally {
                 setLoading(false);
             }
         };
-
-        fetchProducts();
+        fetchAllData();
     }, []);
-    useEffect(() => {
-        // Giả sử bạn đã có danh sách sản phẩm (có seller_id)
-        const fetchProducts = async () => {
-            try {
-                const res = await axios.get('/api/products');
-                setProducts(res.data);
 
-                // Lấy danh sách seller_id duy nhất
-                const sellerIds = [...new Set(res.data.map(p => p.seller_id))];
-
-                if (sellerIds.length > 0) {
-                    // Gọi API lấy rating của các seller
-                    const ratingRes = await axios.get(`/api/sellers/ratings?ids=${sellerIds.join(',')}`);
-                    setSellerRatings(ratingRes.data);
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchProducts();
-    }, []);
-    // Hàm lấy rating để truyền vào component con
-    const getSellerRating = (sellerId) => sellerRatings[sellerId] || { average: 0, count: 0 };
-    // Xử lý đường dẫn hình ảnh
     const getImageUrl = (imageUrl) => {
         if (!imageUrl) return "https://via.placeholder.com/300x300?text=No+Image";
-
-        // Xử lý ảnh base64
-        if (imageUrl.startsWith('data:image')) {
-            return imageUrl;
-        }
-
-        if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-            return imageUrl;
-        }
-
+        if (imageUrl.startsWith('data:image')) return imageUrl;
+        if (/^https?:\/\//.test(imageUrl)) return imageUrl;
         return `${process.env.REACT_APP_API_URL}${imageUrl}`;
     };
 
-    return (
+    const handleShowMore = () => {
+        setVisibleCount(prev => prev + 8);
+    };
 
+    return (
         <div id="content">
             {/* Banner Section */}
             <div className="banner">
@@ -92,7 +66,6 @@ const Homepage = ({ user }) => {
                             <p className="text-title">We are committed to delivering top quality</p>
                             <a href="#Linkpro" className="btn-shop">SHOP NOW</a>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -101,8 +74,8 @@ const Homepage = ({ user }) => {
             <div className="section-logo">
                 <div className="container">
                     <div className="logo">
-                        {[logofc, League_of_Legends_2019_vector, steam_logo, adobe].map((logo, index) => (
-                            <img key={index} src={logo} alt="" className="section-logo col-sm-3" />
+                        {[logofc, League_of_Legends_2019_vector, steam_logo, adobe].map((logo, idx) => (
+                            <img key={idx} src={logo} alt="" className="section-logo col-sm-3" />
                         ))}
                     </div>
                 </div>
@@ -125,7 +98,7 @@ const Homepage = ({ user }) => {
                                             <p>Chưa có sản phẩm</p>
                                         </div>
                                     ) : (
-                                        products.map((product) => (
+                                        products.slice(0, visibleCount).map(product => (
                                             <div className="grid__column-3" key={product.id}>
                                                 <Link
                                                     to={`/product/${product.id}`}
@@ -137,37 +110,27 @@ const Homepage = ({ user }) => {
                                                         src={getImageUrl(product.image_url)}
                                                         alt={product.name}
                                                         className="home-product-item_img"
-                                                        onError={(e) => {
-                                                            console.log("Lỗi hình ảnh:", product.image_url);
-                                                            e.target.src = "https://via.placeholder.com/300x300?text=No+Image";
-                                                        }}
+                                                        onError={e => { e.target.src = "https://via.placeholder.com/300x300?text=No+Image"; }}
                                                     />
                                                     <div className="mota">
                                                         <p className="mota-name home-product-item_name">{product.name}</p>
-                                                        <p className="mota-name home-product-item_desc">{product.description ? product.description.substring(0, 50) + "..." : ""}</p>
+                                                        <p className="mota-name home-product-item_desc">
+                                                            {product.description ? product.description.substring(0, 50) + "..." : ""}
+                                                        </p>
                                                         <p className="mota-name home-product-item_seller">
                                                             <i className="fa-solid fa-store"></i> {product.seller_name || "Unknown Seller"}
                                                         </p>
                                                         <p className="mota-name home-product-item_rating">
                                                             <div className="seller-stars">
-                                                                {Array.from({ length: 5 }).map((_, index) => {
+                                                                {Array.from({ length: 5 }).map((_, idx) => {
                                                                     const avg = sellerRatings[product.seller_id]?.average || 0;
-                                                                    const value = index + 1;
-
+                                                                    const value = idx + 1;
                                                                     let className = "star empty";
-                                                                    if (avg >= value) {
-                                                                        className = "star full";
-                                                                    } else if (avg >= value - 0.5) {
-                                                                        className = "star half";
-                                                                    }
-
-                                                                    return (
-                                                                        <span key={index} className={className}>★</span>
-                                                                    );
+                                                                    if (avg >= value) className = "star full";
+                                                                    else if (avg >= value - 0.5) className = "star half";
+                                                                    return <span key={idx} className={className}>★</span>;
                                                                 })}
-                                                                <p className="rating-number">
-                                                                    ({sellerRatings[product.seller_id]?.count || 0} reviews)
-                                                                </p>
+                                                                <p className="rating-number">({sellerRatings[product.seller_id]?.count || 0} reviews)</p>
                                                             </div>
                                                             <div className="home-product-item_price">
                                                                 <span className="mota-name home-product-item_price-new">
@@ -175,13 +138,20 @@ const Homepage = ({ user }) => {
                                                                 </span>
                                                             </div>
                                                         </p>
-
                                                     </div>
                                                 </Link>
                                             </div>
                                         ))
                                     )}
                                 </div>
+                                {/* Nút Hiển thị thêm */}
+                                {!loading && visibleCount < products.length && (
+                                    <div className="show-more-container">
+                                        <button className="btn-show-more" onClick={handleShowMore}>
+                                            Hiển thị thêm
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}

@@ -8,6 +8,33 @@ html {
         max-width: 100%;
         position: relative;
 }
+/* Hiển thị thêm button */
+.show-more-container {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.btn-show-more {
+  background-color: #b91515;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-show-more:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.btn-show-more:disabled {
+  background-color: #ccc;
+  cursor: default;
+  opacity: 0.7;
+}
+
 .seller-stars {
   display: flex;
   align-items: center;
