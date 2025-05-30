@@ -4,10 +4,12 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useSocket } from '../../contexts/SocketContext';
 import EmojiPicker from 'emoji-picker-react';
 import './style.scss';
+import { useNavigate } from 'react-router-dom';
 
 export default function Chat({ receiverId, receiverName, onUnreadChange, isChatPage }) {
     const { user } = useAuth();
     const { socket } = useSocket();
+    const navigate=useNavigate();
     const [conversations, setConversations] = useState([]);
     const [selectedUser, setSelectedUser] = useState(
         receiverId ? { id: String(receiverId), userName: receiverName || 'Người nhận' } : null
@@ -68,11 +70,11 @@ export default function Chat({ receiverId, receiverName, onUnreadChange, isChatP
     }, [user?.id]);
 
     // If passed receiverId, set selectedUser once conversations load
-    useEffect(() => {
-        if (receiverId && conversations.length > 0) {
-            const target = conversations.find((conv) => String(conv.id) === String(receiverId))
-            setSelectedUser(target || { id: String(receiverId), userName: receiverName || 'Người nhận' });
-        }
+   useEffect(() => {
+        if (!receiverId) return;
+        const target = conversations.find(conv => String(conv.id) === String(receiverId));
+        setSelectedUser(target || { id: String(receiverId), userName: receiverName || 'Người nhận' });
+        if (window.innerWidth <= 900) setShowChatWindow(true);
     }, [receiverId, receiverName, conversations]);
 
     // Listen for incoming messages
@@ -234,10 +236,10 @@ export default function Chat({ receiverId, receiverName, onUnreadChange, isChatP
     };
 
     // Khi chọn user trên mobile, set showChatWindow = true
-    const handleSelectUser = (conv) => {
-        setSelectedUser(conv);
-        // Nếu là mobile thì chuyển sang chat window
-        if (window.innerWidth <= 900) setShowChatWindow(true);
+      const handleSelectUser = (conv) => {
+        const { id, userName } = conv;
+        navigate(`/chat/${id}?receiverName=${encodeURIComponent(userName)}`);
+        // selectedUser and showChatWindow will update via useEffect on receiverId change
     };
 
     // Khi bấm nút "Quay lại" trong chat window trên mobile
@@ -281,7 +283,10 @@ export default function Chat({ receiverId, receiverName, onUnreadChange, isChatP
                                             {conv.avatarUrl ? (
                                                 <img src={conv.avatarUrl} alt={conv.userName} className="avatar-img" />
                                             ) : (
-                                                <span>{conv.userName.charAt(0).toUpperCase()}</span>
+                                                <span>
+                                                    {(conv.userName?.charAt(0) || '?').toUpperCase()}
+                                                </span>
+
                                             )}
                                             {onlineUsers.includes(String(conv.id)) && <span className="online-dot"></span>}
                                         </div>
