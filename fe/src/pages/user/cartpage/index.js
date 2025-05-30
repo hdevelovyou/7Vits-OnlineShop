@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./style.scss";
 import axios from "axios";
 import Modal from "react-modal";
@@ -20,6 +20,11 @@ const CartPage = ({ cart, setCart }) => {
   const [retryCount, setRetryCount] = useState(0);
   const [isRetrying, setIsRetrying] = useState(false);
   const navigate = useNavigate();
+  
+  // Thêm ref để tracking request hiện tại
+  const currentRequestRef = useRef(null);
+  const isProcessingRef = useRef(false);
+  const lastClickTimeRef = useRef(0);
   
   useEffect(() => {
     const savedCart = localStorage.getItem("cart");
@@ -45,6 +50,15 @@ const CartPage = ({ cart, setCart }) => {
   useEffect(() => {
     calculateTotaldiscountPrice();
   }, [cart]);
+  
+  // Cleanup effect để hủy requests khi component unmount
+  useEffect(() => {
+    return () => {
+      if (currentRequestRef.current) {
+        currentRequestRef.current.abort();
+      }
+    };
+  }, []);
   
   const calculateTotaldiscountPrice = () => {
     const total = cart.reduce((sum, item) => {
@@ -86,12 +100,50 @@ const CartPage = ({ cart, setCart }) => {
     return Number(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ";
   };
 
-  const handleCheckout = async () => {
+  // Reset states về trạng thái ban đầu
+  const resetCheckoutStates = () => {
+    console.log("Reset checkout states");
+    setIsLoading(false);
+    setIsRetrying(false);
+    setRetryCount(0);
+    isProcessingRef.current = false;
+    if (currentRequestRef.current) {
+      currentRequestRef.current.abort();
+      currentRequestRef.current = null;
+    }
+  };
+
+  const handleCheckout = async (isRetryAttempt = false) => {
+    // Thêm debounce để ngăn spam clicks (500ms)
+    const now = Date.now();
+    if (!isRetryAttempt && now - lastClickTimeRef.current < 500) {
+      console.log("Click quá nhanh, bỏ qua");
+      return;
+    }
+    lastClickTimeRef.current = now;
+    
+    // Ngăn multiple requests
+    if (isProcessingRef.current && !isRetryAttempt) {
+      console.log("Request đang được xử lý, bỏ qua request mới");
+      return;
+    }
+
     if (cart.length === 0) {
       alert("Giỏ hàng của bạn đang trống!");
       return;
     }
 
+    console.log(`=== BẮT ĐẦU CHECKOUT ${isRetryAttempt ? '(RETRY)' : '(NEW)'} ===`);
+    console.log(`Cart items: ${cart.length}, Total: ${totalPrice}, Wallet: ${walletBalance}`);
+
+    // Cancel request cũ nếu có
+    if (currentRequestRef.current) {
+      console.log("Hủy request cũ");
+      currentRequestRef.current.abort();
+    }
+
+    // Đánh dấu đang xử lý
+    isProcessingRef.current = true;
     setIsLoading(true);
     
     // Nếu đang thử lại, hiển thị trạng thái
@@ -99,12 +151,15 @@ const CartPage = ({ cart, setCart }) => {
       setIsRetrying(true);
     }
     
+    // Tạo AbortController mới
+    const abortController = new AbortController();
+    currentRequestRef.current = abortController;
+    
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         alert("Bạn cần đăng nhập để mua hàng");
-        setIsLoading(false);
-        setIsRetrying(false);
+        resetCheckoutStates();
         return;
       }
 
@@ -112,8 +167,7 @@ const CartPage = ({ cart, setCart }) => {
         // Kiểm tra số dư ví
         if (walletBalance < totalPrice) {
           alert("Số dư ví không đủ. Vui lòng nạp thêm tiền vào ví.");
-          setIsLoading(false);
-          setIsRetrying(false);
+          resetCheckoutStates();
           return;
         }
         
@@ -127,16 +181,21 @@ const CartPage = ({ cart, setCart }) => {
           totalAmount: totalPrice
         };
         
+        console.log(`Đang gửi request checkout (lần thử ${retryCount + 1})...`);
+        
         // Gọi API để tạo đơn hàng và thanh toán từ ví
         const response = await axios.post("/api/orders/create", orderData, {
           headers: {
             Authorization: `Bearer ${token}`
           },
-          // Tăng timeout cho request
-          timeout: 30000,
+          // Giảm timeout xuống 15s để phát hiện vấn đề sớm hơn
+          timeout: 1000,
+          signal: abortController.signal
         });
         
         if (response.data.success) {
+          console.log("Checkout thành công!");
+          
           // Lưu trữ thông tin đơn hàng thành công
           setOrderSuccess(response.data);
           
@@ -147,9 +206,8 @@ const CartPage = ({ cart, setCart }) => {
           setCart([]);
           localStorage.setItem("cart", JSON.stringify([]));
           
-          // Reset các trạng thái retry
-          setRetryCount(0);
-          setIsRetrying(false);
+          // Reset states
+          resetCheckoutStates();
           
           // Chuyển hướng đến trang thanh toán thành công
           navigate(ROUTES.USER.PAYMENT_SUCCESS, { 
@@ -159,33 +217,46 @@ const CartPage = ({ cart, setCart }) => {
             }
           });
         } else {
+          resetCheckoutStates();
           alert(response.data.message || "Có lỗi xảy ra khi thanh toán");
         }
       } else {
         // Xử lý cho phương thức thanh toán khác (sẽ phát triển sau)
+        resetCheckoutStates();
         alert("Phương thức thanh toán này chưa được hỗ trợ");
       }
     } catch (error) {
       console.error("Checkout error:", error);
       
-      // Xử lý lỗi lock timeout
-      if (error.message?.includes('timeout') || 
-          error.response?.data?.message?.includes('timeout') ||
-          error.response?.data?.message?.includes('Lần thử') ||
-          error.code === 'ECONNABORTED') {
-        
+      // Nếu request bị cancel, không xử lý gì
+      if (error.name === 'AbortError' || error.name === 'CanceledError') {
+        console.log("Request bị hủy");
+        return;
+      }
+      
+      // Xử lý lỗi timeout hoặc network
+      const isTimeoutError = error.message?.includes('timeout') || 
+                            error.response?.data?.message?.includes('timeout') ||
+                            error.response?.data?.message?.includes('Lần thử') ||
+                            error.code === 'ECONNABORTED';
+      
+      if (isTimeoutError) {
         // Nếu chưa vượt quá số lần thử lại (tối đa 3 lần)
         if (retryCount < 3) {
           const newRetryCount = retryCount + 1;
           setRetryCount(newRetryCount);
           
-          // Thông báo đang thử lại
           console.log(`Lần thử ${newRetryCount}: Đang thử lại sau lỗi timeout...`);
+          
+          // Reset loading state tạm thời
+          setIsLoading(false);
+          setIsRetrying(false);
+          isProcessingRef.current = false;
           
           // Thử lại sau khoảng thời gian (giãn cách tăng dần)
           const retryDelay = 2000 * Math.pow(1.5, newRetryCount - 1);
           setTimeout(() => {
-            handleCheckout(); // Thử lại
+            handleCheckout(true); // Đánh dấu đây là retry attempt
           }, retryDelay);
           
           return;
@@ -200,9 +271,8 @@ const CartPage = ({ cart, setCart }) => {
       } else {
         alert(error.response?.data?.message || "Đã xảy ra lỗi khi thanh toán. Vui lòng thử lại sau.");
       }
-    } finally {
-      setIsLoading(false);
-      setIsRetrying(false);
+      
+      resetCheckoutStates();
     }
   };
 
@@ -274,7 +344,7 @@ const CartPage = ({ cart, setCart }) => {
                   <td className="price">
                     {item.originalPrice && (
                       <span className="original-price">
-                        <s>{formatPrice(item.originalPrice)}</s>
+                        {formatPrice(item.originalPrice)}
                       </span>
                     )}
                     {formatPrice(item.price)}
@@ -368,13 +438,33 @@ const CartPage = ({ cart, setCart }) => {
                
               </div>
               <button 
-                className="checkout-btn col-sm-12"
-                onClick={handleCheckout}
-                disabled={isLoading}
+                className={`checkout-btn col-sm-12 ${isLoading ? 'loading' : ''}`}
+                onClick={() => handleCheckout()}
+                disabled={isLoading || walletBalance < totalPrice}
+                style={{
+                  opacity: isLoading ? 0.7 : 1,
+                  cursor: isLoading ? 'not-allowed' : 'pointer'
+                }}
               >
-                {isLoading ? 
-                  isRetrying ? `Đang thử lại lần ${retryCount}...` : "Đang xử lý..." 
-                  : "Mua Ngay"}
+                {isLoading ? (
+                  <span>
+                    {isRetrying ? (
+                      <>
+                        <span className="spinner">⏳</span>
+                        {` Đang thử lại lần ${retryCount}...`}
+                      </>
+                    ) : (
+                      <>
+                        <span className="spinner">⏳</span>
+                        {" Đang xử lý..."}
+                      </>
+                    )}
+                  </span>
+                ) : walletBalance < totalPrice ? (
+                  "Số dư không đủ"
+                ) : (
+                  "Mua Ngay"
+                )}
               </button>
             </div>
           </div>
