@@ -483,6 +483,12 @@ const orderController = {
                              VALUES (?, ?, ?, ?, ?, ?, 'pending')`,
                             [orderId, buyerId, sellerId, amount, buyerTransactionId, sellerTransaction.insertId]
                         );
+
+                        // Cập nhật trạng thái sản phẩm về inactive
+                        await db.query(
+                            'UPDATE products SET status = ? WHERE id IN (?)',
+                            ['inactive', items.map(item => item.productId)]
+                        );
                     }
     
                     await db.query('COMMIT');
@@ -564,6 +570,12 @@ const orderController = {
                     SET status = 'completed' 
                     WHERE reference_id = ?`,
                     [orderId]
+                );
+
+                // 6. Cập nhật trạng thái sản phẩm về sold_out
+                await db.query(
+                    'UPDATE products SET status = ? WHERE id IN (?)',
+                    ['sold_out', items.map(item => item.productId)]
                 );
 
                 await db.query('COMMIT');
