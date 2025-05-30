@@ -4,7 +4,7 @@
 ### Giáo viên hướng dẫn
 - Trần Tuấn Dũng
 ### Lớp : NT208.P22.ANTT
-### Nhom 8 - Thành viên thực hiên:
+### Nhom 7 - Thành viên thực hiên:
 + 23520468	Bùi Nguyễn Công Hiếu
 + 23521191	Châu Hoàng Phúc
 + 23520166	Nguyễn Hữu Cảnh
@@ -148,7 +148,7 @@ npm start
 ```
 
 ## Cấu trúc cơ sở dữ liệu
-
+![database](./asset/data.jpeg)
 Hệ thống sử dụng các bảng chính sau:
 
 ### 1. Bảng users
