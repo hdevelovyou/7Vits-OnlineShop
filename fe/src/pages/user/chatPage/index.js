@@ -12,7 +12,12 @@ export default function ChatPage() {
 
     return (
         <div>
-            <Chat receiverId={receiverId} receiverName={receiverName} />
+            <Chat 
+            receiverId={receiverId} 
+            receiverName={receiverName}
+           
+            
+             />
         </div>
     );
 }

@@ -133,7 +133,7 @@ const MasterLayout = ({ children }) => {
         <div>
             {/* Luôn hiện Header */}
             <Header unreadConversations={unreadConversations} cart={cart} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} sluong={cart.length} />
-            <Chat receiverId={receiverId} receiverName={receiverName} onUnreadChange={handleUnreadChange} isChatPage={isChatPage} style={{ display: isChatPage ? undefined : "none" }} />
+            <Chat key={receiverId} receiverId={receiverId} receiverName={receiverName} onUnreadChange={handleUnreadChange} isChatPage={isChatPage} style={{ display: isChatPage ? undefined : "none" }} />
             {/* Truyền dữ liệu qua children nếu là function */}
             {children && typeof children === "function"
                 ? children({ isLoggedIn, setIsLoggedIn, cart, setCart, updateCart })
