@@ -147,7 +147,7 @@ const Homepage = ({ user }) => {
                                 {/* Nút Hiển thị thêm */}
                                 {!loading && visibleCount < products.length && (
                                     <div className="show-more-container">
-                                        <button className="btn-show-more" onClick={handleShowMore}>
+                                        <button className="btn-show-more" onClick={handleShowMore} >
                                             Hiển thị thêm
                                         </button>
                                     </div>

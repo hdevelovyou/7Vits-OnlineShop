@@ -19,6 +19,7 @@ const vnpayRoutes = require('./routes/vnpay_routes');
 const adminRouter = require('./routes/admin');
 const bodyParser = require('body-parser');
 const chatbotRoutes = require('./routes/chatbot');
+const auctionRoutes = require('./routes/auctionRoutes');
 
 const app = express();
 
@@ -53,11 +54,11 @@ app.use(cors({
   origin: function (origin, callback) {
     // Cho phép request không có origin (như từ Postman hoặc mobile apps)
     if (!origin) return callback(null, true);
-    
+
     if (allowedOrigins.indexOf(origin) !== -1) {
       return callback(null, true);
     }
-    
+
     console.log('CORS blocked origin:', origin);
     return callback(new Error('Not allowed by CORS'));
   },
@@ -82,8 +83,8 @@ app.use((req, res, next) => {
 });
 
 // Body parser middleware
-app.use(express.json({limit: '10mb'}));
-app.use(bodyParser.json({limit: '10mb'}));
+app.use(express.json({ limit: '10mb' }));
+app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 // Static file serving
@@ -91,7 +92,9 @@ app.use('/images', express.static(path.join(__dirname, 'public/images')));
 console.log('Serving static files from:', path.join(__dirname, 'public/images'));
 
 // Session configuration
-app.use(session({
+const sharedSession = require('express-socket.io-session');
+
+const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET || 'default_secret',
   resave: false,
   saveUninitialized: false,
@@ -100,7 +103,10 @@ app.use(session({
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
-}));
+});
+
+app.use(sessionMiddleware); // dùng chung cho Express
+io.use(sharedSession(sessionMiddleware, { autoSave: true })); // dùng chung cho Socket.IO
 
 // Initialize passport
 app.use(passport.initialize());
@@ -118,7 +124,7 @@ app.post('/api/messages/read', messageController.markMessagesAsRead);
 app.get('/api/messages/unread-counts/:userId', messageController.getUnreadCounts);
 app.use('/api', adminRouter);
 app.use('/api/chatbot', chatbotRoutes);
-
+app.use('/api/auctions', auctionRoutes);
 // Test route for checking if the API is working
 app.get('/api/test', (req, res) => {
   res.json({
@@ -165,12 +171,71 @@ function broadcastOnlineUsers() {
 
 io.on('connection', (socket) => {
   console.log('New client connected:', socket.id);
+  // --- Đóng phiên đấu giá khi hết giờ ---
+
 
   socket.on('register', (userId) => {
     users[userId] = socket.id;
     console.log(`User ${userId} registered with socket ${socket.id}`);
     broadcastOnlineUsers();
   });
+  // Khi client join một phòng (auction)
+  socket.on('join_auction', (auctionId) => {
+    socket.join(`auction_${auctionId}`);
+    console.log(`Socket ${socket.id} joined room auction_${auctionId}`);
+  });
+  // rời phòng 
+  socket.on('leave_auction', (auctionId) => {
+    socket.leave(`auction_${auctionId}`);
+    console.log(`Socket ${socket.id} left room auction_${auctionId}`);
+  });
+
+ socket.on('place_bid', async ({ auctionId, bidderId, amount }) => {
+  console.log('[Server] Received place_bid:', { auctionId, bidderId, amount });
+
+  try {
+    // Lấy dữ liệu auction từ DB
+    const [rows] = await db.query('SELECT id, current_bid, status, end_time FROM auctions WHERE id = ?', [auctionId]);
+    const auction = rows[0];
+    if (!auction) {
+      socket.emit('bid_failed', { message: 'Phiên đấu giá không tồn tại.' });
+      return;
+    }
+
+    // Kiểm tra trạng thái lẫn thời gian
+    const now = new Date();
+    const endTime = new Date(auction.end_time);
+    if (auction.status !== 'ongoing' || now >= endTime) {
+      socket.emit('bid_failed', { message: 'Phiên đấu giá đã kết thúc.' });
+      return;
+    }
+
+    if (amount <= auction.current_bid) {
+      socket.emit('bid_failed', {
+        message: `Giá phải cao hơn giá hiện tại (${auction.current_bid.toLocaleString()} VND).`
+      });
+      return;
+    }
+
+    // Cập nhật giá mới
+    await db.query('UPDATE auctions SET current_bid = ? WHERE id = ?', [amount, auctionId]);
+
+    // Tạo record bid, **dùng bidderId từ client**
+    await db.query(
+      'INSERT INTO bids (auction_id, bidder_id, amount) VALUES (?, ?, ?)',
+      [auctionId, bidderId, amount]
+    );
+
+    io.to(`auction_${auctionId}`).emit('bid_updated', {
+      auctionId: auctionId,
+      currentBid: amount,
+      bidderId: bidderId
+    });
+  } catch (err) {
+    console.error('Lỗi khi xử lý place_bid:', err);
+    socket.emit('bid_failed', { message: 'Lỗi server, vui lòng thử lại sau.' });
+  }
+});
 
   socket.on('private_message', async ({ sender_id, receiver_id, message }) => {
     console.log(`${sender_id} → ${receiver_id}: ${message}`);
@@ -197,7 +262,7 @@ io.on('connection', (socket) => {
     // Lưu vào DB
     await messageController.saveSocketMessage(sender_id, receiver_id, message);
   });
-  
+
   socket.on('disconnect', () => {
     for (const [userId, sockId] of Object.entries(users)) {
       if (sockId === socket.id) {
@@ -209,6 +274,72 @@ io.on('connection', (socket) => {
     }
   });
 });
+// --- Đóng phiên đấu giá khi hết giờ ---
+async function closeAuction(auctionId) {
+  try {
+    // Kiểm tra auction đang còn hoạt động
+    const [auctionRows] = await db.query('SELECT * FROM auctions WHERE id = ?', [auctionId]);
+    const auction = auctionRows[0];
+    if (!auction || auction.status !== 'ongoing') return;
+
+    // Cập nhật trạng thái -> finished
+    await db.query('UPDATE auctions SET status = ? WHERE id = ?', ['finished', auctionId]);
+
+    // Tìm người có bid cao nhất
+    const [bidRows] = await db.query(`
+      SELECT bidder_id, amount 
+      FROM bids 
+      WHERE auction_id = ? 
+      ORDER BY amount DESC LIMIT 1
+    `, [auctionId]);
+
+    let winner = null;
+
+    if (bidRows.length > 0) {
+      const { bidder_id, amount } = bidRows[0];
+
+      // Cập nhật winner_id vào bảng auctions
+      await db.query(`UPDATE auctions SET winner_id = ? WHERE id = ?`, [bidder_id, auctionId]);
+
+      winner = { id: bidder_id, amount };
+    }
+
+    // Emit cho client biết phiên đã kết thúc và ai thắng
+    io.to(`auction_${auctionId}`).emit('auction_closed', { winner });
+
+    console.log(`✅ Phiên ${auctionId} đã kết thúc. Winner: ${winner ? winner.id : 'Không có'}`);
+  } catch (err) {
+    console.error('❌ Lỗi khi closeAuction:', err);
+  }
+}
+
+// --- Lên lịch đóng các phiên chưa kết thúc ---
+async function scheduleAuctionClose() {
+  try {
+    const [auctions] = await db.query(`
+      SELECT id, end_time 
+      FROM auctions 
+      WHERE status = 'ongoing'
+    `);
+
+    const now = new Date();
+
+    auctions.forEach(auction => {
+      const endTime = new Date(auction.end_time);
+      const delay = endTime - now;
+
+      if (delay <= 0) {
+        closeAuction(auction.id); // Đã hết giờ ⇒ đóng luôn
+      } else {
+        setTimeout(() => closeAuction(auction.id), delay);
+        console.log(`⏳ Đặt lịch đóng auction_${auction.id} sau ${Math.round(delay / 1000)} giây`);
+      }
+    });
+  } catch (err) {
+    console.error('❌ Lỗi khi scheduleAuctionClose:', err);
+  }
+}
+
 
 // Message routes
 app.post('/api/messages', messageController.sendMessage);
@@ -218,7 +349,7 @@ app.get('/api/conversations/:userId', messageController.getConversations);
 // Global error handling middleware
 app.use((err, req, res, next) => {
   console.error('Global error:', err.stack);
-  res.status(500).json({ 
+  res.status(500).json({
     error: 'Something went wrong!',
     message: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
   });
@@ -234,7 +365,9 @@ app._router.stack.forEach(function (r) {
     console.log(r.route.stack[0].method.toUpperCase(), r.route.path);
   }
 });
-
+(async () => {
+  await scheduleAuctionClose();
+})();
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log(`Static files served at: http://localhost:${PORT}/images`);

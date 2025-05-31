@@ -38,7 +38,7 @@ const menuItems = [
   {
     name:"Sự kiện",
     icon:<MdEmojiEvents />,
-    path:"/event",
+    path:"/auctions",
   },
   {
     name: "Đăng xuất",
