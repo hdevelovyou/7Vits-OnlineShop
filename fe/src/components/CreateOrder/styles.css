@@ -1,0 +1,64 @@
+.create-order-container {
+  margin: 15px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.create-order-button {
+  padding: 12px 24px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 300px;
+}
+
+.create-order-button:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.create-order-button:active {
+  transform: translateY(0);
+}
+
+.create-order-button.loading {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.error-message {
+  color: #d32f2f;
+  margin-bottom: 15px;
+  padding: 10px 15px;
+  background-color: #ffebee;
+  border-radius: 4px;
+  border-left: 4px solid #d32f2f;
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+  font-size: 14px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive design */
+@media screen and (max-width: 768px) {
+  .create-order-button {
+    max-width: 100%;
+  }
+  
+  .error-message {
+    max-width: 100%;
+  }
+} 

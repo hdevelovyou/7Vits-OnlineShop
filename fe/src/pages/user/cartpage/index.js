@@ -4,6 +4,7 @@ import axios from "axios";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../../utils/router";
+import CreateOrderButton from "../../../components/CreateOrder";
 
 // Set the app element for accessibility
 Modal.setAppElement("#root");
@@ -13,16 +14,9 @@ const CartPage = ({ cart, setCart }) => {
   const [totalDiscountPrice, setTotalDiscountPrice] = useState(0);
   const [purchasedItems, setPurchasedItems] = useState([]);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("wallet");
-  const [orderSuccess, setOrderSuccess] = useState(null);
   const navigate = useNavigate();
-  
-  // Thêm ref để tracking request hiện tại
-  const currentRequestRef = useRef(null);
-  const isProcessingRef = useRef(false);
-  const lastClickTimeRef = useRef(0);
   
   useEffect(() => {
     const savedCart = localStorage.getItem("cart");
@@ -48,15 +42,6 @@ const CartPage = ({ cart, setCart }) => {
   useEffect(() => {
     calculateTotaldiscountPrice();
   }, [cart]);
-  
-  // Cleanup effect để hủy requests khi component unmount
-  useEffect(() => {
-    return () => {
-      if (currentRequestRef.current) {
-        currentRequestRef.current.abort();
-      }
-    };
-  }, []);
   
   const calculateTotaldiscountPrice = () => {
     const total = cart.reduce((sum, item) => {
@@ -98,106 +83,40 @@ const CartPage = ({ cart, setCart }) => {
     return Number(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ";
   };
 
-  // Reset states về trạng thái ban đầu
-  const resetCheckoutStates = () => {
-    console.log("Reset checkout states");
-    setIsLoading(false);
-    isProcessingRef.current = false;
-    if (currentRequestRef.current) {
-      currentRequestRef.current.abort();
-      currentRequestRef.current = null;
-    }
-  };
-
-  const handleCheckout = async () => {
-    // Kiểm tra click quá nhanh
-    const now = Date.now();
-    if (now - lastClickTimeRef.current < 500) {
-        console.log("Click quá nhanh, bỏ qua");
-        return;
-    }
-    lastClickTimeRef.current = now;
+  // Xử lý khi đặt hàng thành công
+  const handleOrderSuccess = (response) => {
+    console.log("Đặt hàng thành công:", response);
     
-    // Kiểm tra đang xử lý
-    if (isProcessingRef.current) {
-        console.log("Request đang được xử lý, bỏ qua request mới");
-        return;
-    }
-
-    if (cart.length === 0) {
-        alert("Giỏ hàng của bạn đang trống!");
-        return;
-    }
-
-    // Đánh dấu đang xử lý
-    isProcessingRef.current = true;
-    setIsLoading(true);
-
-    try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("Bạn cần đăng nhập để mua hàng");
-            resetCheckoutStates();
-            return;
-        }
-
-        if (paymentMethod === "wallet") {
-            // Kiểm tra số dư ví
-            if (walletBalance < totalPrice) {
-                alert("Số dư ví không đủ. Vui lòng nạp thêm tiền vào ví.");
-                resetCheckoutStates();
-                navigate('/topup'); // Chuyển đến trang nạp tiền
-                return;
-            }
-            
-            // Chuẩn bị dữ liệu thanh toán
-            const orderData = {
-                items: cart.map(item => ({
-                    productId: item.id
-                })),
-                totalAmount: totalPrice
-            };
-            
-            // Gọi API tạo đơn hàng với timeout 30s
-            const response = await axios.post("/api/orders/create", orderData, {
-                headers: { Authorization: `Bearer ${token}` },
-                timeout: 30000
-            });
-            
-            if (response.data.success) {
-                console.log("Checkout thành công!");
-                setOrderSuccess(response.data);
-                setWalletBalance(prev => prev - totalPrice);
-                setCart([]);
-                localStorage.setItem("cart", JSON.stringify([]));
-                resetCheckoutStates();
-                
-                navigate(ROUTES.USER.PAYMENT_SUCCESS, { 
-                    state: { 
-                        orderData: response.data,
-                        purchasedItems: cart
-                    }
-                });
-            }
-        } else {
-            resetCheckoutStates();
-            alert("Phương thức thanh toán này chưa được hỗ trợ");
-        }
-    } catch (error) {
-        console.error("Checkout error:", error);
-        
-        // Xử lý các loại lỗi
-        if (error.response?.data?.message?.includes('số dư')) {
-            alert("Số dư không đủ. Vui lòng nạp thêm tiền.");
-            navigate('/topup');
-        } else if (error.response?.data?.message?.includes('không còn khả dụng')) {
-            alert("Sản phẩm không còn khả dụng. Vui lòng làm mới trang và thử lại.");
-            window.location.reload();
-        } else {
-            alert(error.response?.data?.message || "Đã xảy ra lỗi khi thanh toán. Vui lòng thử lại sau.");
-        }
-        
-        resetCheckoutStates();
+    // Cập nhật số dư ví
+    const numericTotalPrice = parseFloat(parseFloat(totalPrice).toFixed(2));
+    setWalletBalance(prev => prev - numericTotalPrice);
+    
+    // Xóa giỏ hàng
+    setCart([]);
+    localStorage.setItem("cart", JSON.stringify([]));
+    
+    // Chuyển đến trang thành công
+    navigate(ROUTES.USER.PAYMENT_SUCCESS, {
+      state: {
+        orderData: response,
+        purchasedItems: cart
+      }
+    });
+  };
+  
+  // Xử lý khi đặt hàng thất bại
+  const handleOrderError = (error, message) => {
+    console.error("Đặt hàng thất bại:", error);
+    
+    // Xử lý các trường hợp lỗi đặc biệt
+    if (message.includes('số dư')) {
+      alert(message);
+      navigate('/topup');
+    } else if (message.includes('không còn khả dụng')) {
+      alert(message);
+      window.location.reload();
+    } else {
+      alert(message);
     }
   };
 
@@ -360,27 +279,28 @@ const CartPage = ({ cart, setCart }) => {
               <div className="saving">
                 <span style={{ opacity: 0.5 }}>Tiết kiệm </span>
                 <span className="summary-distotal">{formatPrice(totalDiscountPrice)}</span>
-               
               </div>
-              <button 
-                className={`checkout-btn col-sm-12 ${isLoading ? 'loading' : ''}`}
-                onClick={() => handleCheckout()}
-                disabled={isLoading || walletBalance < totalPrice}
-                style={{
-                  opacity: isLoading ? 0.7 : 1,
-                  cursor: isLoading ? 'not-allowed' : 'pointer'
-                }}
-              >
-                {isLoading ? (
-                  <span>
-                    {" Đang xử lý..."}
-                  </span>
-                ) : walletBalance < totalPrice ? (
-                  "Số dư không đủ"
+              
+              {/* Thay thế nút thanh toán cũ bằng component CreateOrderButton */}
+              <div className="checkout-button-container">
+                {walletBalance < totalPrice ? (
+                  <button 
+                    className="checkout-btn col-sm-12"
+                    onClick={() => navigate('/topup')}
+                    style={{ backgroundColor: '#cccccc', cursor: 'not-allowed' }}
+                  >
+                    Số dư không đủ
+                  </button>
                 ) : (
-                  "Mua Ngay"
+                  <CreateOrderButton
+                    items={cart.map(item => ({ productId: parseInt(item.id, 10) }))}
+                    totalAmount={parseFloat(parseFloat(totalPrice).toFixed(2))}
+                    onSuccess={handleOrderSuccess}
+                    onError={handleOrderError}
+                    buttonText="Mua Ngay"
+                  />
                 )}
-              </button>
+              </div>
             </div>
           </div>
 
