@@ -86,6 +86,7 @@ exports.login = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ error: 'Mật khẩu không đúng!' });
     }
+    req.session.userId = user.id;
 
     const token = jwt.sign(
       { id: user.id, 

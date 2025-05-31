@@ -161,3 +161,41 @@ CREATE TABLE IF NOT EXISTS seller_ratings (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+-- 12. Tạo bảng auctions
+CREATE TABLE IF NOT EXISTS auctions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  item_name VARCHAR(255) NOT NULL,
+  description TEXT,
+  starting_price DECIMAL(10,2) NOT NULL,
+  current_bid DECIMAL(10,2) NOT NULL,
+  start_time DATETIME NOT NULL,
+  end_time DATETIME NOT NULL,
+  status ENUM('ongoing','finished') NOT NULL DEFAULT 'ongoing',
+  seller_id INT NOT NULL,
+  winner_id INT NULL,     -- nếu bạn muốn lưu người thắng
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
+  -- FOREIGN KEY (winner_id) REFERENCES users(id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- 13. Tạo bảng bids
+CREATE TABLE IF NOT EXISTS bids (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    auction_id INT NOT NULL,
+    bidder_id INT NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (auction_id) REFERENCES auctions(id) ON DELETE CASCADE,
+    FOREIGN KEY (bidder_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_read TINYINT(1) DEFAULT 0
+);

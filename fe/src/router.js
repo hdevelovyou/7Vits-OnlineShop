@@ -4,7 +4,7 @@ import ProfilePage from "./pages/user/profilePage";
 import RegisterPage from "./pages/user/registerPage";
 import MasterLayout from "./pages/user/theme/masterLayout";
 import { ROUTES } from "./utils/router";
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate, useParams } from "react-router-dom";
 import OtpPage from "./pages/user/otpPage";
 import ForgotPage from "./pages/user/forgotPage";
 import NewPassword from "./pages/user/newPassword";
@@ -35,7 +35,17 @@ import Messages from "./components/Admin/messages";
 import Transactions from "./components/Admin/transactions";
 import HomeAdminPage from "./components/Admin/home";
 import OrderHistoryPage from "./pages/user/orderHistory/OrderHistoryPage";
+<<<<<<< HEAD
 import WithdrawPage from "./pages/user/withdrawPage";
+=======
+import AuctionPage from "./pages/user/AuctionPage/AuctionPage";
+import AuctionsPage from "./pages/user/auctionsPage/auctionsPage";
+
+function AuctionWrapper() {
+    const { id } = useParams();
+    return <AuctionPage auctionId={id} />;
+}
+>>>>>>> adbb7f4 (auctions)
 
 const renderUserRoutes = () => {
     return (
@@ -52,7 +62,7 @@ const renderUserRoutes = () => {
                     <Route path={ROUTES.USER.PRODUCT} element={<ProductPage cart={cart} setCart={setCart} />} />
                     <Route path={ROUTES.USER.STORE} element={<StorePage />} />
                     <Route path={ROUTES.USER.CART} element={<CartPage cart={cart} setCart={setCart} />} />
-                    <Route path="/reset-password" element={<ResetPassword />} />                    
+                    <Route path="/reset-password" element={<ResetPassword />} />
                     <Route path="/chat/:id" element={localStorage.getItem("token") ? <ChatPage /> : <Navigate to="/login" />} />
                     <Route path="/chat" element={<Chat />} />
                     {/* Social auth callback route */}
@@ -73,6 +83,8 @@ const renderUserRoutes = () => {
                     <Route path="/user/purchase-history" element={<OrderHistoryPage />} />
                     <Route path="/withdraw" element={<WithdrawPage />} />
                     {/* Add other routes here */}
+                    <Route path="/auction/:id" element={<AuctionWrapper />} />
+                    <Route path="/auctions" element={<AuctionsPage />} />
                 </Routes>
             )}
         </MasterLayout>
@@ -88,7 +100,7 @@ const RouterCustom = () => {
             <Routes>
                 <Route path="/admin" element={<AdminPage />}>
                     <Route index element={<HomeAdminPage />} />
-                    <Route path="/admin/dashboard" element={<Dashboard />} /> 
+                    <Route path="/admin/dashboard" element={<Dashboard />} />
                     <Route path="/admin/users" element={<Users />} />
                     <Route path="/admin/products" element={<Products />} />
                     <Route path="/admin/orders" element={<Orders />} />
@@ -101,9 +113,10 @@ const RouterCustom = () => {
             </Routes>
         );
     }
-  //Các routes còn lại
+    //Các routes còn lại
     return renderUserRoutes();
-  
+
 }
+
 
 export default RouterCustom;
