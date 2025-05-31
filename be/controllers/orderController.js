@@ -431,7 +431,7 @@ const orderController = {
                 const sellerMap = await orderController.createSellerMap(items); // nên dùng 1 truy vấn JOIN để tối ưu
     
                 await db.query('START TRANSACTION');
-    
+                // Kiểm tra số dư người mua, xử lí tiền người mua
                 try {
                     const buyerTransactionId = await orderController.createBuyerTransaction(buyerId, totalAmount);
     
@@ -455,7 +455,11 @@ const orderController = {
                         const { items: sellerItems, amount } = sellerMap[sellerId];
     
                         await db.query('SELECT id FROM user_wallets WHERE user_id = ? FOR UPDATE', [sellerId]);
-    
+                        //Cộng locked_balance người bán
+                        await db.query(
+                            'UPDATE user_wallets SET locked_balance = locked_balance + ? WHERE user_id = ?',
+                            [amount, sellerId]
+                        );
                         const [orderResult] = await db.query(
                             `INSERT INTO orders (user_id, seller_id, total_amount, status) VALUES (?, ?, ?, 'pending')`,
                             [buyerId, sellerId, amount]
