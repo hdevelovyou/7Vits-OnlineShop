@@ -215,10 +215,18 @@ $success-color: #4caf50;  // Green for success messages
                 display: flex;
                 align-items: center;
                 font-weight: bold;
+                max-width: 100%;
+                min-width: 0;
                 span {
                     font-size: 1.6rem;
                     color: $text-color;
                     margin-right: 1.5rem;
+                    max-width: 220px; 
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    word-break: break-all;
+                    display: inline-block;
                 }
                 
                 .edit-btn {
@@ -445,4 +453,16 @@ $success-color: #4caf50;  // Green for success messages
       font-weight: 500;
     }
   }
+}
+
+.info-value a {
+    color: $text-color;
+    text-decoration: underline;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    font-size: 1.6rem;
+    text-decoration: none;
 }

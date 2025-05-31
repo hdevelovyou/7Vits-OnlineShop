@@ -408,7 +408,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong, unreadConversations }) => {
                     <li>
                       <Link to="/gio-hang" onClick={() => window.scrollTo(0, 0)} style={{ textDecoration: "none" }}>
                         <FaShoppingCart />
-                        <span>{sluong}</span>
+                        {sluong > 0 && <span>{sluong}</span>}
                       </Link>
                     </li>
                   </ul>

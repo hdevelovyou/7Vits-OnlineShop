@@ -287,7 +287,9 @@ const ProfilePage = () => {
                         <div className="info-row">
                             <label>Email:</label>
                             <div className="info-value">
-                                <span>{user.email}</span>
+                                <a href={`mailto:${user.email}`} title={user.email}>
+                                    {user.email}
+                                </a>
                             </div>                         
                         </div>
                         <div className="info-row">
