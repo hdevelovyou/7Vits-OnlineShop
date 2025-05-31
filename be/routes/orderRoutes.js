@@ -11,4 +11,5 @@ router.get('/:orderId/detail', authMiddleware, orderController.getOrderDetails);
 router.get('/getOrderHistory', authMiddleware, orderController.getOrderHistory);
 router.get('/wallet-balance', authMiddleware, orderController.getWalletBalance);
 router.get('/wallet-locked-balance', authMiddleware, orderController.getWalletLockedBalance);
+router.post('/withdraw', authMiddleware, orderController.withdrawMoney);
 module.exports = router; 

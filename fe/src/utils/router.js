@@ -16,6 +16,7 @@ export const ROUTES = {
         EDIT_PRODUCT: '/edit-product/:id',
         CHAT: '/chat/:receiverId',
         TOPUP: '/topup',
+        WITHDRAW: '/withdraw',
         PAYMENT_SUCCESS: '/user/payment-success',
         CHINH_SACH: '/chinh-sach',
         SETUP_ACCOUNT: '/setup-account',

@@ -348,6 +348,54 @@ $success-color: #4caf50;  // Green for success messages
                 }
             }
         }
+
+        .wallet-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+
+            .wallet-action-btn {
+                padding: 12px 24px;
+                border-radius: 8px;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 1.4rem;
+                transition: all 0.3s ease;
+                text-align: center;
+                min-width: 120px;
+
+                &.topup-btn {
+                    background-color: #28a745;
+                    color: white;
+
+                    &:hover {
+                        background-color: #218838;
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+                    }
+                }
+
+                &.withdraw-btn {
+                    background-color: #dc3545;
+                    color: white;
+
+                    &:hover {
+                        background-color: #c82333;
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+                    }
+                }
+            }
+
+            @media (max-width: 768px) {
+                flex-direction: column;
+                
+                .wallet-action-btn {
+                    width: 100%;
+                }
+            }
+        }
     }
 }
 

@@ -727,8 +727,106 @@ const orderController = {
                 error: error.message
             });
         }
+    },
+    
+    // Thêm function rút tiền
+    withdrawMoney: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const { amount, bankInfo } = req.body;
+            
+            // Validate input
+            if (!amount || amount <= 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Số tiền rút không hợp lệ'
+                });
+            }
+
+            if (!bankInfo || !bankInfo.bankName || !bankInfo.accountNumber || !bankInfo.accountHolder) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Thông tin ngân hàng không đầy đủ'
+                });
+            }
+
+            // Bắt đầu transaction
+            await db.query('START TRANSACTION');
+
+            try {
+                // Lấy số dư hiện tại và khóa record để tránh race condition
+                const [wallet] = await db.query(
+                    'SELECT balance FROM user_wallets WHERE user_id = ? FOR UPDATE',
+                    [userId]
+                );
+
+                if (!wallet || wallet.length === 0) {
+                    await db.query('ROLLBACK');
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Không tìm thấy ví của người dùng'
+                    });
+                }
+
+                const currentBalance = wallet[0].balance;
+
+                // Kiểm tra số dư có đủ không
+                if (currentBalance < amount) {
+                    await db.query('ROLLBACK');
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Số dư trong ví không đủ để rút',
+                        currentBalance: currentBalance,
+                        requestedAmount: amount
+                    });
+                }
+
+                // Trừ tiền từ ví
+                await db.query(
+                    'UPDATE user_wallets SET balance = balance - ? WHERE user_id = ?',
+                    [amount, userId]
+                );
+
+                // Tạo transaction record
+                const [transactionResult] = await db.query(
+                    `INSERT INTO transactions 
+                    (user_id, amount, transaction_type, status, description, reference_id) 
+                    VALUES (?, ?, 'withdrawal', 'pending', ?, ?)`,
+                    [
+                        userId, 
+                        amount, 
+                        `Rút tiền về tài khoản ${bankInfo.bankName} - ${bankInfo.accountNumber}`,
+                        `WITHDRAW_${Date.now()}`
+                    ]
+                );
+
+                // Commit transaction
+                await db.query('COMMIT');
+
+                res.json({
+                    success: true,
+                    message: 'Yêu cầu rút tiền đã được gửi thành công',
+                    transactionId: transactionResult.insertId,
+                    withdrawAmount: amount,
+                    remainingBalance: currentBalance - amount,
+                    bankInfo: bankInfo
+                });
+
+            } catch (error) {
+                await db.query('ROLLBACK');
+                throw error;
+            }
+
+        } catch (error) {
+            console.error('Withdraw money error:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Lỗi hệ thống khi rút tiền',
+                error: error.message
+            });
+        }
     }
-    };
+};
 
 // Khởi tạo cron job
 cron.schedule('0 * * * *', async () => {

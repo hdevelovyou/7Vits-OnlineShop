@@ -312,6 +312,11 @@ const ProfilePage = () => {
                                     <span className="balance locked">{formatCurrency(walletInfo.lockedBalance)}</span>
                                 </div>
                             </div>
+                            <div className="wallet-actions">
+                                <Link to="/withdraw" className="wallet-action-btn withdraw-btn">
+                                    Rút tiền
+                                </Link>
+                            </div>
                         </div>
                         <div className="profile-action-buttons">
                             <Link to="/sell-product" className="nav-link sell-product-button">

@@ -35,6 +35,7 @@ import Messages from "./components/Admin/messages";
 import Transactions from "./components/Admin/transactions";
 import HomeAdminPage from "./components/Admin/home";
 import OrderHistoryPage from "./pages/user/orderHistory/OrderHistoryPage";
+import WithdrawPage from "./pages/user/withdrawPage";
 
 const renderUserRoutes = () => {
     return (
@@ -70,6 +71,7 @@ const renderUserRoutes = () => {
                     {/* Policy page */}
                     <Route path={ROUTES.USER.CHINH_SACH} element={<ChinhSachPage />} />
                     <Route path="/user/purchase-history" element={<OrderHistoryPage />} />
+                    <Route path="/withdraw" element={<WithdrawPage />} />
                     {/* Add other routes here */}
                 </Routes>
             )}
