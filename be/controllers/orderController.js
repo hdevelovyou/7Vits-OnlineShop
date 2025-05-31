@@ -4,63 +4,6 @@ const cron = require('node-cron');
 // Tạo một object chứa tất cả các functions
 const orderController = {
     // Helper functions
-    autoConfirmOrder: async (orderId) => {
-        await db.query('START TRANSACTION');
-        try {
-            // Kiểm tra đơn hàng còn pending và đã quá 7 ngày
-            const [order] = await db.query(
-                `SELECT o.*, DATEDIFF(NOW(), o.created_at) as days_passed
-                 FROM orders o
-                 WHERE o.id = ? AND o.status = 'pending'`,
-                [orderId]
-            );
-
-            if (order.length === 0) {
-                await db.query('ROLLBACK');
-                return;
-            }
-
-            const orderData = order[0];
-            
-            // Nếu chưa đủ 7 ngày thì bỏ qua
-            if (orderData.days_passed < 7) {
-                await db.query('ROLLBACK');
-                return;
-            }
-
-            // Chuyển tiền từ locked_balance sang balance của người bán
-            await db.query(
-                `UPDATE user_wallets 
-                SET locked_balance = locked_balance - ?,
-                    balance = balance + ?
-                WHERE user_id = ?`,
-                [orderData.total_amount, orderData.total_amount, orderData.seller_id]
-            );
-
-            // Cập nhật trạng thái đơn hàng và các giao dịch liên quan
-            await db.query(
-                'UPDATE orders SET status = ? WHERE id = ?',
-                ['completed', orderId]
-            );
-
-            await db.query(
-                `UPDATE transactions 
-                 SET status = 'completed' 
-                 WHERE reference_id = ? AND transaction_type = 'sale_income'`,
-                [orderId]
-            );
-
-            
-            
-
-            await db.query('COMMIT');
-            console.log(`Order ${orderId} auto-confirmed after 7 days`);
-        } catch (error) {
-            await db.query('ROLLBACK');
-            console.error('Error in auto confirm order:', error);
-        }
-    },
-
     checkPendingOrders: async () => {
         try {
             // Lấy tất cả đơn hàng pending đã quá 7 ngày
@@ -71,9 +14,7 @@ const orderController = {
             );
 
             // Xử lý từng đơn hàng
-            for (const order of pendingOrders) {
-                await orderController.autoConfirmOrder(order.id);
-            }
+            
         } catch (error) {
             console.error('Error checking pending orders:', error);
         }
@@ -122,156 +63,6 @@ const orderController = {
             throw error;
         }
     },
-
-    createSellerMap: async (items) => {
-        try {
-            const sellerMap = {};
-            
-            for (const item of items) {
-                const [productResult] = await db.query(
-                    'SELECT seller_id, price FROM products WHERE id = ?',
-                    [item.productId]
-                );
-                
-                if (productResult.length === 0) continue;
-                
-                const sellerId = productResult[0].seller_id;
-                const itemPrice = productResult[0].price;
-                
-                if (!sellerMap[sellerId]) {
-                    sellerMap[sellerId] = {
-                        amount: 0,
-                        items: []
-                    };
-                }
-                
-                sellerMap[sellerId].amount += itemPrice;
-                sellerMap[sellerId].items.push({
-                    productId: item.productId,
-                    price: itemPrice
-                });
-            }
-                
-            return sellerMap;
-        } catch (error) {
-            console.error('Error creating seller map:', error);
-            throw error;
-        }
-    },
-
-    createBuyerTransaction: async (userId, totalAmount) => {
-        try {
-            const [buyerTransaction] = await db.query(
-                `INSERT INTO transactions 
-                (user_id, amount, transaction_type, status, description) 
-                VALUES (?, ?, 'purchase', 'pending', ?)`,
-                [userId, totalAmount, 'Thanh toán đơn hàng']
-            );
-            return buyerTransaction.insertId;
-        } catch (error) {
-            console.error('Error creating buyer transaction:', error);
-            throw error;
-        }
-    },
-
-    createSellerTransaction: async (sellerId, amount, orderId) => {
-        try {
-            const [sellerTransaction] = await db.query(
-                `INSERT INTO transactions 
-                (user_id, amount, transaction_type, status, description, reference_id) 
-                VALUES (?, ?, 'sale_income', 'pending', ?, ?)`,
-                [sellerId, amount, `Thu nhập từ đơn hàng #${orderId}`, orderId]
-            );
-            return sellerTransaction.insertId;
-        } catch (error) {
-            console.error('Error creating seller transaction:', error);
-            throw error;
-        }
-    },
-
-    processSellerOrders: async (sellerMap, userId, buyerTransactionId) => {
-        for (const sellerId in sellerMap) {
-            const seller = sellerMap[sellerId];
-            
-            // Tạo đơn hàng mới với trạng thái 'pending'
-            const [orderResult] = await db.query(
-                `INSERT INTO orders 
-                (user_id, seller_id, total_amount, status) 
-                VALUES (?, ?, ?, 'pending')`,
-                [userId, sellerId, seller.amount]
-            );
-            
-            const orderId = orderResult.insertId;
-            
-            // Thêm các sản phẩm vào đơn hàng
-            for (const item of seller.items) {
-                await db.query(
-                    `INSERT INTO order_items 
-                    (order_id, product_id, price) 
-                    VALUES (?, ?, ?)`,
-                    [orderId, item.productId, item.price]
-                );
-            }
-            
-            // Tạo giao dịch cho người bán (pending)
-            const [sellerTransaction] = await db.query(
-                `INSERT INTO transactions 
-                (user_id, amount, transaction_type, status, description, reference_id) 
-                VALUES (?, ?, 'sale_income', 'pending', ?, ?)`,
-                [sellerId, seller.amount, `Thu nhập từ đơn hàng #${orderId}`, orderId]
-            );
-            
-            // 4. Kiểm tra và cập nhật ví của người bán
-            const [sellerWallet] = await db.query(
-                'SELECT * FROM user_wallets WHERE user_id = ?',
-                [sellerId]
-            );
-
-            const walletAmount = seller.amount;
-
-            if (sellerWallet.length === 0) {
-                try {
-                    // Nếu người bán chưa có ví, tạo ví mới
-                    await db.query(
-                        'INSERT INTO user_wallets (user_id, balance, locked_balance) VALUES (?, 0, ?)',
-                        [sellerId, walletAmount]
-                    );
-                } catch (err) {
-                    // Nếu có lỗi duplicate key, thử UPDATE
-                    if (err.code === 'ER_DUP_ENTRY') {
-                        await db.query(
-                            'UPDATE user_wallets SET locked_balance = locked_balance + ? WHERE user_id = ?',
-                            [walletAmount, sellerId]
-                        );
-                    } else {
-                        throw err;
-                    }
-                }
-            } else {
-                // Nếu đã có ví, cập nhật locked_balance
-                await db.query(
-                    'UPDATE user_wallets SET locked_balance = locked_balance + ? WHERE user_id = ?',
-                    [walletAmount, sellerId]
-                );
-            }
-            
-            // Lưu thông tin chuyển tiền
-            await db.query(
-                `INSERT INTO wallet_transfers
-                (order_id, buyer_id, seller_id, amount, buyer_transaction_id, seller_transaction_id, status)
-                VALUES (?, ?, ?, ?, ?, ?, 'pending')`,
-                [
-                    orderId,
-                    userId,
-                    sellerId,
-                    seller.amount,
-                    buyerTransactionId,
-                    sellerTransaction.insertId
-                ]
-            );
-        }
-    },
-
     // Controller functions
     getOrderHistory: async (req, res) => {
         try {
@@ -407,116 +198,162 @@ const orderController = {
     },
 
     createOrder: async (req, res) => {
-        const maxRetries = 3;
-        let retryCount = 0;
-    
-        while (retryCount < maxRetries) {
+        try {
+            const { items, totalAmount } = req.body;
+            const buyerId = req.user.id;
+            console.log('Start createOrder with data:', { items, totalAmount, buyerId });
+
+            if (!items || !Array.isArray(items) || items.length === 0 || !totalAmount) {
+                console.log('Validation failed:', { items, totalAmount });
+                return res.status(400).json({
+                    success: false,
+                    message: 'Thiếu thông tin sản phẩm hoặc tổng tiền'
+                });
+            }
+
+            const productIds = items.map(i => i.productId);
+            console.log('Product IDs:', productIds);
+
+            await db.query('START TRANSACTION');
             try {
-                const { items, totalAmount } = req.body;
-                const buyerId = req.user.id;
-    
-                if (!items || !Array.isArray(items) || items.length === 0 || !totalAmount) {
+                // 1. Lock ví người mua
+                console.log('Locking buyer wallet:', buyerId);
+                const [[buyerWallet]] = await db.query(
+                    'SELECT balance FROM user_wallets WHERE user_id = ? FOR UPDATE',
+                    [buyerId]
+                );
+                console.log('Buyer wallet:', buyerWallet);
+
+                if (!buyerWallet || buyerWallet.balance < totalAmount) {
+                    await db.query('ROLLBACK');
                     return res.status(400).json({
                         success: false,
-                        message: 'Thiếu thông tin sản phẩm hoặc tổng tiền'
+                        message: 'Số dư không đủ'
+                    });
+                }
+
+                // 2. Lock sản phẩm liên quan
+                console.log('Locking products:', productIds);
+                const [products] = await db.query(
+                    'SELECT id, seller_id, price, status FROM products WHERE id IN (?) FOR UPDATE',
+                    [productIds]
+                );
+                console.log('Products found:', products);
+
+                if (products.length !== items.length) {
+                    await db.query('ROLLBACK');
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Một số sản phẩm không tồn tại hoặc bị khóa giao dịch'
                     });
                 }
     
-                const validationResult = await orderController.validateProducts(items, buyerId);
-                if (!validationResult.success) {
-                    return res.status(validationResult.status).json(validationResult);
-                }
-    
-                // Gom sản phẩm theo seller
-                const sellerMap = await orderController.createSellerMap(items); // nên dùng 1 truy vấn JOIN để tối ưu
-    
-                await db.query('START TRANSACTION');
-                // Kiểm tra số dư người mua, xử lí tiền người mua
-                try {
-                    const buyerTransactionId = await orderController.createBuyerTransaction(buyerId, totalAmount);
-    
-                    const [[buyerWallet]] = await db.query(
-                        'SELECT balance FROM user_wallets WHERE user_id = ? FOR UPDATE',
-                        [buyerId]
-                    );
-    
-                    if (!buyerWallet || buyerWallet.balance < totalAmount) {
+                const productMap = new Map();
+                let sellerId = null;
+                for (const product of products) {
+                    if (product.status !== 'active') {
                         await db.query('ROLLBACK');
-                        return res.status(400).json({ success: false, message: 'Số dư không đủ' });
+                        return res.status(400).json({
+                            success: false,
+                            message: `Sản phẩm ID ${product.id} không còn khả dụng`
+                        });
                     }
-    
-                    await db.query(
-                        'UPDATE user_wallets SET balance = balance - ? WHERE user_id = ?',
-                        [totalAmount, buyerId]
-                    );
-    
-                    // Tạo đơn hàng và các bản ghi liên quan
-                    for (const sellerId in sellerMap) {
-                        const { items: sellerItems, amount } = sellerMap[sellerId];
-    
-                        await db.query('SELECT id FROM user_wallets WHERE user_id = ? FOR UPDATE', [sellerId]);
-                        //Cộng locked_balance người bán
-                        await db.query(
-                            'UPDATE user_wallets SET locked_balance = locked_balance + ? WHERE user_id = ?',
-                            [amount, sellerId]
-                        );
-                        const [orderResult] = await db.query(
-                            `INSERT INTO orders (user_id, seller_id, total_amount, status) VALUES (?, ?, ?, 'pending')`,
-                            [buyerId, sellerId, amount]
-                        );
-                        const orderId = orderResult.insertId;
-    
-                        const orderItems = sellerItems.map(item => [orderId, item.productId, item.price]);
-                        await db.query(
-                            'INSERT INTO order_items (order_id, product_id, price) VALUES ?',
-                            [orderItems]
-                        );
-
-                        // Tạo transaction cho người bán
-                        const [sellerTransaction] = await db.query(
-                            `INSERT INTO transactions 
-                             (user_id, amount, transaction_type, status, description, reference_id)
-                             VALUES (?, ?, 'sale_income', 'pending', ?, ?)`,
-                            [sellerId, amount, `Thu nhập từ đơn hàng #${orderId}`, orderId]
-                        );
-
-                        // Cập nhật wallet_transfers với đầy đủ thông tin
-                        await db.query(
-                            `INSERT INTO wallet_transfers 
-                             (order_id, buyer_id, seller_id, amount, buyer_transaction_id, seller_transaction_id, status)
-                             VALUES (?, ?, ?, ?, ?, ?, 'pending')`,
-                            [orderId, buyerId, sellerId, amount, buyerTransactionId, sellerTransaction.insertId]
-                        );
-
-                        // Cập nhật trạng thái sản phẩm về inactive
-                        await db.query(
-                            'UPDATE products SET status = ? WHERE id IN (?)',
-                            ['inactive', items.map(item => item.productId)]
-                        );
+                    if (product.seller_id === buyerId) {
+                        await db.query('ROLLBACK');
+                        return res.status(400).json({
+                            success: false,
+                            message: 'Bạn không thể mua sản phẩm của chính mình'
+                        });
                     }
-    
-                    await db.query('COMMIT');
-                    return res.json({ success: true, message: 'Đơn hàng đã được tạo thành công' });
-                } catch (err) {
-                    await db.query('ROLLBACK');
-                    throw err;
+                    productMap.set(product.id, product);
+                    sellerId = product.seller_id;
                 }
     
-            } catch (error) {
-                console.error(`Create order attempt ${retryCount + 1} failed:`, error);
+                // 3. Lock ví người bán
+                await db.query(
+                    'SELECT locked_balance FROM user_wallets WHERE user_id = ? FOR UPDATE',
+                    [sellerId]
+                );
     
-                if (error.code === 'ER_LOCK_WAIT_TIMEOUT' && retryCount < maxRetries - 1) {
-                    retryCount++;
-                    await new Promise(res => setTimeout(res, Math.random() * 900 + 100));
-                    continue;
-                }
+                // 4. Tạo đơn hàng
+                const [orderResult] = await db.query(
+                    `INSERT INTO orders (user_id, seller_id, total_amount, status)
+                     VALUES (?, ?, ?, 'pending')`,
+                    [buyerId, sellerId, totalAmount]
+                );
+                const orderId = orderResult.insertId;
     
-                return res.status(500).json({
-                    success: false,
-                    message: 'Lỗi khi tạo đơn hàng',
-                    error: error.message
+                // 5. Tạo order_items
+                const orderItems = items.map(item => {
+                    const product = productMap.get(item.productId);
+                    return [orderId, item.productId, product.price];
                 });
+                await db.query(
+                    'INSERT INTO order_items (order_id, product_id, price) VALUES ?',
+                    [orderItems]
+                );
+    
+                // 6. Cập nhật ví
+                await db.query(
+                    'UPDATE user_wallets SET balance = balance - ? WHERE user_id = ?',
+                    [totalAmount, buyerId]
+                );
+                await db.query(
+                    'UPDATE user_wallets SET locked_balance = locked_balance + ? WHERE user_id = ?',
+                    [totalAmount, sellerId]
+                );
+    
+                // 7. Giao dịch
+                console.log('Creating transactions for order:', orderId);
+                try {
+                    await db.query(
+                        'INSERT INTO transactions (user_id, amount, transaction_type, status, description, reference_id) VALUES (?, ?, ?, ?, ?, ?)',
+                        [buyerId, totalAmount, 'purchase', 'pending', 'Thanh toán đơn hàng', orderId.toString()]
+                    );
+                    console.log('Buyer transaction created');
+
+                    await db.query(
+                        'INSERT INTO transactions (user_id, amount, transaction_type, status, description, reference_id) VALUES (?, ?, ?, ?, ?, ?)',
+                        [sellerId, totalAmount, 'sale_income', 'pending', `Thu nhập từ đơn hàng #${orderId}`, orderId.toString()]
+                    );
+                    console.log('Seller transaction created');
+                } catch (transactionError) {
+                    console.error('Transaction creation error:', transactionError);
+                    throw transactionError;
+                }
+                
+                // 8. Cập nhật trạng thái sản phẩm
+                console.log('Updating product status to inactive:', productIds);
+                await db.query(
+                    'UPDATE products SET status = ? WHERE id IN (?)',
+                    ['inactive', productIds]
+                );
+    
+                await db.query('COMMIT');
+                console.log('Transaction committed successfully');
+                return res.json({
+                    success: true,
+                    message: 'Đơn hàng đã được tạo thành công',
+                    orderId: orderId
+                });
+            } catch (err) {
+                console.error('Error in transaction:', err);
+                await db.query('ROLLBACK');
+                throw err;
             }
+        } catch (error) {
+            console.error('Create order error:', {
+                message: error.message,
+                stack: error.stack,
+                sqlMessage: error.sqlMessage,
+                sqlState: error.sqlState
+            });
+            return res.status(500).json({
+                success: false,
+                message: 'Lỗi khi tạo đơn hàng. Vui lòng thử lại.',
+                error: error.message,
+                details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+            });
         }
     },
 
@@ -527,73 +364,38 @@ const orderController = {
 
             await db.query('START TRANSACTION');
 
-            try {
-                // 1. Kiểm tra đơn hàng tồn tại và thuộc về người mua
-                const [order] = await db.query(
-                    'SELECT * FROM orders WHERE id = ? AND user_id = ?',
-                    [orderId, userId]
-                );
+            const [[order]] = await db.query(
+                'SELECT * FROM orders WHERE id = ? AND user_id = ? FOR UPDATE',
+                [orderId, userId]
+            );
 
-                if (order.length === 0) {
-                    await db.query('ROLLBACK');
-                    return res.status(404).json({
-                        success: false,
-                        message: 'Đơn hàng không tồn tại hoặc không thuộc về bạn'
-                    });
-                }
-
-                const orderData = order[0];
-
-                // 2. Kiểm tra trạng thái đơn hàng
-                if (orderData.status !== 'pending') {
-                    await db.query('ROLLBACK');
-                    return res.status(400).json({
-                        success: false,
-                        message: `Đơn hàng không thể xác nhận do đang ở trạng thái ${orderData.status}`
-                    });
-                }
-
-                // 3. Trừ tiền từ locked_balance và cộng vào balance của người bán
-                await db.query(
-                    `UPDATE user_wallets 
-                    SET locked_balance = locked_balance - ?,
-                        balance = balance + ?
-                    WHERE user_id = ?`,
-                    [orderData.total_amount, orderData.total_amount, orderData.seller_id]
-                );
-
-                // 4. Cập nhật trạng thái đơn hàng
-                await db.query(
-                    'UPDATE orders SET status = ? WHERE id = ?',
-                    ['completed', orderId]
-                );
-
-                // 5. Cập nhật trạng thái các transactions
-                await db.query(
-                    `UPDATE transactions 
-                    SET status = 'completed' 
-                    WHERE reference_id = ?`,
-                    [orderId]
-                );
-
-                // 6. Cập nhật trạng thái sản phẩm về sold_out
-                await db.query(
-                    'UPDATE products SET status = ? WHERE id IN (?)',
-                    ['sold_out', items.map(item => item.productId)]
-                );
-
-                await db.query('COMMIT');
-
-                return res.json({
-                    success: true,
-                    message: 'Đơn hàng đã được xác nhận thành công'
-                });
-
-            } catch (error) {
+            if (!order || order.status !== 'pending') {
                 await db.query('ROLLBACK');
-                throw error;
+                return res.status(400).json({
+                    success: false,
+                    message: 'Đơn hàng không tồn tại hoặc không thể xác nhận'
+                });
             }
+
+            await db.query(
+                'UPDATE user_wallets SET locked_balance = locked_balance - ?, balance = balance + ? WHERE user_id = ?',
+                [order.total_amount, order.total_amount, order.seller_id]
+            );
+
+            await db.query('UPDATE orders SET status = ? WHERE id = ?', ['completed', orderId]);
+            await db.query('UPDATE transactions SET status = ? WHERE reference_id = ?', ['completed', orderId]);
+
+            const [items] = await db.query('SELECT product_id FROM order_items WHERE order_id = ?', [orderId]);
+            const productIds = items.map(item => item.product_id);
+            await db.query('UPDATE products SET status = ? WHERE id IN (?)', ['sold_out', productIds]);
+
+            await db.query('COMMIT');
+            return res.json({
+                success: true,
+                message: 'Đơn hàng đã được xác nhận thành công'
+            });
         } catch (error) {
+            await db.query('ROLLBACK');
             console.error('Confirm order error:', error);
             return res.status(500).json({
                 success: false,
@@ -605,90 +407,50 @@ const orderController = {
 
     rejectOrder: async (req, res) => {
         try {
-            const { orderId } = req.params;
+            const orderId = req.params.orderId;
             const userId = req.user.id;
 
             await db.query('START TRANSACTION');
 
-            try {
-                // 1. Kiểm tra đơn hàng tồn tại và thuộc về người mua
-                const [order] = await db.query(
-                    'SELECT * FROM orders WHERE id = ? AND user_id = ?',
-                    [orderId, userId]
-                );
+            const [[order]] = await db.query(
+                'SELECT * FROM orders WHERE id = ? AND user_id = ? FOR UPDATE',
+                [orderId, userId]
+            );
 
-                if (order.length === 0) {
-                    await db.query('ROLLBACK');
-                    return res.status(404).json({
-                        success: false,
-                        message: 'Đơn hàng không tồn tại hoặc không thuộc về bạn'
-                    });
-                }
-
-                const orderData = order[0];
-
-                // 2. Kiểm tra trạng thái đơn hàng
-                if (orderData.status !== 'pending') {
-                    await db.query('ROLLBACK');
-                    return res.status(400).json({
-                        success: false,
-                        message: `Đơn hàng không thể từ chối do đang ở trạng thái ${orderData.status}`
-                    });
-                }
-
-                // 3. Trừ tiền từ locked_balance người bán
-                await db.query(
-                    'UPDATE user_wallets SET locked_balance = locked_balance - ? WHERE user_id = ?',
-                    [orderData.total_amount, orderData.seller_id]
-                );
-
-                // 4. Hoàn tiền vào balance người mua
-                await db.query(
-                    'UPDATE user_wallets SET balance = balance + ? WHERE user_id = ?',
-                    [orderData.total_amount, userId]
-                );
-
-                // 5. Cập nhật trạng thái đơn hàng
-                await db.query(
-                    'UPDATE orders SET status = ? WHERE id = ?',
-                    ['cancelled', orderId]
-                );
-
-                // 6. Cập nhật trạng thái các transactions
-                await db.query(
-                    `UPDATE transactions 
-                    SET status = 'cancelled' 
-                    WHERE reference_id = ?`,
-                    [orderId]
-                );
-
-                // 7. Cập nhật trạng thái sản phẩm về active
-                const [items] = await db.query(
-                    'SELECT product_id FROM order_items WHERE order_id = ?',
-                    [orderId]
-                );
-
-                for (const item of items) {
-                    await db.query(
-                        'UPDATE products SET status = ? WHERE id = ?',
-                        ['active', item.product_id]
-                    );
-                }
-
-                await db.query('COMMIT');
-
-                res.json({
-                    success: true,
-                    message: 'Đơn hàng đã được từ chối và hoàn tiền thành công'
-                });
-
-            } catch (error) {
+            if (!order || order.status !== 'pending') {
                 await db.query('ROLLBACK');
-                throw error;
+                return res.status(400).json({
+                    success: false,
+                    message: 'Đơn hàng không tồn tại hoặc không thể từ chối'
+                });
             }
+
+            await db.query(
+                'UPDATE user_wallets SET locked_balance = locked_balance - ? WHERE user_id = ?',
+                [order.total_amount, order.seller_id]
+            );
+            await db.query(
+                'UPDATE user_wallets SET balance = balance + ? WHERE user_id = ?',
+                [order.total_amount, userId]
+            );
+
+            await db.query('UPDATE orders SET status = ? WHERE id = ?', ['cancelled', orderId]);
+            await db.query('UPDATE transactions SET status = ? WHERE reference_id = ?', ['cancelled', orderId]);
+
+            const [items] = await db.query('SELECT product_id FROM order_items WHERE order_id = ?', [orderId]);
+            for (const item of items) {
+                await db.query('UPDATE products SET status = ? WHERE id = ?', ['active', item.product_id]);
+            }
+
+            await db.query('COMMIT');
+            return res.json({
+                success: true,
+                message: 'Đơn hàng đã được từ chối và hoàn tiền'
+            });
         } catch (error) {
+            await db.query('ROLLBACK');
             console.error('Reject order error:', error);
-            res.status(500).json({
+            return res.status(500).json({
                 success: false,
                 message: 'Lỗi khi từ chối đơn hàng',
                 error: error.message

@@ -17,8 +17,6 @@ const CartPage = ({ cart, setCart }) => {
   const [walletBalance, setWalletBalance] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("wallet");
   const [orderSuccess, setOrderSuccess] = useState(null);
-  const [retryCount, setRetryCount] = useState(0);
-  const [isRetrying, setIsRetrying] = useState(false);
   const navigate = useNavigate();
   
   // Thêm ref để tracking request hiện tại
@@ -104,8 +102,6 @@ const CartPage = ({ cart, setCart }) => {
   const resetCheckoutStates = () => {
     console.log("Reset checkout states");
     setIsLoading(false);
-    setIsRetrying(false);
-    setRetryCount(0);
     isProcessingRef.current = false;
     if (currentRequestRef.current) {
       currentRequestRef.current.abort();
@@ -113,166 +109,95 @@ const CartPage = ({ cart, setCart }) => {
     }
   };
 
-  const handleCheckout = async (isRetryAttempt = false) => {
-    // Thêm debounce để ngăn spam clicks (500ms)
+  const handleCheckout = async () => {
+    // Kiểm tra click quá nhanh
     const now = Date.now();
-    if (!isRetryAttempt && now - lastClickTimeRef.current < 500) {
-      console.log("Click quá nhanh, bỏ qua");
-      return;
+    if (now - lastClickTimeRef.current < 500) {
+        console.log("Click quá nhanh, bỏ qua");
+        return;
     }
     lastClickTimeRef.current = now;
     
-    // Ngăn multiple requests
-    if (isProcessingRef.current && !isRetryAttempt) {
-      console.log("Request đang được xử lý, bỏ qua request mới");
-      return;
+    // Kiểm tra đang xử lý
+    if (isProcessingRef.current) {
+        console.log("Request đang được xử lý, bỏ qua request mới");
+        return;
     }
 
     if (cart.length === 0) {
-      alert("Giỏ hàng của bạn đang trống!");
-      return;
-    }
-
-    console.log(`=== BẮT ĐẦU CHECKOUT ${isRetryAttempt ? '(RETRY)' : '(NEW)'} ===`);
-    console.log(`Cart items: ${cart.length}, Total: ${totalPrice}, Wallet: ${walletBalance}`);
-
-    // Cancel request cũ nếu có
-    if (currentRequestRef.current) {
-      console.log("Hủy request cũ");
-      currentRequestRef.current.abort();
+        alert("Giỏ hàng của bạn đang trống!");
+        return;
     }
 
     // Đánh dấu đang xử lý
     isProcessingRef.current = true;
     setIsLoading(true);
-    
-    // Nếu đang thử lại, hiển thị trạng thái
-    if (retryCount > 0) {
-      setIsRetrying(true);
-    }
-    
-    // Tạo AbortController mới
-    const abortController = new AbortController();
-    currentRequestRef.current = abortController;
-    
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("Bạn cần đăng nhập để mua hàng");
-        resetCheckoutStates();
-        return;
-      }
 
-      if (paymentMethod === "wallet") {
-        // Kiểm tra số dư ví
-        if (walletBalance < totalPrice) {
-          alert("Số dư ví không đủ. Vui lòng nạp thêm tiền vào ví.");
-          resetCheckoutStates();
-          return;
+    try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Bạn cần đăng nhập để mua hàng");
+            resetCheckoutStates();
+            return;
         }
-        
-        // Chuẩn bị dữ liệu thanh toán
-        const orderData = {
-          items: cart.map(item => ({
-            productId: item.id,
-            quantity: 1,
-            price: item.price
-          })),
-          totalAmount: totalPrice
-        };
-        
-        console.log(`Đang gửi request checkout (lần thử ${retryCount + 1})...`);
-        
-        // Gọi API để tạo đơn hàng và thanh toán từ ví
-        const response = await axios.post("/api/orders/create", orderData, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-          // Giảm timeout xuống 15s để phát hiện vấn đề sớm hơn
-          timeout: 1000,
-          signal: abortController.signal
-        });
-        
-        if (response.data.success) {
-          console.log("Checkout thành công!");
-          
-          // Lưu trữ thông tin đơn hàng thành công
-          setOrderSuccess(response.data);
-          
-          // Cập nhật số dư ví sau khi thanh toán
-          setWalletBalance(prev => prev - totalPrice);
-          
-          // Xóa giỏ hàng
-          setCart([]);
-          localStorage.setItem("cart", JSON.stringify([]));
-          
-          // Reset states
-          resetCheckoutStates();
-          
-          // Chuyển hướng đến trang thanh toán thành công
-          navigate(ROUTES.USER.PAYMENT_SUCCESS, { 
-            state: { 
-              orderData: response.data,
-              purchasedItems: cart
+
+        if (paymentMethod === "wallet") {
+            // Kiểm tra số dư ví
+            if (walletBalance < totalPrice) {
+                alert("Số dư ví không đủ. Vui lòng nạp thêm tiền vào ví.");
+                resetCheckoutStates();
+                navigate('/topup'); // Chuyển đến trang nạp tiền
+                return;
             }
-          });
+            
+            // Chuẩn bị dữ liệu thanh toán
+            const orderData = {
+                items: cart.map(item => ({
+                    productId: item.id
+                })),
+                totalAmount: totalPrice
+            };
+            
+            // Gọi API tạo đơn hàng với timeout 30s
+            const response = await axios.post("/api/orders/create", orderData, {
+                headers: { Authorization: `Bearer ${token}` },
+                timeout: 30000
+            });
+            
+            if (response.data.success) {
+                console.log("Checkout thành công!");
+                setOrderSuccess(response.data);
+                setWalletBalance(prev => prev - totalPrice);
+                setCart([]);
+                localStorage.setItem("cart", JSON.stringify([]));
+                resetCheckoutStates();
+                
+                navigate(ROUTES.USER.PAYMENT_SUCCESS, { 
+                    state: { 
+                        orderData: response.data,
+                        purchasedItems: cart
+                    }
+                });
+            }
         } else {
-          resetCheckoutStates();
-          alert(response.data.message || "Có lỗi xảy ra khi thanh toán");
+            resetCheckoutStates();
+            alert("Phương thức thanh toán này chưa được hỗ trợ");
         }
-      } else {
-        // Xử lý cho phương thức thanh toán khác (sẽ phát triển sau)
-        resetCheckoutStates();
-        alert("Phương thức thanh toán này chưa được hỗ trợ");
-      }
     } catch (error) {
-      console.error("Checkout error:", error);
-      
-      // Nếu request bị cancel, không xử lý gì
-      if (error.name === 'AbortError' || error.name === 'CanceledError') {
-        console.log("Request bị hủy");
-        return;
-      }
-      
-      // Xử lý lỗi timeout hoặc network
-      const isTimeoutError = error.message?.includes('timeout') || 
-                            error.response?.data?.message?.includes('timeout') ||
-                            error.response?.data?.message?.includes('Lần thử') ||
-                            error.code === 'ECONNABORTED';
-      
-      if (isTimeoutError) {
-        // Nếu chưa vượt quá số lần thử lại (tối đa 3 lần)
-        if (retryCount < 3) {
-          const newRetryCount = retryCount + 1;
-          setRetryCount(newRetryCount);
-          
-          console.log(`Lần thử ${newRetryCount}: Đang thử lại sau lỗi timeout...`);
-          
-          // Reset loading state tạm thời
-          setIsLoading(false);
-          setIsRetrying(false);
-          isProcessingRef.current = false;
-          
-          // Thử lại sau khoảng thời gian (giãn cách tăng dần)
-          const retryDelay = 2000 * Math.pow(1.5, newRetryCount - 1);
-          setTimeout(() => {
-            handleCheckout(true); // Đánh dấu đây là retry attempt
-          }, retryDelay);
-          
-          return;
+        console.error("Checkout error:", error);
+        
+        // Xử lý các loại lỗi
+        if (error.response?.data?.message?.includes('số dư')) {
+            alert("Số dư không đủ. Vui lòng nạp thêm tiền.");
+            navigate('/topup');
+        } else if (error.response?.data?.message?.includes('không còn khả dụng')) {
+            alert("Sản phẩm không còn khả dụng. Vui lòng làm mới trang và thử lại.");
+            window.location.reload();
         } else {
-          // Đã hết số lần thử
-          alert("Hệ thống đang tải nặng. Vui lòng thử lại sau vài phút.");
-          setRetryCount(0);
+            alert(error.response?.data?.message || "Đã xảy ra lỗi khi thanh toán. Vui lòng thử lại sau.");
         }
-      } else if (error.response && error.response.data && error.response.data.message === "Bạn không thể mua sản phẩm do chính mình đăng bán") {
-        // Xử lý khi có sản phẩm của chính người dùng trong giỏ hàng
-        alert("Giỏ hàng có sản phẩm do bạn đăng bán. Vui lòng xóa sản phẩm đó trước khi thanh toán.");
-      } else {
-        alert(error.response?.data?.message || "Đã xảy ra lỗi khi thanh toán. Vui lòng thử lại sau.");
-      }
-      
-      resetCheckoutStates();
+        
+        resetCheckoutStates();
     }
   };
 
@@ -448,17 +373,7 @@ const CartPage = ({ cart, setCart }) => {
               >
                 {isLoading ? (
                   <span>
-                    {isRetrying ? (
-                      <>
-                        <span className="spinner">⏳</span>
-                        {` Đang thử lại lần ${retryCount}...`}
-                      </>
-                    ) : (
-                      <>
-                        <span className="spinner">⏳</span>
-                        {" Đang xử lý..."}
-                      </>
-                    )}
+                    {" Đang xử lý..."}
                   </span>
                 ) : walletBalance < totalPrice ? (
                   "Số dư không đủ"
