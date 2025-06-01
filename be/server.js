@@ -37,6 +37,7 @@ const allowedOrigins = [
   'https://seventvits-onlineshop.onrender.com',
   'http://localhost:3000',
   'http://localhost:3001',
+  'http://localhost:3002',
   'http://localhost:5000',
   'http://14.225.212.12:3000',
   'https://7-vits-online-shop-frontend.vercel.app'
@@ -46,10 +47,11 @@ const io = socketIO(server, {
   cors: {
     origin: allowedOrigins,
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE']
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
   }
 });
 
+app.set('io', io);
 // Enhanced CORS middleware
 app.use(cors({
   origin: function (origin, callback) {
@@ -94,6 +96,7 @@ console.log('Serving static files from:', path.join(__dirname, 'public/images'))
 
 // Session configuration
 const sharedSession = require('express-socket.io-session');
+const { register } = require('module');
 
 const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET || 'default_secret',
@@ -171,6 +174,14 @@ function broadcastOnlineUsers() {
 }
 
 io.on('connection', (socket) => {
+  
+  socket.on('register_user', (userId) => {
+    if(userId) {
+      console.log('register_user', userId, 'socket:', socket.id);
+      socket.join(`user_${userId}`);
+    }
+  });
+
   console.log('New client connected:', socket.id);
   // --- Đóng phiên đấu giá khi hết giờ ---
 
