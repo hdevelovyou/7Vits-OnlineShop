@@ -35,12 +35,7 @@ import Messages from "./components/Admin/messages";
 import Transactions from "./components/Admin/transactions";
 import HomeAdminPage from "./components/Admin/home";
 import OrderHistoryPage from "./pages/user/orderHistory/OrderHistoryPage";
-<<<<<<< HEAD
-<<<<<<< HEAD
 import WithdrawPage from "./pages/user/withdrawPage";
-=======
-=======
->>>>>>> adbb7f4 (auctions)
 import AuctionPage from "./pages/user/AuctionPage/AuctionPage";
 import AuctionsPage from "./pages/user/auctionsPage/auctionsPage";
 
@@ -48,11 +43,6 @@ function AuctionWrapper() {
     const { id } = useParams();
     return <AuctionPage auctionId={id} />;
 }
-<<<<<<< HEAD
->>>>>>> adbb7f4 (auctions)
-=======
->>>>>>> adbb7f4 (auctions)
-
 const renderUserRoutes = () => {
     return (
         <MasterLayout>
