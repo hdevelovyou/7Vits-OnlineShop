@@ -102,13 +102,15 @@ router.delete("/users/:id", async (req, res) => {
   }
 });
 
-//Ban/Unban
+// Ban/Unban
 router.patch("/users/:id/ban", async (req, res) => {
   try {
     await db.query("UPDATE users SET role = 'banned' WHERE role != 'admin' AND id = ? ", [req.params.id]);
     const io = req.app.get('io');
-    io.to(`user_${req.params.id}`).emit('force logout', {reason: 'banned'});
-    res.json({success: true, message: "This user has been banned."})
+    const room = io.sockets.adapter.rooms.get(`user_${req.params.id}`);
+    console.log('Sockets in room user_' + req.params.id + ':', room ? Array.from(room) : []);
+    io.to(`user_${req.params.id}`).emit('force_logout', {reason: 'banned'});
+    res.json({success: true, message: "This user has been banned."});
   } catch (err) {
     res.status(500).json({error: "Failed to ban user"});
   }

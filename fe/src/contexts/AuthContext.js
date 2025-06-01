@@ -1,12 +1,40 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { io } from "socket.io-client";
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+import socket from '../socket';
 
 const AuthContext = createContext(null);
+
+function useForceLogout(userId)
+{
+    const navigate = useNavigate();
+    useEffect(() => {
+        if(!userId) return;
+        console.log('Registering userId to socket:', userId);
+        socket.emit('register_user', userId);
+
+        const handleForceLogout = (data) => {
+            console.log('Received force_logout:', data);
+            alert(data?.reason || "Your account has been banned by admin!");
+            localStorage.clear();
+            navigate("/login");
+        };
+
+        socket.on('force_logout', handleForceLogout);
+
+        return () => {
+            socket.off('force_logout', handleForceLogout);
+        }
+    }, [userId, navigate]);
+}
+export default useForceLogout;
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const isLoggedIn = !!user;
+    const navigate = useNavigate();
 
     const refreshUser = async () => {
         setLoading(true);
@@ -29,6 +57,33 @@ export const AuthProvider = ({ children }) => {
         window.addEventListener("userLoggedIn", refreshUser);
         return () => window.removeEventListener("userLoggedIn", refreshUser);
     }, []);
+
+    useEffect(() => {
+        let intervalId;
+        if (user) {
+            intervalId = setInterval(async () => {
+                try {
+                    const token = localStorage.getItem('token');
+                    if (!token) throw new Error('No token');
+                    const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/me`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    if (response.data.user?.role === 'banned') {
+                        alert("Your account has been banned by admin");
+                        setUser(null);
+                        localStorage.clear();
+                        navigate("/login");
+                    }
+                } catch (e) {
+                    // Nếu lỗi xác thực, cũng logout
+                    setUser(null);
+                    localStorage.clear();
+                    navigate("/login");
+                }
+            }, 5000); // Set polling 5 giây
+        }
+        return () => clearInterval(intervalId);
+    }, [user]);
 
     const login = async (email, password) => {
         try {
