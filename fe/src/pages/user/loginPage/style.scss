@@ -166,11 +166,19 @@
         }
     }
 
-    .error-message{
-        color: rgb(255, 255, 255);
+    .error-message {
+        display: block;
+        background-color: #ff0000;
+        color: #fff;
         font-size: 1.2rem;
         text-align: center;
-        padding: 1rem 0;
+        padding: 1rem 0; 
         font-weight: bold;
+        margin-bottom: 1.5rem;
+        border-radius: 1rem;
+        box-sizing: border-box;
+        width: 100%; 
+        margin-left: 0;
+        margin-right: 0;
     }
 }
