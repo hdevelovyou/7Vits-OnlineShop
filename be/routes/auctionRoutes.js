@@ -71,18 +71,7 @@ router.get('/:id', async (req, res) => {
 });
 // GET /api/auctions/finished
 
-/**
- * 3) POST /api/auctions
- *    Tạo phiên đấu giá mới. Client phải gửi kèm sellerId.
- *    Body JSON:
- *    {
- *      item_name: string,
- *      description: string (optional),
- *      starting_price: number (>0),
- *      end_time: ISO8601 string,
- *      sellerId: number
- *    }
- */
+
 router.post(
   '/',
   [

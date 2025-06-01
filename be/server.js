@@ -1,4 +1,5 @@
 const express = require('express');
+const cron = require('node-cron');
 const session = require('express-session');
 const cors = require('cors');
 const path = require('path');
@@ -216,7 +217,22 @@ io.on('connection', (socket) => {
       });
       return;
     }
-
+    const[walletRow]=await db.query(
+      'select balance , locked_balance from user_wallets where user_id=?',
+      [bidderId]
+    );
+    if(walletRow.length===0){
+      socket.emit('bid_failed',{message:'Không tìm thấy ví của nguời dùng'});
+      return ;
+    }
+    const {balance,locked_balance}=walletRow[0];
+    const avalablebalance=balance-locked_balance;
+    if (amount>avalablebalance){
+      socket.emit('bid_failed',{
+        message:`số dư không đủ ${avalablebalance.toLocaleString()} VND.`
+      });
+      return ;
+    }
     // Cập nhật giá mới
     await db.query('UPDATE auctions SET current_bid = ? WHERE id = ?', [amount, auctionId]);
 
@@ -339,6 +355,28 @@ async function scheduleAuctionClose() {
     console.error('❌ Lỗi khi scheduleAuctionClose:', err);
   }
 }
+async function checkAndCloseExpiredAuctions() {
+  try {
+    // Lấy tất cả auction còn 'ongoing' mà end_time <= hiện tại
+    const [expiredAuctions] = await db.query(
+      `SELECT id 
+       FROM auctions 
+       WHERE status = 'ongoing' 
+         AND end_time <= NOW()`
+    );
+
+    for (const auc of expiredAuctions) {
+      console.log('[Server] Tự động đóng auction vì đã hết giờ, id =', auc.id);
+      await closeAuction(auc.id);
+    }
+  } catch (err) {
+    console.error('[Server] Lỗi khi checkAndCloseExpiredAuctions:', err);
+  }
+}
+cron.schedule('*/30 * * * * *', async () => {
+  console.log('[Server CRON] Chạy checkAndCloseExpiredAuctions at', new Date().toISOString());
+  await checkAndCloseExpiredAuctions();
+});
 
 
 // Message routes

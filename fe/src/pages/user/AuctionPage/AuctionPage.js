@@ -1,21 +1,20 @@
 // AuctionPage.js
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import socket from '../../../components/socket'; // Đường dẫn tới socket.js đã sửa
 import axios from 'axios';
 
 export default function AuctionPage({ auctionId }) {
+  const navigate = useNavigate();
   const [auction, setAuction] = useState(null);
   const [bidAmount, setBidAmount] = useState('');
   const [timeLeft, setTimeLeft] = useState(0);
-
-  // Giả định userId đã lưu trong localStorage sau khi đăng nhập
   const userId = localStorage.getItem('userId');
 
   useEffect(() => {
     // 1) Join room ngay khi component mount hoặc auctionId thay đổi
     //    (Không cần gọi socket.connect() vì chúng ta đã để autoConnect = true)
-    socket.emit('join_auction', auctionId);
-    console.log(`[Client] emit join_auction: ${auctionId}`);
+
 
     // 2) Đăng ký listener bid_updated **ở ngay đầu** (để không bỏ lỡ event)
     const handleBidUpdated = (data) => {
@@ -31,11 +30,41 @@ export default function AuctionPage({ auctionId }) {
         });
       }
     };
-    const handleAuctionClosed = (data) => {
+    const handleAuctionClosed = async (data) => {
       console.log('[Client] auction_closed:', data);
       if (data.winner) {
         alert(`🎉 Phiên đấu giá kết thúc!\nNgười chiến thắng: ID ${data.winner.id}\nGiá: ${data.winner.amount.toLocaleString()} VND`);
-      } else {
+      }
+
+      if (data.winner.id.toString() === userId.toString()) {
+        alert(
+          `🎉 Phiên đấu giá kết thúc!\n` +
+          `Bạn chính là người chiến thắng với giá: ${data.winner.amount.toLocaleString()} VND.`
+        );
+        const productId = auction.product_id || auction.id;
+         if ( !productId) {
+      alert('❌ Không tìm thấy thông tin sản phẩm để tạo đơn hàng.');
+      return;
+    }
+        try {
+          const payload = {
+            items: [{ productId }], // tùy cấu trúc DB
+            totalAmount: parseFloat(data.winner.amount)
+          };
+          const res = await axios.post(
+            `${process.env.REACT_APP_API_URL}/api/orders/create`,
+            payload,
+            { withCredentials: true }
+          );
+          alert('✅ Đơn hàng của bạn đã được tạo thành công!');
+          // Chuyển qua trang danh sách đơn hàng (tùy bạn đặt route)
+          navigate('/');
+        } catch (err) {
+          console.error('Error creating order:', err);
+          alert(err.response?.data?.message || 'Tạo đơn hàng thất bại.');
+        }
+      }
+      else {
         alert('⛔ Phiên đấu giá kết thúc nhưng không có người tham gia.');
       }
 
@@ -44,8 +73,6 @@ export default function AuctionPage({ auctionId }) {
         status: 'finished'
       }));
     };
-    socket.on('bid_updated', handleBidUpdated);
-
     // 3) (Optional) Lắng nghe event bid_failed để hiển thị alert khi bid lỗi
     const handleBidFailed = (err) => {
       console.log('[Client] Received bid_failed:', err);
@@ -53,8 +80,11 @@ export default function AuctionPage({ auctionId }) {
         alert(err.message);
       }
     };
+    socket.on('bid_updated', handleBidUpdated);
     socket.on('bid_failed', handleBidFailed);
     socket.on('auction_closed', handleAuctionClosed);
+    socket.emit('join_auction', auctionId);
+    console.log(`[Client] emit join_auction: ${auctionId}`);
     // 4) Fetch chi tiết auction ban đầu (để hiển thị và tính timeLeft)
     axios.get(`${process.env.REACT_APP_API_URL}/api/auctions/${auctionId}`, {
       withCredentials: true   // 🔥 BẮT BUỘC để gửi cookie session
