@@ -120,7 +120,11 @@ const Homepage = ({ user }) => {
                                                             onError={e => { e.target.src = "https://via.placeholder.com/300x300?text=No+Image"; }}
                                                         />
                                                         <div className="mota">
-                                                            <p className="mota-name home-product-item_name">{product.name}</p>
+                                                            <p className="mota-name home-product-item_name">
+                                                                {product.name && product.name.length > 30 
+                                                                    ? product.name.substring(0, 23) + "..." 
+                                                                    : product.name}
+                                                            </p>
                                                             <p className="mota-name home-product-item_desc">
                                                                 {product.description ? product.description.substring(0, 50) + "..." : ""}
                                                             </p>
