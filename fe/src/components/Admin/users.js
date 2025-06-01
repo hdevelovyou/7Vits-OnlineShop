@@ -79,7 +79,7 @@ const Users = () => {
                 <td>{u.lastName || ""}</td>
                 <td>{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : ""}</td>
                 <td>
-                  <button
+                  <button className="action-btn"
                       onClick={async e => {
                         e.stopPropagation();
                         if (window.confirm("Are you sure you want to delete this user?")) {
@@ -95,6 +95,47 @@ const Users = () => {
                     >
                       Delete account
                     </button>
+                    {u.role === "banned" ? (
+                    <button className="spaced-btn"
+                      onClick={async e => {
+                        e.stopPropagation();
+                        if (window.confirm("Are you sure you want to unban this user?")) {
+                          await axios.patch(`/api/users/${u.id}/unban`);
+                          const res = await axios.get("/api/users");
+                          setUsers(res.data); 
+                          if (selected && selected.id === u.id) {
+                            const detail = await axios.get(`/api/users/${u.id}`);
+                            setUserDetail(detail.data);
+                            setSelected(detail.data);
+                          }
+                          setProducts([]);
+                          setComments([]);
+                        }
+                      }}
+                    >
+                      Unban
+                    </button>) : (
+                      <button className="spaced-btn"
+                      onClick={async e => {
+                        e.stopPropagation();
+                        if (window.confirm("Are you sure you want to ban this user?")) {
+                          await axios.patch(`/api/users/${u.id}/ban`);
+                          const res = await axios.get("/api/users");
+                          setUsers(res.data); 
+                          if (selected && selected.id === u.id) {
+                            const detail = await axios.get(`/api/users/${u.id}`);
+                            setUserDetail(detail.data);
+                            setSelected(detail.data);
+                          }
+                          setProducts([]);
+                          setComments([]);
+                        }
+                      }}
+                    >
+                      Ban
+                    </button>
+                    )
+                    }
                 </td>
               </tr>
             ))}

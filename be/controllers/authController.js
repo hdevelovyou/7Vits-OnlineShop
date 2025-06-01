@@ -88,6 +88,10 @@ exports.login = async (req, res) => {
     }
     req.session.userId = user.id;
 
+    if(user.role === 'banned'){
+      return res.status(403).json({error: 'Tài khoản của bạn đã bị cấm, liên hệ admin để được hỗ trợ!'})
+    }
+
     const token = jwt.sign(
       { id: user.id, 
         userName: user.userName,

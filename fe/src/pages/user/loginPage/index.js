@@ -79,7 +79,11 @@ const LoginPage = () => {
             }
              
         } catch (err) {
+            if (err.response?.status === 403) {
+                setError(err.response.data.error);
+            } else {
             setError(err.message);
+            }
         }
     };
 

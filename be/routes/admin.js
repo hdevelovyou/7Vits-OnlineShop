@@ -67,7 +67,7 @@ router.get("/dashboard/users-monthly", async (req, res) => {
 });
 
 router.get("/users", async (req, res) => {
-  const [rows] = await db.query("SELECT id, userName, email, firstName, lastName, createdAt FROM users");
+  const [rows] = await db.query("SELECT id, userName, email, firstName, lastName, role, createdAt FROM users");
   res.json(rows);
 });
 router.get("/users/:id", async (req, res) => {
@@ -101,6 +101,27 @@ router.delete("/users/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete user" });
   }
 });
+
+//Ban/Unban
+router.patch("/users/:id/ban", async (req, res) => {
+  try {
+    await db.query("UPDATE users SET role = 'banned' WHERE role != 'admin' AND id = ? ", [req.params.id]);
+    const io = req.app.get('io');
+    io.to(`user_${req.params.id}`).emit('force logout', {reason: 'banned'});
+    res.json({success: true, message: "This user has been banned."})
+  } catch (err) {
+    res.status(500).json({error: "Failed to ban user"});
+  }
+})
+router.patch("/users/:id/unban", async (req, res) => {
+  try {
+    await db.query("UPDATE users SET role = 'user' WHERE id = ?", [req.params.id]);
+    res.json({ success: true, message: "User has been unbanned." });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to unban user" });
+  }
+});
+
 router.get("/users/:id/conversations", messageController.getConversationsOfUser);
 router.get("/users/:id/messages/:otherId", messageController.getMessagesBetweenUsers);
 router.delete("/users/:id/conversations/:otherId", messageController.deleteConversation);
