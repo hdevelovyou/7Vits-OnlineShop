@@ -132,7 +132,7 @@ const EditProductPage = () => {
     };
 
     const categories = [
-        'Game', 'Key', 'Tài khoản game'
+        'Game Key', 'App Key', 'Account'
     ];
 
     if (loading) return <div className="loading">Đang tải...</div>;

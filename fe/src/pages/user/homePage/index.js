@@ -10,7 +10,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import { Link } from "react-router-dom";
 import { formatVND } from "../../../utils/formatprice";
 
-const categories = ["Game Key", "App Key", "Tài khoản game"];
+const categories = ["Game Key", "App Key", "Account"];
 
 const Homepage = ({ user }) => {
     const [products, setProducts] = useState([]);

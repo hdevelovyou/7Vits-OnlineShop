@@ -120,7 +120,7 @@ const SellProductPage = () => {
     };
 
     const categories = [
-        'Game Key', 'App Key', 'Tài khoản game'
+        'Game Key', 'App Key', 'Account'
     ];
 
     return (
