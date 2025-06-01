@@ -10,7 +10,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import { Link } from "react-router-dom";
 import { formatVND } from "../../../utils/formatprice";
 
-const categories = ["New Arrivals", "Best Sellers", "Discounted Items"];
+const categories = ["Game Key", "App Key", "Tài khoản game"];
 
 const Homepage = ({ user }) => {
     const [products, setProducts] = useState([]);
@@ -55,6 +55,11 @@ const Homepage = ({ user }) => {
         setVisibleCount(prev => prev + 8);
     };
 
+    // Hàm để lọc sản phẩm theo category
+    const getProductsByCategory = (category) => {
+        return products.filter(product => product.category === category);
+    };
+
     return (
         <div id="content">
             {/* Banner Section */}
@@ -84,77 +89,80 @@ const Homepage = ({ user }) => {
             {/* Products Section */}
             <div className="Products" id="Linkpro">
                 <div className="container">
-                    {categories.map((category, index) => (
-                        <div className="product-namename" key={index}>
-                            <h3>{category}</h3>
-                            <div className="home-product">
-                                <div className="grid__row">
-                                    {loading ? (
-                                        <div className="loading-container">
-                                            <p>Đang tải sản phẩm...</p>
-                                        </div>
-                                    ) : products.length === 0 ? (
-                                        <div className="no-products">
-                                            <p>Chưa có sản phẩm</p>
-                                        </div>
-                                    ) : (
-                                        products.slice(0, visibleCount).map(product => (
-                                            <div className="grid__column-3" key={product.id}>
-                                                <Link
-                                                    to={`/product/${product.id}`}
-                                                    onClick={() => window.scrollTo(0, 0)}
-                                                    className="home-product-item"
-                                                    style={{ display: "block", textDecoration: "none" }}
-                                                >
-                                                    <img
-                                                        src={getImageUrl(product.image_url)}
-                                                        alt={product.name}
-                                                        className="home-product-item_img"
-                                                        onError={e => { e.target.src = "https://via.placeholder.com/300x300?text=No+Image"; }}
-                                                    />
-                                                    <div className="mota">
-                                                        <p className="mota-name home-product-item_name">{product.name}</p>
-                                                        <p className="mota-name home-product-item_desc">
-                                                            {product.description ? product.description.substring(0, 50) + "..." : ""}
-                                                        </p>
-                                                        <p className="mota-name home-product-item_seller">
-                                                            <i className="fa-solid fa-store"></i> {product.seller_name || "Unknown Seller"}
-                                                        </p>
-                                                        <p className="mota-name home-product-item_rating">
-                                                            <div className="seller-stars">
-                                                                {Array.from({ length: 5 }).map((_, idx) => {
-                                                                    const avg = sellerRatings[product.seller_id]?.average || 0;
-                                                                    const value = idx + 1;
-                                                                    let className = "star empty";
-                                                                    if (avg >= value) className = "star full";
-                                                                    else if (avg >= value - 0.5) className = "star half";
-                                                                    return <span key={idx} className={className}>★</span>;
-                                                                })}
-                                                                <p className="rating-number">({sellerRatings[product.seller_id]?.count || 0} reviews)</p>
-                                                            </div>
-                                                            <div className="home-product-item_price">
-                                                                <span className="mota-name home-product-item_price-new">
-                                                                    {formatVND(product.price)}
-                                                                </span>
-                                                            </div>
-                                                        </p>
-                                                    </div>
-                                                </Link>
+                    {categories.map((category, index) => {
+                        const categoryProducts = getProductsByCategory(category);
+                        return (
+                            <div className="product-namename" key={index}>
+                                <h3>{category}</h3>
+                                <div className="home-product">
+                                    <div className="grid__row">
+                                        {loading ? (
+                                            <div className="loading-container">
+                                                <p>Đang tải sản phẩm...</p>
                                             </div>
-                                        ))
+                                        ) : categoryProducts.length === 0 ? (
+                                            <div className="no-products">
+                                                <p>Chưa có sản phẩm trong danh mục này</p>
+                                            </div>
+                                        ) : (
+                                            categoryProducts.slice(0, visibleCount).map(product => (
+                                                <div className="grid__column-3" key={product.id}>
+                                                    <Link
+                                                        to={`/product/${product.id}`}
+                                                        onClick={() => window.scrollTo(0, 0)}
+                                                        className="home-product-item"
+                                                        style={{ display: "block", textDecoration: "none" }}
+                                                    >
+                                                        <img
+                                                            src={getImageUrl(product.image_url)}
+                                                            alt={product.name}
+                                                            className="home-product-item_img"
+                                                            onError={e => { e.target.src = "https://via.placeholder.com/300x300?text=No+Image"; }}
+                                                        />
+                                                        <div className="mota">
+                                                            <p className="mota-name home-product-item_name">{product.name}</p>
+                                                            <p className="mota-name home-product-item_desc">
+                                                                {product.description ? product.description.substring(0, 50) + "..." : ""}
+                                                            </p>
+                                                            <p className="mota-name home-product-item_seller">
+                                                                <i className="fa-solid fa-store"></i> {product.seller_name || "Unknown Seller"}
+                                                            </p>
+                                                            <p className="mota-name home-product-item_rating">
+                                                                <div className="seller-stars">
+                                                                    {Array.from({ length: 5 }).map((_, idx) => {
+                                                                        const avg = sellerRatings[product.seller_id]?.average || 0;
+                                                                        const value = idx + 1;
+                                                                        let className = "star empty";
+                                                                        if (avg >= value) className = "star full";
+                                                                        else if (avg >= value - 0.5) className = "star half";
+                                                                        return <span key={idx} className={className}>★</span>;
+                                                                    })}
+                                                                    <p className="rating-number">({sellerRatings[product.seller_id]?.count || 0} reviews)</p>
+                                                                </div>
+                                                                <div className="home-product-item_price">
+                                                                    <span className="mota-name home-product-item_price-new">
+                                                                        {formatVND(product.price)}
+                                                                    </span>
+                                                                </div>
+                                                            </p>
+                                                        </div>
+                                                    </Link>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                    {/* Nút Hiển thị thêm cho từng category */}
+                                    {!loading && visibleCount < categoryProducts.length && (
+                                        <div className="show-more-container">
+                                            <button className="btn-show-more" onClick={handleShowMore} >
+                                                Hiển thị thêm {category}
+                                            </button>
+                                        </div>
                                     )}
                                 </div>
-                                {/* Nút Hiển thị thêm */}
-                                {!loading && visibleCount < products.length && (
-                                    <div className="show-more-container">
-                                        <button className="btn-show-more" onClick={handleShowMore} >
-                                            Hiển thị thêm
-                                        </button>
-                                    </div>
-                                )}
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
         </div>
