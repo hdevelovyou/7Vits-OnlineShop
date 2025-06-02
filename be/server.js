@@ -340,13 +340,14 @@ async function closeAuction(auctionId) {
       // Thông tin để insert: tên, mô tả, giá = amount, seller_id = auction.seller_id
       const [insertResult] = await db.query(
         `INSERT INTO products 
-           (name, description, price, seller_id, status, created_at, updated_at) 
-         VALUES (?, ?, ?, ?, 'active', NOW(), NOW())`,
+           (name, description, price, seller_id, status, created_at, updated_at,notes) 
+         VALUES (?, ?, ?, ?, 'active', NOW(), NOW(),?)`,
         [
           auction.item_name,
           auction.description || null,
           winner.amount,
-          auction.seller_id
+          auction.seller_id,
+          auction.notes
         ]
       );
       newProductId = insertResult.insertId;

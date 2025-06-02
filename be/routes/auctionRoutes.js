@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/connectDB');
 const { body, validationResult } = require('express-validator');
+const authmidleware = require('../middleware/authMiddleware')
 router.get('/finished', async (req, res) => {
   try {
     const [rows] = await db.query(`
@@ -35,7 +36,9 @@ router.get('/', async (req, res) => {
          start_time, 
          end_time, 
          status, 
-         seller_id 
+         seller_id,
+         image_url,
+          notes
        FROM auctions
        ORDER BY end_time ASC`
     );
@@ -73,14 +76,15 @@ router.get('/:id', async (req, res) => {
 
 
 router.post(
-  '/',
+  '/', authmidleware,
   [
     body('item_name').notEmpty().withMessage('Tên sản phẩm không được để trống.'),
     body('description').optional().isString(),
     body('starting_price').isFloat({ gt: 0 }).withMessage('Giá khởi điểm phải lớn hơn 0.'),
     body('end_time').isISO8601().withMessage('end_time phải là định dạng ISO8601.'),
     body('sellerId').notEmpty().withMessage('sellerId (userId) phải được cung cấp.'),
-
+    body('image_url').optional().isURL().withMessage('image_url phải là URL hợp lệ.'),
+    body('notes').optional().isString(),
   ],
   async (req, res) => {
     // 1) Kiểm validation
@@ -90,7 +94,7 @@ router.post(
     }
 
     // 2) Lấy dữ liệu từ body
-    const { item_name, description, starting_price, end_time, sellerId} = req.body;
+    const { item_name, description, starting_price, end_time, sellerId,image_url, notes } = req.body;
 
     // 3) Kiểm thời gian hợp lệ
     const now = new Date();
@@ -103,8 +107,8 @@ router.post(
       // 4) Chèn vào bảng auctions (không có image_url)
       const [result] = await db.query(
         `INSERT INTO auctions 
-         (item_name, description, starting_price, current_bid, start_time, end_time, status, seller_id) 
-         VALUES (?, ?, ?, ?, ?, ?, 'ongoing', ?)`,
+         (item_name, description, starting_price, current_bid, start_time, end_time, status, seller_id,image_url, notes) 
+         VALUES (?, ?, ?, ?, ?, ?, 'ongoing', ?,?,?)`,
         [
           item_name,
           description || null,
@@ -112,7 +116,9 @@ router.post(
           starting_price,   // current_bid = starting_price
           now,
           end_time,
-          sellerId
+          sellerId,
+          image_url,
+          notes
         ]
       );
 

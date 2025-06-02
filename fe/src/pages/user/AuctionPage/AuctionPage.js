@@ -42,14 +42,16 @@ export default function AuctionPage({ auctionId }) {
           `Bạn chính là người chiến thắng với giá: ${data.winner.amount.toLocaleString()} VND.`
         );
         const productId = data.productId;
-         if ( !productId) {
-      alert('❌ Không tìm thấy thông tin sản phẩm để tạo đơn hàng.');
-      return;
-    }
+        if (!productId) {
+          alert('❌ Không tìm thấy thông tin sản phẩm để tạo đơn hàng.');
+          return;
+        }
         try {
           const payload = {
-            items: [{ productId }], // tùy cấu trúc DB
-            totalAmount: parseFloat(data.winner.amount)
+            items: [{ productId}], // tùy cấu trúc DB
+            totalAmount: parseFloat(data.winner.amount),
+          
+            
           };
           const res = await axios.post(
             `${process.env.REACT_APP_API_URL}/api/orders/create`,
@@ -166,6 +168,13 @@ export default function AuctionPage({ auctionId }) {
 
   return (
     <div style={{ maxWidth: 600, margin: '0 auto', padding: 200 }}>
+      {auction.image_url && (
+        <img src={auction.image_url} alt="Ảnh sản phẩm" style={{ maxWidth: '100%', marginBottom: '12px' }} />
+      )}
+
+      {auction.game_key && (
+        <p><strong>🎮 Key game:</strong> {auction.game_key}</p>
+      )}
       <h2>🛒 {auction.item_name}</h2>
       <p>{auction.description}</p>
       <p>

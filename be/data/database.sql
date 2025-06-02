@@ -165,12 +165,12 @@ CREATE TABLE IF NOT EXISTS auctions (
   status ENUM('ongoing','finished') NOT NULL DEFAULT 'ongoing',
   seller_id INT NOT NULL,
   winner_id INT NULL,     -- nếu bạn muốn lưu người thắng
+  image_url TEXT,
+  notes TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
-  -- FOREIGN KEY (winner_id) REFERENCES users(id) ON DELETE SET NULL ON UPDATE CASCADE
 );
-
 -- 13. Tạo bảng bids
 CREATE TABLE IF NOT EXISTS bids (
     id INT AUTO_INCREMENT PRIMARY KEY,
