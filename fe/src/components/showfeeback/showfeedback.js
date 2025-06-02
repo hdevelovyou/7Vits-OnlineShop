@@ -12,14 +12,7 @@ export default function FeedbackSlider({ productId = null }) {
   });
   return () => socket.off('new_feedback');
 }, []);
-    useEffect(() => {
-        if (sliderRef.current && feedbacks.length) {
-            const firstCard = sliderRef.current.querySelector(`.${styles.feedbackCard}`);
-            if (firstCard) {
-                firstCard.scrollIntoView({ behavior: 'smooth', inline: 'start' });
-            }
-        }
-    }, [feedbacks]);
+   
     useEffect(() => {
         const fetchFeedbacks = async () => {
             try {

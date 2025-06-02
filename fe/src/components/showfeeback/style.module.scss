@@ -10,7 +10,7 @@
 .sliderContainer {
   display: flex;
   /* Chạy animation dịch chuyển từ 0 → -50% (vì đã nhân đôi nội dung) */
-  animation: slideLeft 2s linear infinite;
+  animation: slideLeft 15s linear infinite;
 }
 
 .feedbackCard {
