@@ -32,7 +32,6 @@ export default function FeedbackForm({ productId }) {
       );
       setSuccessMsg(res.data.message || 'Gửi phản hồi thành công!');
       setMessage('');
-      setRating(5);
     } catch (err) {
       console.error('Lỗi khi gửi feedback:', err.response || err.message);
       const msg = err.response?.data?.errors
@@ -57,6 +56,10 @@ export default function FeedbackForm({ productId }) {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             rows={4}
+
+
+            style={{ width: '100%' ,color:'red'}}
+
           ></textarea>
         </div>
        

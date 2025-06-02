@@ -1,0 +1,64 @@
+/* FeedbackSlider.module.scss */
+
+.sliderWrapper {
+  width: 100%;
+  overflow: hidden;
+  background-color: #fafafa;
+  padding: 16px 0;
+}
+
+.sliderContainer {
+  display: flex;
+  /* Chạy animation dịch chuyển từ 0 → -50% (vì đã nhân đôi nội dung) */
+  animation: slideLeft 20s linear infinite;
+}
+
+.feedbackCard {
+  flex: 0 0 auto; /* Không co dãn, width theo nội dung tối thiểu */
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-right: 16px;
+  min-width: 240px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.userName {
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.message {
+  font-style: italic;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.createdAt {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+/* Keyframes cho hiệu ứng lướt ngang: 
+   - 0%: translateX(0)
+   - 100%: translateX(-50%)
+*/
+@keyframes slideLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Optional: dừng khi hover */
+.sliderContainer:hover {
+  animation-play-state: paused;
+}
