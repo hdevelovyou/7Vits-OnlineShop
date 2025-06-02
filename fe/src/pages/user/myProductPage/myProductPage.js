@@ -11,6 +11,7 @@ import {
   Type as ListType
 } from 'react-swipeable-list';
 import 'react-swipeable-list/dist/styles.css';
+import { encodeId } from '../../../utils/hashId';
 
 const MyProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -68,7 +69,7 @@ const MyProductsPage = () => {
 
   const trailingActions = (product) => (
     <TrailingActions style={{ width: 120 }}>
-      <SwipeAction onClick={() =>navigate(`/edit-product/${product.id}`)}>
+      <SwipeAction onClick={() =>navigate(`/edit-product/${encodeId(product.id)}`)}>
         <button className="change">Thay đổi</button>
       </SwipeAction>
       <SwipeAction destructive onClick={() => handleDelete(product.id)}>
@@ -150,7 +151,7 @@ const MyProductsPage = () => {
                           <button onClick={() => handleStatusChange(p.id, 'sold_out')}>Đã bán hết</button>
                         </div>
                       </div>
-                      <Link to={`/edit-product/${p.id}`} className="edit-btn"><i className="fas fa-edit"/></Link>
+                      <Link to={`/edit-product/${encodeId(p.id)}`} className="edit-btn"><i className="fas fa-edit"/></Link>
                       <button className="delete-btn" onClick={() => handleDelete(p.id)}><i className="fas fa-trash-alt"/></button>
                     </td>
                   </tr>

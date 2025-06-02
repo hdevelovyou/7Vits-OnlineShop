@@ -4,10 +4,12 @@ import axios from 'axios';
 import '../sellProductPage/sellProductPage.scss'; // Reuse the same styles
 import '../../../utils/formatprice'; // Assuming you have a formatVND function for formatting prices
 import { formatVND } from '../../../utils/formatprice';
+import { decodeId } from '../../../utils/hashId'; // Import decodeId
 
 const EditProductPage = () => {
-    const { id } = useParams();
+    const { id: hashedId } = useParams(); // Rename id to hashedId
     const navigate = useNavigate();
+    const [productId, setProductId] = useState(null); // Added state for decoded product ID
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -31,7 +33,15 @@ const EditProductPage = () => {
                     return;
                 }
 
-                const response = await axios.get(`/api/products/${id}`, {
+                const decodedId = decodeId(hashedId);
+                if (decodedId === undefined) {
+                    setError('ID sản phẩm không hợp lệ');
+                    setLoading(false);
+                    return;
+                }
+                setProductId(decodedId); // Set the decoded product ID state
+
+                const response = await axios.get(`/api/products/${decodedId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
@@ -57,7 +67,7 @@ const EditProductPage = () => {
         };
 
         fetchProduct();
-    }, [id, navigate]);
+    }, [hashedId, navigate]); // Depend on hashedId
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -114,7 +124,7 @@ const EditProductPage = () => {
             };
 
             // Send request to update product
-            await axios.put(`/api/products/${id}`, productData, {
+            await axios.put(`/api/products/${productId}`, productData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'

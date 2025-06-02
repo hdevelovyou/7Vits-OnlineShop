@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './feedback.scss';
 
 export default function FeedbackForm({ productId }) {
   const [message, setMessage] = useState('');
@@ -46,17 +47,16 @@ export default function FeedbackForm({ productId }) {
   return (
     <div className="feedback-form-container">
       <h3>Gửi phản hồi</h3>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {successMsg && <p style={{ color: 'green' }}>{successMsg}</p>}
+      {error && <p className="error-message">{error}</p>}
+      {successMsg && <p className="success-message">{successMsg}</p>}
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: 8 }}>
-          <label htmlFor="feedback-message">Nội dung:</label><br />
+        <div className="form-group">
+          <label htmlFor="feedback-message">Nội dung:</label>
           <textarea
             id="feedback-message"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             rows={4}
-            style={{ width: '100%' }}
           ></textarea>
         </div>
        
