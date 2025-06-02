@@ -1,11 +1,12 @@
 import { memo, useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link,useLocation } from "react-router-dom";
 import { formatVND } from "../../../utils/formatprice";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./style.scss";
 
 const StorePage = () => {
+    const location=useLocation();
     const [products, setProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -17,7 +18,13 @@ const StorePage = () => {
     const [minPrice, setMinPrice] = useState(0);
     const [maxPrice, setMaxPrice] = useState(10000000);
     const [sellerRatings, setSellerRatings] = useState({});
-  
+    useEffect(() => {
+    // Lấy giá trị ?search=... từ URL
+    const params = new URLSearchParams(location.search);
+    const initialQuery = params.get("search") || "";
+    setSearchQuery(initialQuery);
+}, [location.search]);
+
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -53,6 +60,7 @@ const StorePage = () => {
 
         fetchProducts();
     }, []);
+    
   useEffect(() => {
     // Giả sử bạn đã có danh sách sản phẩm (có seller_id)
     const fetchProducts = async () => {

@@ -160,7 +160,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong, unreadConversations }) => {
     e.preventDefault();
     if (searchTerm.trim() === "") return;
     setShowDropdown(false);
-    navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
+    navigate(`${ROUTES.USER.STORE}?search=${encodeURIComponent(searchTerm)}`);
   }
   const pickSugeestion = (item) => {
     setSearchTerm(item.name);
