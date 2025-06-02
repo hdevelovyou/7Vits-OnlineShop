@@ -10,7 +10,7 @@ const Transactions = () => {
 
   useEffect(() => {
     axios
-      .get("/api/transactions")
+      .get("/api/admin/transactions")
       .then((res) => setTransactions(res.data))
       .catch(() => setTransactions([]));
   }, []);
@@ -44,8 +44,8 @@ const Transactions = () => {
                   onClick={async e => {
                         e.stopPropagation();
                         if (window.confirm("Are you sure you want to delete this transaction?")) {
-                          await axios.delete(`api/transactions/${transaction.transaction_id}`);
-                          const res = await axios.get("/api/transactions");
+                          await axios.delete(`api/admin/transactions/${transaction.transaction_id}`);
+                          const res = await axios.get("/api/admin/transactions");
                           setTransactions(res.data); 
                         }
                       }}

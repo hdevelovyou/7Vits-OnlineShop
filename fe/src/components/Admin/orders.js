@@ -10,7 +10,7 @@ const Orders = () => {
 
   useEffect(() => {
     axios
-      .get("/api/orders")
+      .get("/api/admin/orders")
       .then((res) => setOrders(res.data))
       .catch(() => setOrders([]));
   }, []);
@@ -42,8 +42,8 @@ const Orders = () => {
                   onClick={async e => {
                         e.stopPropagation();
                         if (window.confirm("Are you sure you want to delete this order?")) {
-                          await axios.delete(`api/orders/${order.order_id}`);
-                          const res = await axios.get("/api/orders");
+                          await axios.delete(`api/admin/orders/${order.order_id}`);
+                          const res = await axios.get("/api/admin/orders");
                           setOrders(res.data); 
                         }
                       }}

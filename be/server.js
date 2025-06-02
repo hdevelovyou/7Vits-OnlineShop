@@ -116,11 +116,11 @@ io.use(sharedSession(sessionMiddleware, { autoSave: true })); // dùng chung cho
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Routes
-app.use('/api', adminRouter);
+// Router
 app.use("/api/auth", authRouter);
 app.use("/api/comments", commentRoutes);
 app.use('/api', productRoutes);
+app.use('/api/admin', adminRouter);
 app.use('/api/sellers', ratingRoutes);
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/topup', vnpayRoutes);

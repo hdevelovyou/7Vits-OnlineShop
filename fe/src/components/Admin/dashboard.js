@@ -23,7 +23,7 @@ const Dashboard = () => {
         const fetchStats = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/dashboard`, {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/dashboard`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setStats(response.data);
@@ -38,7 +38,7 @@ const Dashboard = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    axios.get(`${process.env.REACT_APP_API_URL}/api/dashboard/revenue-monthly`, {
+    axios.get(`${process.env.REACT_APP_API_URL}/api/admin/dashboard/revenue-monthly`, {
       headers: { Authorization: `Bearer ${token}` }
     }).then(res => {
       const data = res.data.map(item => ({
@@ -48,7 +48,7 @@ const Dashboard = () => {
       setRevenueData(data);
     });
 
-    axios.get(`${process.env.REACT_APP_API_URL}/api/dashboard/users-monthly`, {
+    axios.get(`${process.env.REACT_APP_API_URL}/api/admin/dashboard/users-monthly`, {
       headers: { Authorization: `Bearer ${token}` }
     }).then(res => {
       const data = res.data.map(item => ({

@@ -17,16 +17,16 @@ const Users = () => {
   const detailRef = useRef(null);
 
   useEffect(() => {
-    axios.get("/api/users").then(res => setUsers(res.data));
+    axios.get("/api/admin/users").then(res => setUsers(res.data));
   }, []);
 
   const handleSelect = async (user) => {
     setSelected(user);
     const [detail, prods, comms, convs] = await Promise.all([
-      axios.get(`/api/users/${user.id}`),
-      axios.get(`/api/users/${user.id}/products`),
-      axios.get(`/api/users/${user.id}/comments`),
-      axios.get(`/api/users/${user.id}/conversations`),
+      axios.get(`/api/admin/users/${user.id}`),
+      axios.get(`/api/admin/users/${user.id}/products`),
+      axios.get(`/api/admin/users/${user.id}/comments`),
+      axios.get(`/api/admin/users/${user.id}/conversations`),
     ]);
     setUserDetail(detail.data);
     setProducts(prods.data);
@@ -41,13 +41,13 @@ const Users = () => {
   };
   const handleSelectConversation = async (otherUser) => {
     setSelectedConversation(otherUser);
-    const res = await axios.get(`/api/users/${selected.id}/messages/${otherUser.otherUserId}`);
+    const res = await axios.get(`/api/admin/users/${selected.id}/messages/${otherUser.otherUserId}`);
     setMessages(res.data);
   };
   const handleDeleteConversation = async (otherUserId) => {
-    await axios.delete(`/api/users/${selected.id}/conversations/${otherUserId}`);
+    await axios.delete(`/api/admin/users/${selected.id}/conversations/${otherUserId}`);
     // Cập nhật lại danh sách conversation
-    const res = await axios.get(`/api/users/${selected.id}/conversations`);
+    const res = await axios.get(`/api/admin/users/${selected.id}/conversations`);
     setConversations(res.data);
     setSelectedConversation(null);
     setMessages([]);
@@ -83,8 +83,8 @@ const Users = () => {
                       onClick={async e => {
                         e.stopPropagation();
                         if (window.confirm("Are you sure you want to delete this user?")) {
-                          await axios.delete(`/api/users/${u.id}`);
-                          const res = await axios.get("/api/users");
+                          await axios.delete(`/api/admin/users/${u.id}`);
+                          const res = await axios.get("/api/admin/users");
                           setUsers(res.data); 
                           setSelected(null);
                           setUserDetail(null);
@@ -100,11 +100,11 @@ const Users = () => {
                       onClick={async e => {
                         e.stopPropagation();
                         if (window.confirm("Are you sure you want to unban this user?")) {
-                          await axios.patch(`/api/users/${u.id}/unban`);
-                          const res = await axios.get("/api/users");
+                          await axios.patch(`/api/admin/users/${u.id}/unban`);
+                          const res = await axios.get("/api/admin/users");
                           setUsers(res.data); 
                           if (selected && selected.id === u.id) {
-                            const detail = await axios.get(`/api/users/${u.id}`);
+                            const detail = await axios.get(`/api/admin/users/${u.id}`);
                             setUserDetail(detail.data);
                             setSelected(detail.data);
                           }
@@ -119,11 +119,11 @@ const Users = () => {
                       onClick={async e => {
                         e.stopPropagation();
                         if (window.confirm("Are you sure you want to ban this user?")) {
-                          await axios.patch(`/api/users/${u.id}/ban`);
-                          const res = await axios.get("/api/users");
+                          await axios.patch(`/api/admin/users/${u.id}/ban`);
+                          const res = await axios.get("/api/admin/users");
                           setUsers(res.data); 
                           if (selected && selected.id === u.id) {
-                            const detail = await axios.get(`/api/users/${u.id}`);
+                            const detail = await axios.get(`/api/admin/users/${u.id}`);
                             setUserDetail(detail.data);
                             setSelected(detail.data);
                           }
