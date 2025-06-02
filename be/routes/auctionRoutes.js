@@ -79,7 +79,8 @@ router.post(
     body('description').optional().isString(),
     body('starting_price').isFloat({ gt: 0 }).withMessage('Giá khởi điểm phải lớn hơn 0.'),
     body('end_time').isISO8601().withMessage('end_time phải là định dạng ISO8601.'),
-    body('sellerId').notEmpty().withMessage('sellerId (userId) phải được cung cấp.')
+    body('sellerId').notEmpty().withMessage('sellerId (userId) phải được cung cấp.'),
+
   ],
   async (req, res) => {
     // 1) Kiểm validation
@@ -89,7 +90,7 @@ router.post(
     }
 
     // 2) Lấy dữ liệu từ body
-    const { item_name, description, starting_price, end_time, sellerId } = req.body;
+    const { item_name, description, starting_price, end_time, sellerId} = req.body;
 
     // 3) Kiểm thời gian hợp lệ
     const now = new Date();

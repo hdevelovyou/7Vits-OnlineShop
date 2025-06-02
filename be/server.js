@@ -330,9 +330,28 @@ async function closeAuction(auctionId) {
 
       winner = { id: bidder_id, amount };
     }
-
+    // 3) Tạo sản phẩm mới trong bảng products (nếu có winner)
+    let newProductId = null;
+    if (winner) {
+      // Thông tin để insert: tên, mô tả, giá = amount, seller_id = auction.seller_id
+      const [insertResult] = await db.query(
+        `INSERT INTO products 
+           (name, description, price, seller_id, status, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, 'active', NOW(), NOW())`,
+        [
+          auction.item_name,
+          auction.description || null,
+          winner.amount,
+          auction.seller_id
+        ]
+      );
+      newProductId = insertResult.insertId;
+    }
+     await db.query('UPDATE auctions SET status = ? WHERE id = ?', ['finished', auctionId]);
     // Emit cho client biết phiên đã kết thúc và ai thắng
-    io.to(`auction_${auctionId}`).emit('auction_closed', { winner });
+    io.to(`auction_${auctionId}`).emit('auction_closed', { winner,
+      productId:newProductId
+     });
 
     console.log(`✅ Phiên ${auctionId} đã kết thúc. Winner: ${winner ? winner.id : 'Không có'}`);
   } catch (err) {

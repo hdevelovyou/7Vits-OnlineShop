@@ -41,7 +41,7 @@ export default function AuctionPage({ auctionId }) {
           `🎉 Phiên đấu giá kết thúc!\n` +
           `Bạn chính là người chiến thắng với giá: ${data.winner.amount.toLocaleString()} VND.`
         );
-        const productId = auction.product_id || auction.id;
+        const productId = data.productId;
          if ( !productId) {
       alert('❌ Không tìm thấy thông tin sản phẩm để tạo đơn hàng.');
       return;
@@ -58,7 +58,7 @@ export default function AuctionPage({ auctionId }) {
           );
           alert('✅ Đơn hàng của bạn đã được tạo thành công!');
           // Chuyển qua trang danh sách đơn hàng (tùy bạn đặt route)
-          navigate('/');
+          navigate('/user/purchase-history');
         } catch (err) {
           console.error('Error creating order:', err);
           alert(err.response?.data?.message || 'Tạo đơn hàng thất bại.');
