@@ -436,7 +436,7 @@ app._router.stack.forEach(function (r) {
 (async () => {
   await scheduleAuctionClose();
 })();
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log(`Static files served at: http://localhost:${PORT}/images`);
   console.log(`CORS enabled for origins:`, allowedOrigins);
