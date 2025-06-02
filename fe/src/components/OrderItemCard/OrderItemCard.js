@@ -42,29 +42,6 @@ const OrderItemCard = ({ item, orderStatus }) => {
   };
 
 
-  const handleRejectOrder = async (orderId) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/orders/reject/${orderId}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-
-      if (response.data.success) {
-        alert('Đã từ chối đơn hàng thành công');
-        window.location.reload();
-      }
-    } catch (error) {
-      console.error('Error rejecting order:', error);
-      alert(error.response?.data?.message || 'Có lỗi xảy ra khi từ chối đơn hàng');
-    }
-  };
-
   const handleConfirmOrder = async (orderId) => {
     try {
       const token = localStorage.getItem('token');
@@ -134,7 +111,6 @@ const OrderItemCard = ({ item, orderStatus }) => {
       </div>
       { !ratingSent && (
         <div className="rating-product">
-          <p>Đánh giá sản phẩm:</p>
           {Array.from({ length: 5 }).map((_, index) => (
             <i
               key={index}
@@ -146,7 +122,7 @@ const OrderItemCard = ({ item, orderStatus }) => {
           <button
             onClick={handleVoteProduct}
             disabled={userRating === 0}
-            style={{ marginLeft: 8, padding: '4px 10px' }}
+            style={{ margin: '0 10px', padding: '4px 10px' }}
           >
             Gửi
           </button>
@@ -155,12 +131,6 @@ const OrderItemCard = ({ item, orderStatus }) => {
 
       {showActionButtons(orderStatus) && (
         <div className="item-actions">
-          <button
-            className="reject-btn"
-            onClick={() => handleRejectOrder(item.order_id)}
-          >
-            Từ chối
-          </button>
           <button
             className="confirm-btn"
             onClick={() => handleConfirmOrder(item.order_id)}
