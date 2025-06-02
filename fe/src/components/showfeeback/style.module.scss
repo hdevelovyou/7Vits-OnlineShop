@@ -10,7 +10,7 @@
 .sliderContainer {
   display: flex;
   /* Chạy animation dịch chuyển từ 0 → -50% (vì đã nhân đôi nội dung) */
-  animation: slideLeft 20s linear infinite;
+  animation: slideLeft 2s linear infinite;
 }
 
 .feedbackCard {
@@ -45,20 +45,16 @@
   color: #888;
 }
 
-/* Keyframes cho hiệu ứng lướt ngang: 
-   - 0%: translateX(0)
-   - 100%: translateX(-50%)
-*/
+
 @keyframes slideLeft {
   0% {
-    transform: translateX(0);
+    transform: translateX(00);
   }
-  100% {
+100% {
     transform: translateX(-50%);
   }
 }
 
-/* Optional: dừng khi hover */
 .sliderContainer:hover {
   animation-play-state: paused;
 }

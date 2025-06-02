@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './feedback.scss';
 
-export default function FeedbackForm({ productId }) {
+export default function FeedbackForm({ productId,onFeedbackAdded }) {
   const [message, setMessage] = useState('');
   const [rating, setRating] = useState(5);
   const [submitting, setSubmitting] = useState(false);
@@ -28,6 +28,10 @@ export default function FeedbackForm({ productId }) {
         payload,
         { withCredentials: true }
       );
+      const newFeedback = res.data.feedback;
+       if (onFeedbackAdded && newFeedback) {
+        onFeedbackAdded(newFeedback);
+      }
       setSuccessMsg(res.data.message || 'Gửi phản hồi thành công!');
       setMessage('');
     } catch (err) {

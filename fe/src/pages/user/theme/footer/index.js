@@ -9,12 +9,11 @@ import zl from '../../../../assets/images/zalopay.png';
 import vs from '../../../../assets/images/vs.png';    
 import vnpay from '../../../../assets/images/vnpay.jpg';
 import Feedback from '../../../../components/feedback/feedback'
-import Showfeedback from '../../../../components/showfeeback/showfeedback'
+import Showfeedback from '../../../../components/feedbackarea/feedbackarea'
 const Footer = () => {
     return (
         <div id="footer">
             <Showfeedback />
-            <Feedback />
             <div className="footer-top">
                 <div className="container">
                     <div className="container-footer">

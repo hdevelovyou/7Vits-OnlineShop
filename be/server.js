@@ -21,7 +21,7 @@ const adminRouter = require('./routes/admin');
 const bodyParser = require('body-parser');
 const chatbotRoutes = require('./routes/chatbot');
 const auctionRoutes = require('./routes/auctionRoutes');
-const feedback=require('./routes/feedback');
+
 const app = express();
 
 // --- SOCKET.IO SETUP ---
@@ -129,8 +129,11 @@ app.post('/api/messages/read', messageController.markMessagesAsRead);
 app.get('/api/messages/unread-counts/:userId', messageController.getUnreadCounts);
 app.use('/api/chatbot', chatbotRoutes);
 app.use('/api/auctions', auctionRoutes);
+const feedback = require('./routes/feedback')(io);
+
 app.use('/api/feedback',feedback);
 // Test route for checking if the API is working
+
 app.get('/api/test', (req, res) => {
   res.json({
     message: 'API is working',
