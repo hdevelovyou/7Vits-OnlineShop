@@ -64,7 +64,7 @@ const Products = () => {
               <td>{p.name}</td>
               <td>{p.price?.toLocaleString() ?? ""}</td>
               <td>{p.category}</td>
-              <td>{p.seller_name}</td>
+              <td>{p.sellerName}</td>
               <td>{p.status}</td>
               <td>
                 <button onClick={() => handleViewProduct(p)}>Xem</button>
@@ -89,7 +89,7 @@ const Products = () => {
           <ul>
             <li><b>Product name:</b> {selectedProduct.name}</li>
             <li><b>Descriptions:</b> {selectedProduct.description || "This product has no description"}</li>
-            <li><b>Seller:</b> {selectedProduct.seller_name}</li>
+            <li><b>Seller:</b> {selectedProduct.sellerName}</li>
             <li><b>Notes:</b> {selectedProduct.notes || "This product has no note"}</li>
           </ul>
         </div>

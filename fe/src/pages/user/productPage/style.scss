@@ -611,3 +611,25 @@ $border-radius: 8px;
     }
   }
 }
+
+.chat-link {
+  background: #e53935;       
+  color: #fff;                
+  border: none;
+  border-radius: 8px;         
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+  margin-left: 12px;
+
+  &:hover {
+    background: #b71c1c;      
+  }
+
+  i.fa-comment-dots {
+    color: #fff !important; 
+    margin-right: 6px;  
+  }
+
+}

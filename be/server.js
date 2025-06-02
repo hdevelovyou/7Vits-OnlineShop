@@ -117,6 +117,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
+app.use('/api', adminRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/comments", commentRoutes);
 app.use('/api', productRoutes);
@@ -126,7 +127,6 @@ app.use('/api/topup', vnpayRoutes);
 app.use('/api', require('./routes/api'));
 app.post('/api/messages/read', messageController.markMessagesAsRead);
 app.get('/api/messages/unread-counts/:userId', messageController.getUnreadCounts);
-app.use('/api', adminRouter);
 app.use('/api/chatbot', chatbotRoutes);
 app.use('/api/auctions', auctionRoutes);
 app.use('/api/feedback',feedback);
