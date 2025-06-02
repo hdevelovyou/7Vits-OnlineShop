@@ -8,9 +8,11 @@ import momo from '../../../../assets/images/momo.png';
 import zl from '../../../../assets/images/zalopay.png';
 import vs from '../../../../assets/images/vs.png';    
 import vnpay from '../../../../assets/images/vnpay.jpg';
+import Feedback from '../../../../components/feedback/feedback'
 const Footer = () => {
     return (
         <div id="footer">
+            <Feedback />
             <div className="footer-top">
                 <div className="container">
                     <div className="container-footer">
