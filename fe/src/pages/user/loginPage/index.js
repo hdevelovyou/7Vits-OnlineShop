@@ -99,7 +99,11 @@ const LoginPage = () => {
                         <h1>Đăng nhập</h1>
                     </div>
                     
-                    {error && <span className="error-message">{error}</span>}
+                    {error && (
+                        <div className="error-wrapper">
+                            <span className="error-message">{error}</span>
+                        </div>
+                    )}
 
                     <div className="input-group">
                         <FaCircleUser className="icon" />

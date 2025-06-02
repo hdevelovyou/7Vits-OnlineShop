@@ -108,7 +108,11 @@ const RegisterPage = () => {
                 </div>
 
                 {/* Error message display, styled the same as in LoginPage */}
-                {error && <p className="error-message">{error}</p>}
+                {error && (
+                    <div className="error-wrapper">
+                        <span className="error-message">{error}</span>
+                    </div>
+                )}
 
                 <div className="input-group">
                     <input type="text" name="firstName" placeholder="Họ" onChange={handleChange} required />

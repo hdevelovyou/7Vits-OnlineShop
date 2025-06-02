@@ -166,8 +166,16 @@
         }
     }
 
+    .error-wrapper {
+        display: flex;
+        padding: 0 8rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
     .error-message {
         display: block;
+        flex: 1;
         background-color: #ff0000;
         color: #fff;
         font-size: 1.2rem;
