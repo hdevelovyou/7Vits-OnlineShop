@@ -1,63 +1,510 @@
+// Modern Auction Page Styles
 .auction-container {
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    border: 1px solid #404040;
+    border-radius: 16px;
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+
+    // Subtle animated background effect
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, transparent 30%, rgba(255, 0, 0, 0.02) 50%, transparent 70%);
+        animation: shimmer 3s ease-in-out infinite;
+        pointer-events: none;
+    }
+
+    @keyframes shimmer {
+        0%, 100% { transform: translateX(-100%); }
+        50% { transform: translateX(100%); }
+    }
+
+    // Enhanced responsive design
+    @media (max-width: 1024px) {
+        max-width: 90%;
+        padding: 32px;
+    }
+
+    @media (max-width: 768px) {
+        margin: 16px;
+        padding: 24px;
+        border-radius: 12px;
+        max-width: calc(100% - 32px);
+    }
+
+    @media (max-width: 480px) {
+        margin: 8px;
+        padding: 16px;
+        border-radius: 8px;
+        max-width: calc(100% - 16px);
+    }
+
+    @media (max-width: 320px) {
+        margin: 4px;
+        padding: 12px;
+        max-width: calc(100% - 8px);
+    }
 }
 
+// Header styling
 .auction-container h2 {
-    font-size: 1.8rem;
-    margin-bottom: 15px;
-    color: #333;
+    font-size: clamp(1.5rem, 6vw, 3.5rem);
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #ffffff;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    word-wrap: break-word;
+    hyphens: auto;
+    
+    // Emoji styling
+    .emoji {
+        font-size: 1.2em;
+        margin-right: 8px;
+    }
+
+    @media (max-width: 768px) {
+        font-size: clamp(1.3rem, 5vw, 2.5rem);
+        margin-bottom: 16px;
+    }
+
+    @media (max-width: 480px) {
+        font-size: clamp(1.2rem, 4vw, 2rem);
+        margin-bottom: 12px;
+    }
 }
 
+// General paragraph styling
 .auction-container p {
-    margin-bottom: 15px;
-    font-size: 1rem;
-    color: #555;
+    margin-bottom: 16px;
+    font-size: clamp(0.95rem, 3vw, 1.4rem);
+    color: #e0e0e0;
+    line-height: 1.6;
+    word-wrap: break-word;
+    
+    &:last-of-type {
+        margin-bottom: 0;
+    }
+
+    @media (max-width: 768px) {
+        margin-bottom: 12px;
+        font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+    }
+
+    @media (max-width: 480px) {
+        margin-bottom: 10px;
+        font-size: clamp(0.85rem, 2vw, 1.1rem);
+    }
 }
 
-.auction-container p:last-of-type {
-    margin-bottom: 0;
-}
-
+// Strong text styling
 .auction-container strong {
-    font-weight: bold;
+    font-weight: 600;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
+// Current bid styling
+.current-bid {
+    background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: clamp(1.2rem, 4vw, 2rem);
+    font-weight: 700;
+    text-shadow: none;
+    display: inline-block;
+    
+    @media (max-width: 768px) {
+        font-size: clamp(1.1rem, 3.5vw, 1.8rem);
+    }
+}
+
+// Time remaining styling
+.time-remaining {
+    background: linear-gradient(135deg, #44ff44 0%, #00cc00 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: clamp(1.1rem, 3.5vw, 1.8rem);
+    font-weight: 600;
+    text-shadow: none;
+    display: inline-block;
+
+    @media (max-width: 768px) {
+        font-size: clamp(1rem, 3vw, 1.5rem);
+    }
+}
+
+// Bid input section
+.bid-section {
+    margin-top: 32px;
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    @media (max-width: 768px) {
+        padding: 20px;
+        margin-top: 24px;
+        gap: 14px;
+    }
+
+    @media (max-width: 480px) {
+        padding: 16px;
+        margin-top: 20px;
+        gap: 12px;
+        border-radius: 8px;
+    }
+
+    @media (max-width: 320px) {
+        padding: 12px;
+        margin-top: 16px;
+    }
+}
+
+// Input field styling
 .auction-container input[type="number"] {
-    padding: 8px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    width: 100%;
+    padding: 14px 16px;
+    font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+    font-weight: 500;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid #555;
+    border-radius: 8px;
+    color: #ffffff;
     outline: none;
-    width: 60%;
-    margin-right: 10px;
+    margin-bottom: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+
+    &::placeholder {
+        color: #888;
+        font-weight: 400;
+    }
+
+    &:focus {
+        border-color: #ff4444;
+        box-shadow: 
+            inset 0 2px 4px rgba(0, 0, 0, 0.2),
+            0 0 0 3px rgba(255, 68, 68, 0.2);
+        background: rgba(0, 0, 0, 0.6);
+    }
+
+    &:hover:not(:focus) {
+        border-color: #666;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    @media (max-width: 768px) {
+        padding: 12px 14px;
+        font-size: clamp(0.85rem, 2vw, 1.1rem);
+    }
+
+    @media (max-width: 480px) {
+        padding: 10px 12px;
+        font-size: 1rem;
+        border-radius: 6px;
+    }
+
+    // Remove number input spinners on mobile
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
 }
 
-.auction-container input[type="number"]:focus {
-    border-color: #007bff;
-}
-
+// Button styling
 .auction-container button {
-    padding: 8px 16px;
-    font-size: 1rem;
-    background-color: #007bff;
-    color: #fff;
+    width: 100%;
+    padding: 14px 28px;
+    font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+    font-weight: 600;
+    background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+    color: #ffffff;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 4px 12px rgba(255, 68, 68, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    min-height: 48px; // Better touch target
+    touch-action: manipulation; // Improve touch responsiveness
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    &:hover {
+        background: linear-gradient(135deg, #ff5555 0%, #dd0000 100%);
+        box-shadow: 
+            0 6px 20px rgba(255, 68, 68, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+
+        &::before {
+            left: 100%;
+        }
+    }
+
+    &:active {
+        transform: translateY(0);
+        box-shadow: 
+            0 2px 8px rgba(255, 68, 68, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    &:disabled {
+        background: #444;
+        color: #888;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+
+        &:hover {
+            transform: none;
+            box-shadow: none;
+        }
+    }
+
+    @media (max-width: 768px) {
+        padding: 12px 24px;
+        font-size: clamp(0.85rem, 2vw, 1.1rem);
+        min-height: 44px;
+    }
+
+    @media (max-width: 480px) {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+        border-radius: 6px;
+        min-height: 40px;
+        letter-spacing: 0.3px;
+    }
+
+    // Mobile touch improvements
+    @media (hover: none) and (pointer: coarse) {
+        &:hover {
+            transform: none;
+        }
+        
+        &:active {
+            transform: scale(0.98);
+        }
+    }
 }
 
-.auction-container button:hover {
-    background-color: #0056b3;
+// Status messages
+.auction-status {
+    margin-top: 24px;
+    padding: 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: clamp(1rem, 3vw, 1.3rem);
+    text-align: center;
+    line-height: 1.5;
+    word-wrap: break-word;
+
+    &.ended {
+        background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(255, 68, 68, 0.3);
+    }
+
+    &.finished {
+        background: linear-gradient(135deg, #44ff44 0%, #00cc00 100%);
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(68, 255, 68, 0.3);
+    }
+
+    &.winner {
+        background: linear-gradient(135deg, #ffd700 0%, #ffb000 100%);
+        color: #000000;
+        box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        margin-top: 20px;
+        padding: 16px;
+        font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+    }
+
+    @media (max-width: 480px) {
+        margin-top: 16px;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: clamp(0.85rem, 2vw, 1.1rem);
+    }
 }
 
-.auction-container .ended {
-    color: red;
-    font-weight: bold;
+// Loading state
+.loading {
+    text-align: center;
+    padding: 60px 20px;
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    color: #ccc;
+
+    &::after {
+        content: '';
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        margin-left: 10px;
+        border: 2px solid #555;
+        border-radius: 50%;
+        border-top-color: #ff4444;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+        padding: 40px 16px;
+        font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+    }
+
+    @media (max-width: 480px) {
+        padding: 30px 12px;
+        font-size: clamp(0.85rem, 2vw, 1.2rem);
+    }
+}
+
+// Utility classes
+.text-center {
+    text-align: center;
+}
+
+.mt-large {
+    margin-top: 32px;
+    
+    @media (max-width: 768px) {
+        margin-top: 24px;
+    }
+    
+    @media (max-width: 480px) {
+        margin-top: 20px;
+    }
+}
+
+.mb-small {
+    margin-bottom: 8px;
+    
+    @media (max-width: 480px) {
+        margin-bottom: 6px;
+    }
+}
+
+// Enhanced responsive typography and layout
+@media (max-width: 768px) {
+    .auction-container {
+        h2 {
+            margin-bottom: 16px;
+        }
+        
+        p {
+            margin-bottom: 12px;
+        }
+        
+        .bid-section {
+            margin-top: 20px;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .auction-container {
+        h2 {
+            margin-bottom: 12px;
+        }
+        
+        p {
+            margin-bottom: 10px;
+        }
+        
+        .bid-section {
+            margin-top: 16px;
+        }
+    }
+}
+
+// Very small screens (older phones)
+@media (max-width: 320px) {
+    .auction-container {
+        h2 {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            margin-bottom: 10px;
+        }
+        
+        p {
+            font-size: clamp(0.8rem, 1.5vw, 1rem);
+            margin-bottom: 8px;
+        }
+        
+        .bid-section {
+            margin-top: 12px;
+            padding: 10px;
+        }
+        
+        button {
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            min-height: 36px;
+        }
+        
+        input[type="number"] {
+            padding: 8px 10px;
+            font-size: 0.9rem;
+        }
+    }
+}
+
+// Landscape orientation on mobile
+@media (max-height: 500px) and (orientation: landscape) {
+    .auction-container {
+        padding: 16px;
+        margin: 8px;
+        
+        h2 {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            margin-bottom: 12px;
+        }
+        
+        .bid-section {
+            margin-top: 16px;
+            padding: 16px;
+        }
+    }
 }

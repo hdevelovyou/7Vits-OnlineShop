@@ -1,4 +1,3 @@
-
 /* style.scss */
 .auctions-container input,
 .auctions-container textarea,
@@ -56,4 +55,430 @@
 .no-auctions {
   text-align: center;
   color: #666;
+}
+
+// Modern Auctions Page Styles
+.auctions-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #0f0f0f 100%);
+  padding: 40px 20px;
+  color: #ffffff;
+
+  @media (max-width: 768px) {
+    padding: 20px 10px;
+  }
+}
+
+// Page Typography
+.auctions-container h2 {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 32px;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: -0.01em;
+
+  // Emoji styling
+  &::before {
+    margin-right: 8px;
+    font-size: 1.1em;
+  }
+}
+
+// Create Auction Form
+.create-auction-form {
+  max-width: 700px;
+  margin: 0 auto 60px auto;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border: 1px solid #404040;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+
+  // Subtle glow effect
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(0, 123, 255, 0.02) 50%, transparent 70%);
+    animation: shimmer 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes shimmer {
+    0%, 100% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+  }
+
+  h2 {
+    color: #ffffff;
+    margin-bottom: 24px;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    text-align: left;
+  }
+
+  @media (max-width: 768px) {
+    padding: 24px;
+    margin-bottom: 40px;
+  }
+}
+
+// Form Elements
+.create-auction-form {
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #e0e0e0;
+    font-size: 1.1rem;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid #555;
+    border-radius: 8px;
+    color: #ffffff !important;
+    font-size: 1rem;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+
+    &::placeholder {
+      color: #888;
+      font-weight: 400;
+    }
+
+    &:focus {
+      border-color: #007bff;
+      box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.2),
+        0 0 0 3px rgba(0, 123, 255, 0.2);
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    &:hover:not(:focus) {
+      border-color: #666;
+      background: rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+  }
+
+  button[type="submit"] {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 32px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+      0 4px 12px rgba(0, 123, 255, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    &:hover {
+      background: linear-gradient(135deg, #0086ff 0%, #0062cc 100%);
+      box-shadow: 
+        0 6px 20px rgba(0, 123, 255, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+
+      &::before {
+        left: 100%;
+      }
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 
+        0 2px 8px rgba(0, 123, 255, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    @media (max-width: 480px) {
+      width: 100%;
+      padding: 16px;
+    }
+  }
+}
+
+// Auction Lists
+.auctions-list {
+  list-style: none;
+  padding: 0;
+  max-width: 800px;
+  margin: 0 auto;
+  display: grid;
+  gap: 20px;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  }
+}
+
+// Individual Auction Items
+.auction-item {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border: 1px solid #404040;
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ff4444, #ffaa00, #44ff44, #0088ff, #8844ff);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+      0 8px 25px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(255, 255, 255, 0.1);
+    border-color: #555;
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  // Finished auction styling
+  &.finished {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    border-color: #505050;
+
+    &::before {
+      background: linear-gradient(90deg, #666, #888);
+    }
+  }
+}
+
+// Auction Links
+.auction-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+
+  &:hover {
+    color: inherit;
+  }
+
+  h4 {
+    margin: 0 0 16px 0;
+    font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.3;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  p {
+    margin: 8px 0;
+    font-size: 1rem;
+    color: #cccccc;
+    line-height: 1.5;
+
+    strong {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// Price highlighting
+.auction-item p:has(strong:contains("Giá")) {
+  strong:last-child {
+    background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 1.1em;
+    font-weight: 700;
+  }
+}
+
+// Status indicators
+.auction-status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 8px;
+
+  &.ongoing {
+    background: linear-gradient(135deg, #44ff44 0%, #00cc00 100%);
+    color: #000000;
+    box-shadow: 0 2px 8px rgba(68, 255, 68, 0.3);
+  }
+
+  &.finished {
+    background: linear-gradient(135deg, #888 0%, #666 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(136, 136, 136, 0.3);
+  }
+
+  &.winner {
+    background: linear-gradient(135deg, #ffd700 0%, #ffb000 100%);
+    color: #000000;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+  }
+}
+
+// No auctions message
+.no-auctions {
+  text-align: center;
+  padding: 60px 20px;
+  color: #888;
+  font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+  font-style: italic;
+  
+  &::before {
+    content: '🔍';
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+}
+
+// Section headers
+.section-header {
+  text-align: center;
+  margin: 60px 0 32px;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #ff4444, #0088ff);
+    border-radius: 2px;
+  }
+
+  &.ongoing::after {
+    background: linear-gradient(90deg, #44ff44, #00cc00);
+  }
+
+  &.finished::after {
+    background: linear-gradient(90deg, #888, #666);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .auctions-list {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .auction-item {
+    padding: 20px;
+  }
+
+  .section-header {
+    margin: 40px 0 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auction-item {
+    padding: 16px;
+  }
+
+  .auction-link h4 {
+    font-size: 1.2rem;
+  }
+
+  .auction-link p {
+    font-size: 0.95rem;
+  }
+}
+
+// Animation for loading states
+.loading-shimmer {
+  background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+  background-size: 200% 100%;
+  animation: shimmer-loading 1.5s infinite;
+
+  @keyframes shimmer-loading {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+}
+
+// Utility classes
+.text-center {
+  text-align: center;
+}
+
+.mt-large {
+  margin-top: 40px;
+}
+
+.mb-large {
+  margin-bottom: 40px;
+}
+
+.price-highlight {
+  background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
 }
