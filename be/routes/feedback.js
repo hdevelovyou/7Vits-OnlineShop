@@ -5,18 +5,18 @@ const db = require('../config/connectDB');
 const authMiddleware = require('../middleware/authMiddleware');
 const { route } = require('./auctionRoutes');
 
-router.post('/',authMiddleware, async (req, res) => {
+router.post('/', async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty) {
         return res.status(400).json({ errors: errors.array() });
     }
     try {
-        const { message, rating } = req.body;
+        const { message } = req.body;
         const userId = req.user ? req.user.id : null;
         const [result] = await db.query(
-            `INSERT INTO feedbacks (user_id, message, rating)
-         VALUES (?, ?, ?)`,
-            [userId, message, rating|| null]
+            `INSERT INTO feedbacks (user_id, message)
+         VALUES (?, ?)`,
+            [userId, message]
         );
         return res.status(201).json({
             success: true,
@@ -34,7 +34,7 @@ router.post('/',authMiddleware, async (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const [row] = await db.query(`
-      SELECT f.id, f.user_id, u.userName AS user_name, f.message, f.rating, f.created_at
+      SELECT f.id, f.user_id, u.userName AS user_name, f.message, f.created_at
       FROM feedbacks f
       LEFT JOIN users u ON f.user_id = u.id
       ORDER BY f.created_at DESC

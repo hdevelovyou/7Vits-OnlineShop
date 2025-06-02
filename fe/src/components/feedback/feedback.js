@@ -22,9 +22,7 @@ export default function FeedbackForm({ productId }) {
     try {
       setSubmitting(true);
       // Gửi lên server
-      const payload = { message, rating };
-      if (productId) payload.productId = productId;
-
+      const payload = { message};
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/feedback`,
         payload,
@@ -56,10 +54,7 @@ export default function FeedbackForm({ productId }) {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             rows={4}
-
-
             style={{ width: '100%' ,color:'red'}}
-
           ></textarea>
         </div>
        
