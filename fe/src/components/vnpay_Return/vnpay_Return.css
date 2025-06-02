@@ -1,6 +1,7 @@
 .payment-return-container-main {
-  padding: 200px;
   height: 100vh;
+  padding-top: 20rem;
+  margin-bottom: 20rem;
 }
 
 .payment-return-container {

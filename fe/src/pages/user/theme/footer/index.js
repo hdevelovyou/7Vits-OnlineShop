@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import momo from '../../../../assets/images/momo.png';
 import zl from '../../../../assets/images/zalopay.png';
 import vs from '../../../../assets/images/vs.png';    
+import vnpay from '../../../../assets/images/vnpay.jpg';
 const Footer = () => {
     return (
         <div id="footer">
@@ -17,7 +18,7 @@ const Footer = () => {
                             <ul>
                                 <li><img src={momo} alt="momo"/></li>
                                 <li><img src={zl} alt="zl"/></li>
-                                <li><img src={vs} alt="vs"/></li>
+                                <li><img src={vnpay} alt="vnpay"/></li>
                                 <li>và nhiều hình thức thanh toán khác</li>
 
                             </ul>
