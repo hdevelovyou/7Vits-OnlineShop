@@ -3,6 +3,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  button {
+    font-family: sans-serif;
+    color: #fff
+  }
 }
 
 .create-order-button {

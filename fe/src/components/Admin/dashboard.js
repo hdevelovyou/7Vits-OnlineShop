@@ -71,7 +71,7 @@ const Dashboard = () => {
         <div className="card"><h3>Products</h3><p>{stats.totalProducts}</p></div>
         <div className="card"><h3>Orders</h3><p>{stats.totalOrders}</p></div>
         <div className="card"><h3>Pending</h3><p>{stats.pendingOrders}</p></div>
-        <div className="card"><h3>Revenue</h3><p>{stats.totalRevenue.toLocaleString()} vnđ</p></div>
+        <div className="card"><h3>Revenue</h3><p>{Number(stats.totalRevenue).toLocaleString()} vnđ</p></div>
       </div>
       <div className="charts">
         <div className="chart-box">

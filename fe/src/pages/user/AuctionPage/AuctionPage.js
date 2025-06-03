@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import socket from '../../../components/socket'; // Đường dẫn tới socket.js đã sửa
 import axios from 'axios';
+import './style.scss'; // Import SCSS file
 
 export default function AuctionPage({ auctionId }) {
   const navigate = useNavigate();
@@ -159,71 +160,156 @@ export default function AuctionPage({ auctionId }) {
   };
 
   if (!auction) {
-    return <p>Đang tải phiên đấu giá...</p>;
+    return (
+      <div className="auction-container">
+        <div className="loading">Đang tải phiên đấu giá...</div>
+      </div>
+    );
   }
 
   // Tính minutes và seconds từ timeLeft (ms)
   const minutes = Math.floor(timeLeft / 60000);
   const seconds = Math.floor((timeLeft % 60000) / 1000);
 
+  // Determine auction status for styling
+  const getAuctionStatusClass = () => {
+    if (timeLeft <= 0) {
+      return auction.status === 'finished' ? 'finished' : 'ended';
+    }
+    return '';
+  };
+
+  // Tính toán thời gian còn lại theo ngày, giờ, phút, giây
+  const calculateTimeRemaining = () => {
+    if (timeLeft <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+
+    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+    return { days, hours, minutes, seconds };
+  };
+
+  const { days, hours, minutes: mins, seconds: secs } = calculateTimeRemaining();
+
+  // Format time display
+  const formatTimeDisplay = () => {
+    const parts = [];
+    if (days > 0) parts.push(`${days} ngày`);
+    if (hours > 0) parts.push(`${hours} giờ`);
+    if (mins > 0) parts.push(`${mins} phút`);
+    if (secs > 0 || parts.length === 0) parts.push(`${secs} giây`);
+    
+    return parts.join(' ');
+  };
+
+  // Render individual time units for better styling
+  const renderTimeUnits = () => {
+    const units = [];
+    
+    if (days > 0) {
+      units.push(
+        <span key="days" className="time-unit">
+          <span className="time-number">{days}</span>
+          <span className="time-label">ngày</span>
+        </span>
+      );
+    }
+    
+    if (hours > 0) {
+      units.push(
+        <span key="hours" className="time-unit">
+          <span className="time-number">{hours}</span>
+          <span className="time-label">giờ</span>
+        </span>
+      );
+    }
+    
+    if (mins > 0) {
+      units.push(
+        <span key="minutes" className="time-unit">
+          <span className="time-number">{mins}</span>
+          <span className="time-label">phút</span>
+        </span>
+      );
+    }
+    
+    if (secs > 0 || units.length === 0) {
+      units.push(
+        <span key="seconds" className="time-unit">
+          <span className="time-number">{secs}</span>
+          <span className="time-label">giây</span>
+        </span>
+      );
+    }
+    
+    return units;
+  };
+
+  // Determine if time is urgent (less than 1 hour)
+  const isUrgent = timeLeft > 0 && timeLeft < 3600000; // 1 hour in milliseconds
+
   return (
-    <div style={{ maxWidth: 600, margin: '0 auto', padding: 200 }}>
-      {auction.image_url && (
-        <img src={auction.image_url} alt="Ảnh sản phẩm" style={{ maxWidth: '100%', marginBottom: '12px' }} />
-      )}
-
-      {auction.game_key && (
-        <p><strong>🎮 Key game:</strong> {auction.game_key}</p>
-      )}
-      <h2>🛒 {auction.item_name}</h2>
-      <p>{auction.description}</p>
-      <p>
-        <strong>Giá hiện tại:</strong>{' '}
-        {auction.current_bid.toLocaleString()} VND
-      </p>
-      <p>
-        <strong>⏰ Còn lại:</strong>{' '}
-        {minutes}:{seconds < 10 ? '0' + seconds : seconds}
-      </p>
-
-      {timeLeft > 0 ? (
-        <div style={{ marginTop: 20 }}>
-          <input
-            type="number"
-            placeholder="Nhập giá đấu (VND)"
-            value={bidAmount}
-            onChange={e => setBidAmount(e.target.value)}
-            style={{
-              padding: '8px',
-              width: '60%',
-              marginRight: '8px',
-              fontSize: '1rem',
-            }}
-          />
-          <button
-            onClick={handleBid}
-            style={{
-              padding: '8px 16px',
-              fontSize: '1rem',
-              cursor: 'pointer',
-            }}
-          >
-            Đặt giá
-          </button>
-        </div>
-      ) :
-        auction.status === 'finished' ? (
-          <div style={{ marginTop: 20, color: 'green', fontWeight: 'bold' }}>
-            🎉 Phiên đấu giá đã kết thúc! <br />
-            🏆 Người chiến thắng: {auction.winner_name ? auction.winner_name : 'Không có ai đấu giá'}
+    <div className="auction-page">
+      <div className="auction-container">
+        {auction.image_url && (
+          <div className="auction-image">
+            <img src={auction.image_url} alt="Ảnh sản phẩm" />
+          </div>
+        )}
+  
+        <h2>
+          <span className="emoji">🛒</span>
+          {auction.item_name}
+        </h2>
+        
+        <p>{auction.description}</p>
+        
+        {auction.game_key && (
+          <p><strong>🎮 Key game:</strong> {auction.game_key}</p>
+        )}
+        
+        <p>
+          <strong>Giá hiện tại:</strong>{' '}
+          <span className="current-bid">
+            {auction.current_bid.toLocaleString()} VND
+          </span>
+        </p>
+        
+        <p>
+          <strong>⏰ Còn lại:</strong>{' '}
+          <span className={`time-remaining ${isUrgent ? 'urgent' : ''}`}>
+            {renderTimeUnits()}
+          </span>
+        </p>
+  
+        {timeLeft > 0 ? (
+          <div className="bid-section">
+            <input
+              type="number"
+              placeholder="Nhập giá đấu (VND)"
+              value={bidAmount}
+              onChange={e => setBidAmount(e.target.value)}
+              min={auction.current_bid + 1}
+            />
+            <button onClick={handleBid}>
+              Đặt giá
+            </button>
           </div>
         ) : (
-          <p style={{ color: 'red', marginTop: 20 }}>
-            ⛔ Phiên đấu giá đã kết thúc
-          </p>
+          <div className={`auction-status ${getAuctionStatusClass()}`}>
+            {auction.status === 'finished' ? (
+              <>
+                🎉 Phiên đấu giá đã kết thúc! <br />
+                🏆 Người chiến thắng: {auction.winner_name ? auction.winner_name : 'Không có ai đấu giá'}
+              </>
+            ) : (
+              <>⛔ Phiên đấu giá đã kết thúc</>
+            )}
+          </div>
         )}
-
-
+      </div>
     </div>
   );
 }
