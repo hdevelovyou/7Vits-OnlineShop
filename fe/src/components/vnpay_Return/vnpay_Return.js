@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './vnpay_Return.css';
+import './vnpay_Return.scss';
 
 // Utility function to clean up old processed transactions (older than 30 days)
 const cleanupOldTransactions = () => {

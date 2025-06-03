@@ -155,7 +155,7 @@ const CartPage = ({ cart, setCart }) => {
   };
 
   return (
-    <div className="cart-page container">
+    <div className="cart-page container" style={{padding:"200px 0"}}>
       <h1 className="cart-title">Giỏ Hàng</h1>
       {cart.length === 0 ? (
         <p className="empty-cart">Giỏ hàng trống</p>
@@ -186,11 +186,7 @@ const CartPage = ({ cart, setCart }) => {
 
                   {/* Cột: Đơn Giá */}
                   <td className="price">
-                    {item.originalPrice && (
-                      <span className="original-price">
-                        {formatPrice(item.originalPrice)}
-                      </span>
-                    )}
+                    
                     {formatPrice(item.price)}
                   </td>
 
@@ -276,10 +272,7 @@ const CartPage = ({ cart, setCart }) => {
                 <span className="summary-total">{formatPrice(totalPrice)}</span>
               </span>
           
-              <div className="saving">
-                <span style={{ opacity: 0.5 }}>Tiết kiệm </span>
-                <span className="summary-distotal">{formatPrice(totalDiscountPrice)}</span>
-              </div>
+             
               
               {/* Thay thế nút thanh toán cũ bằng component CreateOrderButton */}
               <div className="checkout-button-container">

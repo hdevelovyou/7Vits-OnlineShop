@@ -4,3 +4,4 @@
 .idea/
 .env
 node_modules
+.vscode
