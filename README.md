@@ -133,7 +133,28 @@ npm start
    - Hệ thống chuyển tiền từ locked_balance sang balance của người bán
    - Tự động xác nhận sau 7 ngày nếu người mua không thực hiện thao tác
 
-
+### Nạp tiền bằng VNPay
+1. **Tài khoản test thanh toán**
+<table>
+  <tr>
+    <th colspan="2" style="text-align:center;">🪪 Thông tin thẻ</th>
+  </tr>
+  <tr>
+    <td><b>Ngân hàng</b></td><td>NCB</td>
+  </tr>
+  <tr>
+    <td><b>Số thẻ</b></td><td>9704198526191432198</td>
+  </tr>
+  <tr>
+    <td><b>Tên chủ thẻ</b></td><td>NGUYEN VAN A</td>
+  </tr>
+  <tr>
+    <td><b>Ngày phát hành</b></td><td>07/15</td>
+  </tr>
+  <tr>
+    <td><b>Mật khẩu OTP</b></td><td>123456</td>
+  </tr>
+</table>
 
 
 
