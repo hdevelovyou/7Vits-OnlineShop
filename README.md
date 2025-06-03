@@ -1,5 +1,7 @@
 # Website mua bán vật phẩm, tài sản ảo online - Made by 7Vits!
-![LOGO](./asset/7VITSnobg.png)
+<p align="center">
+  <img src="./asset/7VITSnobg.png" alt="LOGO" width="150">
+</p>
 ## Giới thiệu đồ án
 
 Đồ án này xây dựng một **website sàn thương mại điện tử** chuyên dành cho các giao dịch **vật phẩm ảo** như *key game*, *tài khoản game*, *CD-Key*, v.v.
