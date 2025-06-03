@@ -1,4 +1,4 @@
-# Website mua bán vật phẩm, tài sản ảo online - Made by 7VITS - 7vits.id.vn!
+# Website mua bán vật phẩm, tài sản ảo online - Made by 7VITS - 7vits.id.vn
 
 <p align="center">
   <img src="./asset/7VITSnobg.png" alt="LOGO" width="250">
@@ -115,6 +115,226 @@ REACT_APP_API_URL=http://localhost:5000
 npm start
 ```
 ## Miêu tả chi tiết các chức năng chính
+
+### Đăng nhập Google (Google OAuth Authentication)
+
+#### Tổng quan
+Hệ thống tích hợp chức năng đăng nhập Google OAuth 2.0, cho phép người dùng đăng nhập nhanh chóng và an toàn bằng tài khoản Google của họ mà không cần tạo tài khoản mới.
+
+#### Quy trình hoạt động
+
+##### 1. Khởi tạo đăng nhập
+- Người dùng nhấp vào nút "Đăng nhập với Google" 
+- Hệ thống chuyển hướng tới `${API_URL}/api/auth/google`
+- Server sử dụng Passport.js với GoogleStrategy để xử lý OAuth
+
+##### 2. Xác thực với Google
+- Google hiển thị trang đồng ý quyền truy cập (scope: profile, email)
+- Người dùng xác nhận và cấp quyền
+- Google callback tới `${API_URL}/api/auth/google/callback`
+
+##### 3. Xử lý sau xác thực
+**Trường hợp 1: Người dùng mới**
+- Tạo tài khoản mới với thông tin từ Google
+- Tự động tạo ví điện tử với số dư 0
+- Yêu cầu thiết lập username và password (chuyển hướng tới trang setup)
+
+**Trường hợp 2: Người dùng đã tồn tại**
+- Liên kết Google ID với tài khoản hiện có
+- Đăng nhập trực tiếp và chuyển hướng về trang chính
+
+##### 4. Hoàn tất đăng nhập
+- Tạo JWT token với thời gian hết hạn 24h
+- Lưu thông tin người dùng vào localStorage
+- Cập nhật trạng thái đăng nhập trong ứng dụng
+
+#### Tính năng bảo mật
+- **Token JWT**: Bảo mật và xác thực phiên làm việc
+- **Xử lý lỗi**: Thông báo rõ ràng khi có xung đột email hoặc lỗi xác thực
+- **Validation**: Kiểm tra và xác thực thông tin từ Google
+
+#### Công nghệ sử dụng
+- **Backend**: Passport.js, passport-google-oauth20, JWT
+- **Frontend**: React Router, Axios
+- **Database**: MySQL với bảng users hỗ trợ googleId
+
+---
+
+### Đăng bán sản phẩm (Product Listing)
+
+#### Tổng quan
+Chức năng cho phép người dùng đăng bán các sản phẩm ảo như Game Key, Account Game, CD-Key với giao diện thân thiện và quy trình đơn giản.
+
+#### Quy trình đăng sản phẩm
+
+##### 1. Truy cập trang đăng bán
+- Đường dẫn: `/sell-product`
+- Yêu cầu: Phải đăng nhập (có JWT token)
+- Giao diện: Form chi tiết với validation
+
+##### 2. Nhập thông tin sản phẩm
+**Thông tin bắt buộc:**
+- **Tên sản phẩm**: Tiêu đề mô tả sản phẩm
+- **Mô tả chi tiết**: Thông tin về sản phẩm
+- **Giá bán**: Định dạng VNĐ với separator (tự động format)
+- **Danh mục**: Lựa chọn từ dropdown (Game Key, App Key, Account)
+- **Ghi chú**: Thông tin key/tài khoản sẽ giao cho buyer
+
+**Thông tin tùy chọn:**
+- **Hình ảnh**: Upload ảnh sản phẩm (hỗ trợ JPG, PNG, GIF, WEBP, tối đa 2MB)
+
+##### 3. Upload và xử lý hình ảnh
+- Kiểm tra định dạng file và kích thước
+- Chuyển đổi sang Base64 để lưu trữ
+- Hiển thị preview trước khi submit
+
+##### 4. Validation và lưu trữ
+**Backend validation:**
+- Kiểm tra quyền truy cập (JWT token)
+- Validate các trường bắt buộc
+- Xử lý và lưu vào database
+
+**Database operations:**
+- Insert vào bảng `products` với `seller_id`
+- Tự động set `stock = 1` và `status = 'active'`
+- Lưu image dưới dạng Base64 string
+
+##### 5. Quản lý sản phẩm đã đăng
+- Xem danh sách sản phẩm tại `/my-products`
+- Chỉnh sửa thông tin sản phẩm
+- Thay đổi trạng thái (active/inactive)
+- Xóa sản phẩm nếu chưa có đơn hàng
+
+#### Tính năng nổi bật
+- **Real-time validation**: Kiểm tra dữ liệu ngay khi nhập
+- **Price formatting**: Tự động format giá với dấu chấm phân cách
+- **Image optimization**: Tự động resize và tối ưu ảnh
+- **Security**: Chỉ chủ sản phẩm mới có thể chỉnh sửa
+
+#### Công nghệ sử dụng
+- **Frontend**: React, SCSS, React Router, Axios
+- **Backend**: Express.js, Multer (file upload), MySQL
+- **Database**: Bảng products, categories, users
+- **Security**: JWT authentication, input validation
+
+---
+
+### Chat Bot AI (VitBot)
+
+#### Tổng quan
+VitBot là trợ lý AI thông minh được phát triển bằng Google Gemini AI, hỗ trợ khách hàng 24/7 với khả năng tư vấn sản phẩm, chính sách và hướng dẫn mua hàng.
+
+#### Tính năng chính
+
+##### 1. Giao diện Chat
+- **Floating button**: Biểu tượng chat nổi ở góc màn hình
+- **Responsive design**: Tự động ẩn hiện trên các trang khác nhau
+- **Modern UI**: Giao diện đẹp với animation mượt mà
+
+##### 2. Khả năng hỗ trợ
+**Tư vấn chính sách:**
+- Chính sách đổi trả (7 ngày)
+- Quy định bảo hành sản phẩm
+- Chính sách rút tiền cho người bán
+- Điều khoản sử dụng
+
+**Hướng dẫn mua hàng:**
+- Quy trình thanh toán
+- Cách nhận sản phẩm
+- Hướng dẫn nạp tiền ví
+- Cách đánh giá sản phẩm
+
+**Thông tin liên hệ:**
+- Hotline: 1900-7777
+- Email: 7vits.shop@gmail.com
+- Fanpage: 7VITS
+- Thời gian hỗ trợ: 8h-22h
+
+##### 3. Công nghệ AI
+
+**Google Gemini Integration:**
+- Model: gemini-1.5-flash (latest)
+- API Key authentication
+- Context-aware responses
+
+**Conversation Management:**
+- Lưu lịch sử hội thoại trong session
+- Context switching cho câu hỏi liên quan
+- Memory của cuộc hội thoại trước đó
+
+**Prompt Engineering:**
+```
+CUSTOMER_SUPPORT_PROMPT = Detailed system prompt defining:
+- Bot personality (VitBot - thân thiện, chuyên nghiệp)
+- Shop information (7Vits, chính sách, liên hệ)
+- Response guidelines (tiếng Việt, chi tiết, hướng dẫn)
+- Shop policies (đổi trả, bảo hành, quy định...)
+```
+
+##### 4. Tính năng tương tác
+
+**Quick Questions:**
+- "Chính sách đổi trả như thế nào?"
+- "Cách mua tài khoản game?"
+- "Cách thanh toán online?"
+- "Thời gian bảo hành bao lâu?"
+
+**Message Features:**
+- Real-time typing
+- Message timestamp
+- Error handling với retry
+- Loading indicators
+
+**Conversation Controls:**
+- Reset conversation
+- Message history
+- Scroll to latest message
+- Auto-focus input
+
+##### 5. Backend API
+
+**Endpoint: `/api/chatbot/message`**
+```javascript
+{
+  message: "Câu hỏi của user",
+  conversationHistory: [
+    { role: "user", content: "..." },
+    { role: "assistant", content: "..." }
+  ]
+}
+```
+
+**Response Format:**
+```javascript
+{
+  success: true,
+  response: "Câu trả lời từ AI",
+  timestamp: "2024-01-01T00:00:00.000Z"
+}
+```
+
+##### 6. Error Handling
+- **API Key validation**: Kiểm tra Gemini API key
+- **Rate limiting**: Xử lý giới hạn API calls
+- **Network errors**: Thông báo lỗi mạng
+- **Graceful degradation**: Fallback khi AI không khả dụng
+
+#### Công nghệ sử dụng
+- **AI Engine**: Google Gemini 1.5 Flash
+- **Frontend**: React, SCSS, Axios
+- **Backend**: Node.js, Express.js
+- **State Management**: React useState, useEffect
+- **Error Handling**: Try-catch với user-friendly messages
+
+#### Deployment
+- **Environment Variables**: GEMINI_API_KEY
+- **Security**: API key protection, input sanitization
+- **Performance**: Conversation history optimization
+- **Monitoring**: Detailed error logging for debugging
+
+
+
+### Đăng nhập bằng Google
 
 ### Mua hàng
 1. **Duyệt và tìm kiếm sản phẩm**
