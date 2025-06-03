@@ -313,12 +313,62 @@ CUSTOMER_SUPPORT_PROMPT = Detailed system prompt defining:
 - **Rate limiting**: Xử lý giới hạn API calls
 - **Network errors**: Thông báo lỗi mạng
 - **Graceful degradation**: Fallback khi AI không khả dụng
-
-
-
+---
 ### Mua hàng, Thanh toán
 #### 1. Tổng quan chức năng
 Hệ thống thanh toán của 7VITS được xây dựng dựa trên cơ chế escrow, đảm bảo an toàn cho cả người mua và người bán thông qua việc khóa tiền trong quá trình giao dịch.
+
+#### 2. Quy trình thanh toán chi tiết
+
+##### 2.1. Khởi tạo đơn hàng
+- Người dùng chọn sản phẩm và gửi yêu cầu tạo đơn hàng
+- Backend nhận thông tin gồm danh sách sản phẩm (`items`) và tổng tiền (`totalAmount`)
+- Hệ thống tạo `idempotencyKey` để đảm bảo không xử lý trùng lặp đơn hàng
+
+##### 2.2. Kiểm tra điều kiện trước giao dịch
+- Xác thực danh sách sản phẩm tồn tại và còn hàng (`status = 'active'`)
+- Kiểm tra người mua không phải là người bán
+- Đảm bảo tất cả sản phẩm đều từ cùng một người bán
+- Kiểm tra số dư ví của người mua đủ để thanh toán
+
+##### 2.3. Xử lý giao dịch với Transaction Database
+Hệ thống sử dụng transaction SQL để đảm bảo tính toàn vẹn dữ liệu:
+
+1. **Khóa ví người dùng**: Khóa ví người mua và người bán theo thứ tự ID tăng dần để tránh deadlock
+2. **Kiểm tra số dư**: Xác nhận số dư người mua đủ để thực hiện giao dịch
+3. **Khóa sản phẩm**: Khóa các sản phẩm được mua để tránh bán trùng lặp
+4. **Tạo đơn hàng**: Lưu thông tin đơn hàng với trạng thái "pending"
+5. **Tạo chi tiết đơn hàng**: Lưu danh sách sản phẩm thuộc đơn hàng
+6. **Cập nhật ví theo cơ chế Escrow**:
+   - Trừ tiền từ ví người mua
+   - Chuyển vào locked_balance của người bán (chưa nhận được ngay)
+7. **Cập nhật trạng thái sản phẩm**: Đánh dấu sản phẩm thành "inactive" để không hiển thị cho người khác
+8. **Tạo bản ghi giao dịch**: Ghi nhận giao dịch mua hàng và thu nhập cho người bán (pending)
+
+##### 2.4. Xử lý sau giao dịch
+- Hệ thống có cơ chế retry khi xảy ra deadlock hoặc timeout (tối đa 3 lần)
+- Nếu có lỗi, toàn bộ giao dịch được rollback để đảm bảo dữ liệu nhất quán
+- Hàm `cleanupFailedOrder` dọn dẹp dữ liệu nếu đơn hàng bị lỗi
+
+##### 2.5. Xác nhận đơn hàng và hoàn tất thanh toán
+Sau khi người mua nhận được sản phẩm và xác nhận:
+- Chuyển tiền từ locked_balance sang balance của người bán
+- Cập nhật trạng thái đơn hàng và giao dịch thành "completed"
+- Đánh dấu sản phẩm đã bán với trạng thái "sold_out"
+
+##### 2.6. Xử lý từ chối đơn hàng
+Nếu có vấn đề, người mua có thể từ chối đơn hàng:
+- Hoàn tiền từ locked_balance của người bán về balance người mua
+- Cập nhật trạng thái đơn hàng và giao dịch thành "cancelled"
+- Đặt lại trạng thái sản phẩm thành "active" để có thể bán lại
+
+#### 3. API Backend chính
+- `POST /api/orders/create`: Tạo đơn hàng mới
+- `GET /api/orders/user`: Lấy danh sách đơn hàng của người dùng
+- `PUT /api/orders/:id/confirm`: Xác nhận đã nhận sản phẩm
+- `PUT /api/orders/:id/reject`: Từ chối đơn hàng và yêu cầu hoàn tiền
+- `GET /api/orders/:id`: Lấy chi tiết đơn hàng
+- `GET /api/wallet/balance`: Lấy số dư ví hiện tại
 
 ### Nạp tiền bằng VNPay
 ####  **Tài khoản test thanh toán**
