@@ -8,12 +8,10 @@ $error-color: #ff3333;     // Đỏ nhạt cho lỗi
 $success-color: #00ff00;   // Xanh lá cho thành công
 
 .withdraw-page {
-  min-height: 100vh;
   background-color: $main-color;
   padding: 20rem 0;
 
   .container {
-    max-width: 80rem;
     margin: 0 auto;
     padding: 0 2rem;
   }
@@ -259,7 +257,6 @@ $success-color: #00ff00;   // Xanh lá cho thành công
 
   // Responsive design
   @media (max-width: 768px) {
-    padding: 1rem 0;
 
     .container {
       padding: 0 1.5rem;

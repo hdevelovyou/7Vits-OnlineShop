@@ -246,7 +246,7 @@ html {
 
 
 .Products {
-        padding: 50px 0;
+       
         text-align: center;
 
        
@@ -360,7 +360,7 @@ html {
         }
 
         h3 {
-                font-size: 4rem;
+                font-size: 2rem;
         }
 
         .Products .home-product-item_rating {
@@ -400,6 +400,11 @@ html {
                 gap: 0.5rem;
                 padding: 5px;
                 justify-content: space-between;
+        }
+        .Products{
+                h3{
+                        font-size: 5rem;
+                }
         }
 }
 

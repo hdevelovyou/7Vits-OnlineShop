@@ -1,7 +1,8 @@
+@use "sass:map";
+@import "../../style/pages/all";
+
 .payment-return-container-main {
-  height: 100vh;
-  padding-top: 20rem;
-  margin-bottom: 20rem;
+  padding: 20rem 0;
 }
 
 .payment-return-container {
@@ -117,7 +118,6 @@
   background-color: #868686;
   color: white;
   border: none;
-  padding: 15px 65px;
   border-radius: 8px;
   font-size: 20px;
   font-weight: 600;
@@ -142,7 +142,7 @@
   100% { transform: rotate(360deg); }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px ) {
   .payment-return-container {
     margin: 20px;
     padding: 20px;
@@ -156,3 +156,27 @@
     margin-bottom: 5px;
   }
 } 
+@include Responsive($TABLET)
+{
+  .continue-topup-button{
+    padding: 10px 10px;
+  }
+}
+@include Responsive($SMALL){
+  .continue-topup-button {
+    background-color: #868686;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+}
+@include Responsive($DESKTOP)
+{
+  .continue-topup-button{
+    padding: 10px;
+  }
+}

@@ -313,16 +313,17 @@ const ProfilePage = () => {
                                 </div>
                             </div>
                             <div className="wallet-actions">
-                                <Link to="/withdraw" className="wallet-action-btn withdraw-btn">
+                                <Link to="/withdraw" className="wallet-action-btn withdraw-btn"onClick={()=>window.scrollTo(0,0)}>
                                     Rút tiền
                                 </Link>
                             </div>
                         </div>
                         <div className="profile-action-buttons">
-                            <Link to="/sell-product" className="nav-link sell-product-button">
+                            <Link to="/sell-product" className="nav-link sell-product-button"onClick={()=>window.scrollTo(0,0)} >
                                 Đăng bán sản phẩm
                             </Link>
-                            <Link to="/my-products" className="nav-link sell-product-button">
+                            <Link to="/my-products" className="nav-link sell-product-button" 
+                            onClick={()=>window.scrollTo(0,0)}>
                                 Sản phẩm của tôi
                             </Link>
                         </div>
