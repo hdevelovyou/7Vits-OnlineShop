@@ -221,7 +221,7 @@ io.on('connection', (socket) => {
     // Kiểm tra trạng thái lẫn thời gian
     const now = new Date();
     const endTime = new Date(auction.end_time);
-    if (auction.status !== 'ongoing' || now >= endTime) {
+    if (auction.status !== 'ongoing' ) {
       socket.emit('bid_failed', { message: 'Phiên đấu giá đã kết thúc.' });
       return;
     }
