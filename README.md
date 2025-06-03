@@ -26,73 +26,6 @@
 - **Hệ thống đơn hàng**: Quản lý đơn hàng, theo dõi trạng thái giao dịch
 - **Hệ thống bảo mật**: Xác thực OTP, bảo vệ giao dịch, cơ chế escrow (trung gian)
 
-## Công nghệ sử dụng
-
-### Frontend
-- **React**: Thư viện xây dựng giao diện người dùng
-- **React Router**: Quản lý định tuyến và điều hướng
-- **Axios**: Xử lý các yêu cầu HTTP
-- **SCSS/Sass**: Tiền xử lý CSS để tạo kiểu
-- **Socket.io-client**: Giao tiếp thời gian thực (chat, thông báo)
-- **Redux/Redux Toolkit**: Quản lý trạng thái toàn cục
-- **React Query**: Quản lý trạng thái máy chủ và bộ nhớ đệm
-- **Material-UI**: Thư viện thành phần giao diện
-- **Formik & Yup**: Xử lý form và xác thực
-- **React Icons**: Thư viện biểu tượng
-- **React Toastify**: Thông báo toast
-
-### Backend
-- **Node.js/Express**: Framework máy chủ web
-- **MySQL**: Hệ quản trị cơ sở dữ liệu quan hệ
-- **JWT (JSON Web Tokens)**: Xác thực người dùng
-- **Bcrypt**: Mã hóa mật khẩu
-- **Socket.io**: Xử lý kết nối thời gian thực
-- **Nodemailer**: Gửi email thông báo và xác thực
-- **VNPay API**: Tích hợp cổng thanh toán
-- **Multer**: Xử lý tải lên tệp
-- **Cors**: Chia sẻ tài nguyên đa nguồn gốc
-- **Dotenv**: Quản lý biến môi trường
-- **Node-cron**: Lập lịch tác vụ tự động
-- **Express-validator**: Middleware xác thực
-- **Morgan**: Ghi log yêu cầu HTTP
-- **Helmet**: Middleware bảo mật
-
-### Công cụ phát triển
-- **Git**: Quản lý phiên bản
-- **npm**: Quản lý gói
-- **ESLint**: Kiểm tra mã
-- **Prettier**: Định dạng mã
-- **Postman**: Kiểm thử API
-- **MySQL Workbench**: Quản lý cơ sở dữ liệu
-- **VS Code**: Môi trường phát triển tích hợp
-
-### Triển khai & Lưu trữ
-- **Vercel**: Lưu trữ Frontend
-- **Railway**: Lưu trữ Backend
-- **MySQL Hosting**: Lưu trữ cơ sở dữ liệu
-- **Cloudinary**: Lưu trữ hình ảnh
-- **GitHub**: Kho lưu trữ mã nguồn
-
-### Bảo mật
-- **JWT Authentication**: Xác thực người dùng
-- **Bcrypt Password Hashing**: Mã hóa mật khẩu
-- **CORS Protection**: Bảo vệ yêu cầu đa nguồn gốc
-- **Helmet Security Headers**: Bảo mật HTTP headers
-- **Rate Limiting**: Giới hạn tốc độ yêu cầu
-- **Input Validation**: Kiểm tra dữ liệu đầu vào
-- **SQL Injection Prevention**: Bảo vệ cơ sở dữ liệu
-- **XSS Protection**: Bảo vệ tấn công XSS
-- **CSRF Protection**: Bảo vệ tấn công CSRF
-
-### Hiệu suất & Tối ưu hóa
-- **React Query Caching**: Quản lý bộ nhớ đệm
-- **Image Optimization**: Tối ưu hóa hình ảnh
-- **Code Splitting**: Chia nhỏ bundle
-- **Lazy Loading**: Tải components khi cần
-- **Database Indexing**: Tối ưu truy vấn
-- **Connection Pooling**: Quản lý kết nối cơ sở dữ liệu
-- **Compression**: Nén dữ liệu phản hồi
-- **Caching**: Bộ nhớ đệm tài nguyên tĩnh
 
 ## Cài đặt và chạy dự án
 
@@ -149,69 +82,6 @@ npm start
 
 ## Cấu trúc cơ sở dữ liệu
 ![database](./asset/data.jpeg)
-Hệ thống sử dụng các bảng chính sau:
-
-### 1. Bảng users
-- Lưu trữ thông tin người dùng
-- Các trường chính: id, firstName, lastName, userName, email, password, googleId, facebookId, displayName, avatarUrl, role
-- Hỗ trợ đăng nhập bằng email/password, Google và Facebook
-
-### 2. Bảng user_wallets
-- Quản lý ví điện tử của người dùng
-- Các trường chính: user_id, balance (số dư), locked_balance (số dư bị khóa)
-- Liên kết với bảng users qua user_id
-
-### 3. Bảng categories
-- Quản lý danh mục sản phẩm
-- Các trường chính: id, name, description
-- Theo dõi thời gian tạo và cập nhật
-
-### 4. Bảng products
-- Lưu trữ thông tin sản phẩm
-- Các trường chính: name, description, price, category_id, stock, seller_id, status, image_url, notes
-- Trạng thái sản phẩm: active, inactive, sold_out
-- Liên kết với users (seller) và categories
-
-### 5. Bảng ratings
-- Quản lý đánh giá sản phẩm
-- Các trường chính: user_id, product_id, rating (1-5)
-- Liên kết với users và products
-
-### 6. Bảng comments
-- Quản lý bình luận sản phẩm
-- Các trường chính: user_id, product_id, content, parent_id
-- Hỗ trợ bình luận đa cấp (reply)
-
-### 7. Bảng transactions
-- Quản lý giao dịch tài chính
-- Các trường chính: user_id, amount, transaction_type, status, description, reference_id
-- Loại giao dịch: deposit, purchase, refund, withdrawal, sale_income
-- Trạng thái: pending, completed, failed, cancelled
-
-### 8. Bảng orders
-- Quản lý đơn hàng
-- Các trường chính: user_id, seller_id, total_amount, status
-- Trạng thái: pending, processing, completed, cancelled, refunded
-
-### 9. Bảng order_items
-- Chi tiết các sản phẩm trong đơn hàng
-- Các trường chính: order_id, product_id, quantity, price
-- Liên kết với orders và products
-
-### 10. Bảng wallet_transfers
-- Quản lý chuyển tiền giữa các ví
-- Các trường chính: order_id, buyer_id, seller_id, amount, buyer_transaction_id, seller_transaction_id, status
-- Theo dõi trạng thái chuyển tiền: pending, completed, failed, cancelled
-
-### 11. Bảng payment_vnpay
-- Lưu trữ thông tin thanh toán qua VNPay
-- Các trường chính: transaction_id, vnp_TxnRef, vnp_Amount, vnp_OrderInfo, vnp_ResponseCode, vnp_TransactionNo, vnp_BankCode, vnp_PayDate
-- Liên kết với bảng transactions
-
-### 12. Bảng seller_ratings
-- Quản lý đánh giá người bán
-- Các trường chính: seller_id, user_id, rating (1-5)
-- Đảm bảo mỗi người dùng chỉ đánh giá một người bán một lần
 
 ## Quy trình mua bán
 
@@ -283,11 +153,81 @@ Hệ thống sử dụng các bảng chính sau:
 
 ## Đóng góp và phát triển
 
-Dự án đang trong giai đoạn phát triển. Các tính năng sẽ được cập nhật liên tục:
-- Tích hợp thêm phương thức thanh toán
+Dự án đang trong giai đoạn phát triển. Hướng phát triển tiếp theo cho đồ án
+- Tích hợp thêm phương thức thanh toán (Momo, Visa, Paypal,... )
+- Tích hợp thêm hệ thống thanh toán bằng blockchain(Solana,...)
+- 
 - Cải thiện hệ thống chat, thêm thông báo thời gian thực
 - Phát triển ứng dụng di động
 - Tích hợp blockchain để tăng tính minh bạch cho giao dịch
+
+## Công nghệ sử dụng
+
+### Frontend
+- **React**: Thư viện xây dựng giao diện người dùng
+- **React Router**: Quản lý định tuyến và điều hướng
+- **Axios**: Xử lý các yêu cầu HTTP
+- **SCSS/Sass**: Tiền xử lý CSS để tạo kiểu
+- **Socket.io-client**: Giao tiếp thời gian thực (chat, thông báo)
+- **Redux/Redux Toolkit**: Quản lý trạng thái toàn cục
+- **React Query**: Quản lý trạng thái máy chủ và bộ nhớ đệm
+- **Material-UI**: Thư viện thành phần giao diện
+- **Formik & Yup**: Xử lý form và xác thực
+- **React Icons**: Thư viện biểu tượng
+- **React Toastify**: Thông báo toast
+
+### Backend
+- **Node.js/Express**: Framework máy chủ web
+- **MySQL**: Hệ quản trị cơ sở dữ liệu quan hệ
+- **JWT (JSON Web Tokens)**: Xác thực người dùng
+- **Bcrypt**: Mã hóa mật khẩu
+- **Socket.io**: Xử lý kết nối thời gian thực
+- **Nodemailer**: Gửi email thông báo và xác thực
+- **VNPay API**: Tích hợp cổng thanh toán
+- **Multer**: Xử lý tải lên tệp
+- **Cors**: Chia sẻ tài nguyên đa nguồn gốc
+- **Dotenv**: Quản lý biến môi trường
+- **Node-cron**: Lập lịch tác vụ tự động
+- **Express-validator**: Middleware xác thực
+- **Morgan**: Ghi log yêu cầu HTTP
+- **Helmet**: Middleware bảo mật
+
+### Công cụ phát triển
+- **Git**: Quản lý phiên bản
+- **npm**: Quản lý gói
+- **ESLint**: Kiểm tra mã
+- **Prettier**: Định dạng mã
+- **Postman**: Kiểm thử API
+- **MySQL Workbench**: Quản lý cơ sở dữ liệu
+- **VS Code**: Môi trường phát triển tích hợp
+
+### Triển khai & Lưu trữ
+- **Vercel**: Lưu trữ Frontend
+- **Railway**: Lưu trữ Backend
+- **MySQL Hosting**: Lưu trữ cơ sở dữ liệu
+- **Cloudinary**: Lưu trữ hình ảnh
+- **GitHub**: Kho lưu trữ mã nguồn
+
+### Bảo mật
+- **JWT Authentication**: Xác thực người dùng
+- **Bcrypt Password Hashing**: Mã hóa mật khẩu
+- **CORS Protection**: Bảo vệ yêu cầu đa nguồn gốc
+- **Helmet Security Headers**: Bảo mật HTTP headers
+- **Rate Limiting**: Giới hạn tốc độ yêu cầu
+- **Input Validation**: Kiểm tra dữ liệu đầu vào
+- **SQL Injection Prevention**: Bảo vệ cơ sở dữ liệu
+- **XSS Protection**: Bảo vệ tấn công XSS
+- **CSRF Protection**: Bảo vệ tấn công CSRF
+
+### Hiệu suất & Tối ưu hóa
+- **React Query Caching**: Quản lý bộ nhớ đệm
+- **Image Optimization**: Tối ưu hóa hình ảnh
+- **Code Splitting**: Chia nhỏ bundle
+- **Lazy Loading**: Tải components khi cần
+- **Database Indexing**: Tối ưu truy vấn
+- **Connection Pooling**: Quản lý kết nối cơ sở dữ liệu
+- **Compression**: Nén dữ liệu phản hồi
+- **Caching**: Bộ nhớ đệm tài nguyên tĩnh
 
 ## Screenshots
 
