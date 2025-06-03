@@ -212,12 +212,6 @@ Chức năng cho phép người dùng đăng bán các sản phẩm ảo như Ga
 - **Image optimization**: Tự động resize và tối ưu ảnh
 - **Security**: Chỉ chủ sản phẩm mới có thể chỉnh sửa
 
-#### Công nghệ sử dụng
-- **Frontend**: React, SCSS, React Router, Axios
-- **Backend**: Express.js, Multer (file upload), MySQL
-- **Database**: Bảng products, categories, users
-- **Security**: JWT authentication, input validation
-
 ---
 
 ### Chat Bot AI (VitBot)
@@ -320,47 +314,14 @@ CUSTOMER_SUPPORT_PROMPT = Detailed system prompt defining:
 - **Network errors**: Thông báo lỗi mạng
 - **Graceful degradation**: Fallback khi AI không khả dụng
 
-#### Công nghệ sử dụng
-- **AI Engine**: Google Gemini 1.5 Flash
-- **Frontend**: React, SCSS, Axios
-- **Backend**: Node.js, Express.js
-- **State Management**: React useState, useEffect
-- **Error Handling**: Try-catch với user-friendly messages
-
-#### Deployment
-- **Environment Variables**: GEMINI_API_KEY
-- **Security**: API key protection, input sanitization
-- **Performance**: Conversation history optimization
-- **Monitoring**: Detailed error logging for debugging
 
 
-
-### Đăng nhập bằng Google
-
-### Mua hàng
-1. **Duyệt và tìm kiếm sản phẩm**
-   - Người dùng có thể xem danh sách sản phẩm được phân loại theo danh mục
-   - Tìm kiếm sản phẩm theo tên, mô tả hoặc từ khóa
-   - Lọc sản phẩm theo giá, danh mục, đánh giá
-
-2. **Thêm vào giỏ hàng**
-   - Thêm sản phẩm vào giỏ hàng với số lượng tùy chọn
-   - Xem và chỉnh sửa giỏ hàng (thay đổi số lượng, xóa sản phẩm)
-   - Lưu giỏ hàng cho lần truy cập sau
-
-3. **Quy trình thanh toán**
-   - Kiểm tra tính hợp lệ của sản phẩm (còn hàng, không mua sản phẩm của chính mình)
-   - Kiểm tra số dư trong ví điện tử
-   - Tạo đơn hàng và trừ tiền từ ví người mua
-   - Khóa số tiền trong locked_balance của người bán
-
-4. **Xác nhận đơn hàng**
-   - Người mua xác nhận đã nhận được sản phẩm
-   - Hệ thống chuyển tiền từ locked_balance sang balance của người bán
-   - Tự động xác nhận sau 7 ngày nếu người mua không thực hiện thao tác
+### Mua hàng, Thanh toán
+#### 1. Tổng quan chức năng
+Hệ thống thanh toán của 7VITS được xây dựng dựa trên cơ chế escrow, đảm bảo an toàn cho cả người mua và người bán thông qua việc khóa tiền trong quá trình giao dịch.
 
 ### Nạp tiền bằng VNPay
-1. **Tài khoản test thanh toán**
+####  **Tài khoản test thanh toán**
 <table>
   <tr>
     <th colspan="2" style="text-align:center;">🪪 Thông tin thẻ</th>
@@ -382,7 +343,38 @@ CUSTOMER_SUPPORT_PROMPT = Detailed system prompt defining:
   </tr>
 </table>
 
+#### Quy trình nạp tiền
+![vnpay-flow](./asset/flow-pay.png)
+##### 1. Khởi tạo giao dịch
+- Người dùng truy cập trang "Nạp tiền" từ trang cá nhân
+- Nhập số tiền muốn nạp 
 
+##### 2. Tạo yêu cầu thanh toán
+- Backend tạo mã giao dịch duy nhất (txnRef)
+- Thiết lập các tham số VNPay (amount, returnUrl, ipAddr, etc.)
+- Tạo chữ ký số (secureHash) để bảo mật giao dịch
+- Lưu thông tin giao dịch vào bảng transactions với trạng thái "pending"
+
+##### 3. Chuyển hướng đến VNPay
+- Người dùng được chuyển hướng đến cổng thanh toán VNPay
+- Chọn phương thức thanh toán (thẻ ATM, thẻ tín dụng, QR code)
+- Nhập thông tin thẻ và xác thực OTP
+
+##### 4. Xử lý kết quả thanh toán
+- Server nhận thông tin từ VNPay qua returnUrl
+- Xác thực chữ ký và thông tin giao dịch
+- Kiểm tra trạng thái thanh toán từ VNPay
+
+**Xử lý thành công:**
+- Cập nhật trạng thái giao dịch thành "completed"
+- Cộng tiền vào ví người dùng (balance)
+- Tạo lịch sử giao dịch với loại "deposit"
+- Hiển thị thông báo thành công và số dư mới
+
+**Xử lý thất bại:**
+- Cập nhật trạng thái giao dịch thành "failed"
+- Ghi log lỗi để kiểm tra sau
+- Hiển thị thông báo lỗi và hướng dẫn thử lại
 
 ### Đấu giá
 1. **Tạo phiên đấu giá**
