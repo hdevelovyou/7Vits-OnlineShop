@@ -94,7 +94,7 @@ router.post(
     }
 
     // 2) Lấy dữ liệu từ body
-    const { item_name, description, starting_price, end_time, sellerId,image_url, notes } = req.body;
+    const { item_name, description, starting_price, end_time, sellerId,imageData, notes } = req.body;
 
     // 3) Kiểm thời gian hợp lệ
     const now = new Date();
@@ -117,7 +117,7 @@ router.post(
           now,
           end_time,
           sellerId,
-          image_url,
+          imageData,
           notes
         ]
       );

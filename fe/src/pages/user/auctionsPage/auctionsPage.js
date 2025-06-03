@@ -17,8 +17,8 @@ const AuctionsPage = () => {
   const [endTime, setEndTime] = useState('');
   const [finishedAuctions, setFinishedAuctions] = useState([]);
   const [gameKey, setGameKey] = useState('');
-const [imageUrl, setImageUrl] = useState('');
-
+  const [imageFile, setImageFile] = useState('');
+  const [imageBase64, setImageBase64] = useState('');
 
   // Lấy userId từ localStorage (sau khi login)
   const userId = localStorage.getItem('userId');
@@ -61,7 +61,20 @@ const [imageUrl, setImageUrl] = useState('');
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
-
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      setImageFile(null);
+      setImageBase64('');
+      return;
+    }
+    setImageFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImageBase64(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
   // Hàm xử lý form tạo auction mới
   const handleCreateAuction = async (e) => {
     e.preventDefault();
@@ -85,27 +98,27 @@ const [imageUrl, setImageUrl] = useState('');
       starting_price: parseFloat(startingPrice),
       end_time: formatDateToMySQL(endTime),
       sellerId: userId,
-      image_url: imageUrl,
-      notes: gameKey 
+      imageData:imageBase64,
+      notes: gameKey
     }
     try {
-        // 4) Gửi request POST /api/auctions
-        const res = await axios.post(
-          `${process.env.REACT_APP_API_URL}/api/auctions`,
-          payload,
-          { withCredentials: true }
-        );
-        const newAuction = res.data.auction;
-        alert('Tạo phiên đấu giá thành công!');
+      // 4) Gửi request POST /api/auctions
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/auctions`,
+        payload,
+        { withCredentials: true }
+      );
+      const newAuction = res.data.auction;
+      alert('Tạo phiên đấu giá thành công!');
       navigate(`/auction/${newAuction.id
-      }`);
+        }`);
     } catch (err) {
       console.error('Lỗi khi tạo phiên đấu giá:', err);
       if (err.response) {
         // Nếu backend trả mảng validation errors
         if (err.response.data.errors) {
           const messages = err.response.data.errors.map(e => e.msg).join('\n');
-          alert(`Tạo phiên thất bại: \n${ messages }`);
+          alert(`Tạo phiên thất bại: \n${messages}`);
         } else {
           alert(err.response.data.message || 'Tạo phiên thất bại.');
         }
@@ -114,13 +127,13 @@ const [imageUrl, setImageUrl] = useState('');
       }
     }
   };
-const inputStyle = {
-  width: '100%',
-  padding: '8px',
-  borderRadius: '4px',
-  border: '1px solid #ccc',
-  fontSize: '1rem'
-};
+  const inputStyle = {
+    width: '100%',
+    padding: '8px',
+    borderRadius: '4px',
+    border: '1px solid #ccc',
+    fontSize: '1rem'
+  };
   return (
     <div className="auctions-container" style={{ padding: '200px' }}>
       {/* Form tạo auction mới */}
@@ -175,17 +188,26 @@ const inputStyle = {
               placeholder="Mô tả sản phẩm (tuỳ chọn)"
             />
           </div>
-          <div style={{ marginBottom: '12px' }}>
+         <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', marginBottom: '4px' }}>
-              Link ảnh sản phẩm:
+              Ảnh sản phẩm (từ file):
             </label>
             <input
-              type="url"
-              value={imageUrl}
-              onChange={e => setImageUrl(e.target.value)}
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
               style={inputStyle}
-              placeholder="https://example.com/image.jpg"
             />
+            {imageBase64 && (
+              <div style={{ marginTop: '8px' }}>
+                <p>Ảnh đã chọn:</p>
+                <img
+                  src={imageBase64}
+                  alt="Preview"
+                  style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '4px' }}
+                />
+              </div>
+            )}
           </div>
 
           <div style={{ marginBottom: '12px' }}>
@@ -278,7 +300,7 @@ const inputStyle = {
                 marginBottom: '12px'
               }}
             >
-              <Link to={`/ auction / ${ auction.id } `} className="auction-link" style={{ textDecoration: 'none', color: '#333' }}>
+              <Link to={`/auction/ ${auction.id} `} className="auction-link" style={{ textDecoration: 'none', color: '#333' }}>
                 <h4 style={{ margin: '0 0 8px 0' }}>{auction.item_name}</h4>
                 <p style={{ margin: '4px 0' }}>
                   <strong>Giá hiện tại:</strong> {auction.current_bid.toLocaleString()} VND

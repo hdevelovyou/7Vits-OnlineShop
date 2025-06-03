@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS auctions (
   status ENUM('ongoing','finished') NOT NULL DEFAULT 'ongoing',
   seller_id INT NOT NULL,
   winner_id INT NULL,     -- nếu bạn muốn lưu người thắng
-  image_url TEXT,
+  image_url LONGTEXT,
   notes TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
