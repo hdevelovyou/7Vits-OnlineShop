@@ -174,7 +174,7 @@ const Users = () => {
                   {products.map((p) => (
                     <tr key={p.id}>
                       <td>{p.name}</td>
-                      <td>{p.price?.toLocaleString() ?? ""}</td>
+                      <td>{ Number(p.price)?.toLocaleString() ?? ""}</td>
                       <td>{p.status}</td>
                       <td>{p.created_at ? new Date(p.created_at).toLocaleDateString() : ""}</td>
                     </tr>

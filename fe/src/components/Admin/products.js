@@ -62,7 +62,7 @@ const Products = () => {
             <tr key={p.id}>
               <td>{idx + 1}</td>
               <td>{p.name}</td>
-              <td>{p.price?.toLocaleString() ?? ""}</td>
+              <td>{Number(p.price)?.toLocaleString() ?? ""}</td>
               <td>{p.category}</td>
               <td>{p.sellerName}</td>
               <td>{p.status}</td>

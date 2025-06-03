@@ -35,7 +35,7 @@ const Transactions = () => {
             <tr key={transaction.transaction_id}>
               <td>{idx + 1}</td>
               <td>{transaction.user_name}</td>
-              <td>{transaction.amount.toLocaleString()}</td>
+              <td>{Number(transaction.amount).toLocaleString()}</td>
               <td>{transaction.transaction_type} </td>
               <td>{transaction.status}</td>
               <td>{new Date(transaction.created_at).toLocaleString()}</td>

@@ -35,7 +35,7 @@ const Orders = () => {
               <td>{idx + 1}</td>
               <td>{order.buyer_name}</td>
               <td>{order.seller_name}</td>
-              <td>{order.total_amount.toLocaleString()} </td>
+              <td>{Number(order.total_amount).toLocaleString()} </td>
               <td>{new Date(order.created_at).toLocaleString()}</td>
               <td>
                 <button 
