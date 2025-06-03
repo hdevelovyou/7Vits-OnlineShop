@@ -1,4 +1,4 @@
-# Website mua bán vật phẩm, tài sản ảo online - Made by 7Vits!
+# Website mua bán vật phẩm, tài sản ảo online - Made by 7VITS - 7vits.id.vn!
 
 <p align="center">
   <img src="./asset/7VITSnobg.png" alt="LOGO" width="250">
