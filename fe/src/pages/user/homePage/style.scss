@@ -8,61 +8,62 @@ html {
         max-width: 100%;
         position: relative;
 }
+
 /* Hiển thị thêm button */
 .show-more-container {
-  text-align: center;
-  margin: 2rem 0;
+        text-align: center;
+        margin: 2rem 0;
 }
 
 .btn-show-more {
-  background-color: #b91515;
-  color: #fff;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+        background-color: #b91515;
+        color: #fff;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
 }
 
 .btn-show-more:hover:not(:disabled) {
-  background-color: #0056b3;
+        background-color: #0056b3;
 }
 
 .btn-show-more:disabled {
-  background-color: #ccc;
-  cursor: default;
-  opacity: 0.7;
+        background-color: #ccc;
+        cursor: default;
+        opacity: 0.7;
 }
 
 .seller-stars {
-  display: flex;
-  align-items: center;
-  gap: 2px;
+        display: flex;
+        align-items: center;
+        gap: 2px;
 
-  .star {
-    font-size: 18px;
-    color: #ccc;
-    position: relative;
-    display: inline-block;
-  }
+        .star {
+                font-size: 18px;
+                color: #ccc;
+                position: relative;
+                display: inline-block;
+        }
 
-  .star.full {
-    color: gold;
-  }
+        .star.full {
+                color: gold;
+        }
 
-  .star.half {
-    background: linear-gradient(to right, gold 50%, #ccc 50%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: gold;
-  }
+        .star.half {
+                background: linear-gradient(to right, gold 50%, #ccc 50%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                color: gold;
+        }
 
-  .rating-number {
-    margin-left: 6px;
-    font-size: 14px;
-    color: #666;
-  }
+        .rating-number {
+                margin-left: 6px;
+                font-size: 14px;
+                color: #666;
+        }
 }
 
 #section-1 {
@@ -81,7 +82,7 @@ html {
 #section-1 img {
         bottom: 0;
         transition: transform 0.3s ease;
-        
+
 }
 
 #section-1 img:hover {
@@ -230,21 +231,25 @@ html {
 
 .product-namename {
         h3 {
-                
+
                 font-weight: bold;
                 text-align: center;
         }
 
         margin: 140px 0px;
-        .home-product{
-                padding-left:24px;
-                padding-right:24px;
+
+        .home-product {
+                padding-left: 24px;
+                padding-right: 24px;
         }
 }
+
 
 .Products {
         padding: 50px 0;
         text-align: center;
+
+       
 
         .home-product-item {
                 margin-bottom: 20px;
@@ -255,7 +260,7 @@ html {
                 transition: 0.3s;
                 cursor: pointer;
                 text-align: left;
-           
+
                 .mota-name {
                         font-size: 1.6rem;
                         font-weight: bold;
@@ -303,11 +308,12 @@ html {
                 }
 
                 &_rating {
-                        display: flex;
+
                         align-items: center;
                         gap: 0.5rem;
                         padding: 5px;
                         justify-content: space-between;
+
                         .fa-star {
                                 color: #ddd;
                                 font-size: 1.4rem;
@@ -327,6 +333,7 @@ html {
         }
 }
 
+
 @media (max-width: 768px) {
         .banner {
                 background: url("../../../assets/images/mainbg.webp") no-repeat 70% center/cover;
@@ -334,13 +341,16 @@ html {
                 max-width: 100%;
                 position: relative;
         }
+
         .grid__column-3 {
                 width: calc(50% - 2.4rem);
                 /* Chia 2 cột */
         }
+
         #section-1 .text-introduce {
                 font-size: 3rem;
         }
+
         #section-1 img {
                 width: 100%;
         }
@@ -348,28 +358,50 @@ html {
         .logo img {
                 height: 8rem;
         }
-        h3{
+
+        h3 {
                 font-size: 4rem;
         }
+
+        .Products .home-product-item_rating {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 5px;
+                justify-content: space-between;
+        }
 }
+
 @media (max-width: 480px) {
-        h3{
+        h3 {
                 font-size: 2rem;
         }
+
         .banner {
                 background: url("../../../assets/images/mainbg.webp") no-repeat 73% center/cover;
                 height: 87vh;
                 max-width: 100%;
                 position: relative;
         }
+
         .grid__column-3 {
                 width: calc(100% - 2.4rem);
         }
+
         .logo img {
                 height: 5rem;
         }
 }
 
+@media (min-width:769px) {
+        .Products .home-product-item_rating {
+
+                align-items: center;
+                gap: 0.5rem;
+                padding: 5px;
+                justify-content: space-between;
+        }
+}
 
 /* Responsive Design */
 @media screen and (min-width: 1200px) {
@@ -381,9 +413,7 @@ html {
         #section-1 img {
                 width: 60rem;
         }
-        h3{
-                font-size: 5rem;
-        }
+
 }
 
 @media screen and (max-width: 992px) {
@@ -427,4 +457,5 @@ html {
         #section-1 img {
                 width: 25rem;
         }
+       
 }
