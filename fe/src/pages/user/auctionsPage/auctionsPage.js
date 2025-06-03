@@ -135,7 +135,7 @@ const AuctionsPage = () => {
     fontSize: '1rem'
   };
   return (
-    <div className="auctions-container" style={{ padding: '200px' }}>
+    <div className="auctions-container" style={{ padding: '200px 18px' }}>
       {/* Form tạo auction mới */}
       <div className="create-auction-form" style={{
         border: '1px solid #ccc',

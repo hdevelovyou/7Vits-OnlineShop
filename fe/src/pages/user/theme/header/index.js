@@ -1,7 +1,7 @@
 import { memo, useState, useEffect, useRef, use } from "react";
 import "./style.scss";
 import { CiFacebook } from "react-icons/ci";
-import { FaInstagram, FaShoppingCart, FaWallet, FaStore, FaGamepad, FaKey,FaBook } from "react-icons/fa";
+import { FaInstagram, FaShoppingCart, FaWallet, FaStore, FaGamepad, FaKey, FaBook } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../../../assets/images/logo.png";
 import { ROUTES } from "../../../../utils/router.js";
@@ -14,6 +14,7 @@ import { MdEmojiEvents, MdLogout } from "react-icons/md";
 import axios from "axios";
 
 const menuItems = [
+
   {
     name: "Ví",
     icon: <FaWallet />,
@@ -36,16 +37,16 @@ const menuItems = [
     path: "/chinh-sach",
   },
   {
-    name:"Sự kiện",
-    icon:<MdEmojiEvents />,
-    path:"/auctions",
+    name: "Sự kiện",
+    icon: <MdEmojiEvents />,
+    path: "/auctions",
   },
   {
     name: "Đăng xuất",
     icon: <MdLogout />,
     path: "/",
   },
- 
+
 
 ];
 
@@ -161,6 +162,8 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong, unreadConversations }) => {
     if (searchTerm.trim() === "") return;
     setShowDropdown(false);
     navigate(`${ROUTES.USER.STORE}?search=${encodeURIComponent(searchTerm)}`);
+    setIsHumbergerMenuOpen(false);
+    window.scrollTo(0, 0);
   }
   const pickSugeestion = (item) => {
     setSearchTerm(item.name);
@@ -175,18 +178,76 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong, unreadConversations }) => {
 
       <div className={`humberger_menu_wrapper ${isHumbergerMenuOpen ? "show" : ""}`}>
         <div className="header__menu_navbar">
-          <div className="input-search-mobile">
-            <input type="text" placeholder="Nhập từ khóa cần tìm kiếm" />
-            <AiOutlineSearch className="header-search" />
+          <div className="input-search-mobile" ref={inputRef}>
+            <form className="search-mobile-form" onSubmit={handleSearch}>
+              <input
+                type="text"
+                placeholder="Nhập từ khóa cần tìm kiếm"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={() => searchTerm && setShowDropdown(true)}
+              />
+              <button type="submit">
+                <AiOutlineSearch className="header-search" />
+              </button>
+            </form>
+            {showDropdown && suggestions.length > 0 && (
+              <ul className="autocomplete-dropdown-mobile">
+                {suggestions.map(prod => (
+                  <li key={prod.id} onClick={() => pickSugeestion(prod)} className="suggestion-item-mobile">
+                    <span>{prod.name}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
+
           <ul>
+
+
+            {/* 1. Nếu chưa đăng nhập, hiển thị 1 <li> duy nhất chứa “Đăng nhập / Đăng kí” */}
+            {!isActuallyLoggedIn() && (
+              <li className="login-register-combined-mobile" >
+                <Link
+                  to="/login"
+                  onClick={() => {
+                    window.scrollTo(0, 0);
+                    setIsHumbergerMenuOpen(false);
+                    
+                  }}
+                >
+                  Đăng nhập
+                </Link>
+                <span className="separator"> / </span>
+                <Link
+                  to="/register"
+                  onClick={() => {
+                    window.scrollTo(0, 0);
+                    setIsHumbergerMenuOpen(false);
+                  }}
+                >
+                  Đăng kí
+                </Link>
+              </li>
+            )}
+
             {menuItems.filter(menu => menu.name !== "Danh mục").map((menu, menuKey) => {
               if (menu.name === "Đăng xuất" && !isActuallyLoggedIn()) return null; // Nếu không đăng nhập thì không hiển thị mục "Đăng xuất"
               if (menu.name === "Ví" && !isActuallyLoggedIn()) return null; // Không hiển thị mục "Ví" nếu chưa đăng nhập
+              const handleItemClick = () => {
+                window.scrollTo(0, 0);
+                setIsHumbergerMenuOpen(false);
 
+                if (menu.name === "Đăng xuất") {
+                  // Nếu là “Đăng xuất” thì phải gọi handleLogout()
+                  handleLogout();
+                } else {
+                  navigate(menu.path);
+                }
+              };
               return (
                 <li key={menuKey}
-                  className={menu.name === "Đăng xuất" ? "logout-mobile" : ""}
+                  className={menu.name === "Đăng xuất" ? "logout-mobile" : ""} onClick={handleItemClick}
                 >
                   {menu.name === "Danh mục" ? (
                     // Mục "Danh mục": chỉ toggle submenu mà không đóng menu
@@ -305,14 +366,14 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong, unreadConversations }) => {
               <div className="col-lg-3 col-sm-6">
                 <div className="header-logo">
                   <Link to={ROUTES.USER.HOME} onClick={() => window.scrollTo(0, 0)} style={{
-                      textDecoration: "none" ,
-                      display: "flex",
-                      alignItems: "center",
+                    textDecoration: "none",
+                    display: "flex",
+                    alignItems: "center",
                   }}>
                     <img src={logo} alt="7vits-logo" />
-                   <h1>7VITS</h1>
+                    <h1>7VITS</h1>
                   </Link>
-                   
+
                 </div>
               </div>
               <div className="col-lg-3  " >
@@ -326,14 +387,14 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong, unreadConversations }) => {
                       onFocus={() => searchTerm && setShowDropdown(true)}
                     />
                     <button type="submit" >
-                    <AiOutlineSearch className="header-search"/>
+                      <AiOutlineSearch className="header-search" />
                     </button>
                   </form>
                   {showDropdown && suggestions.length > 0 && (
                     <ul className="autocomplete-dropdown">
                       {suggestions.map((prod) => (
                         <li key={prod.id} onClick={() => pickSugeestion(prod)}>
-                           
+
                           <span>{prod.name}</span>
                         </li>
                       ))}
@@ -349,6 +410,8 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong, unreadConversations }) => {
                         menu.name !== "Key Game" &&
                         menu.name !== "Tài khoản Game"
                         && menu.name !== "Ví"
+                        && menu.name !== "Đăng nhập"
+                        && menu.name !== "Đăng kí"
                       )
                       .map((menu, menuKey) => (
                         <li key={menuKey}>
@@ -382,15 +445,15 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong, unreadConversations }) => {
                   {
                     isActuallyLoggedIn() ? (
                       <>
-                      <Link to="/profile" onClick={() => window.scrollTo(0, 0)} className="login-btn-mobile">
-                        <CgProfile />
-                      </Link>
-                      <Link to="/chat" onClick={() => window.scrollTo(0, 0)} className="chat-btn-mobile">
-                        <IoChatbubbleSharp />
-                        {unreadConversations > 0 && (
-                          <span className="chat-unread-badge">{unreadConversations}</span>
-                        )}
-                      </Link>
+                        <Link to="/profile" onClick={() => window.scrollTo(0, 0)} className="login-btn-mobile">
+                          <CgProfile />
+                        </Link>
+                        <Link to="/chat" onClick={() => window.scrollTo(0, 0)} className="chat-btn-mobile">
+                          <IoChatbubbleSharp />
+                          {unreadConversations > 0 && (
+                            <span className="chat-unread-badge">{unreadConversations}</span>
+                          )}
+                        </Link>
                       </>
                     ) : (
                       <Link to="/login" onClick={() => window.scrollTo(0, 0)} className="login-btn-mobile">

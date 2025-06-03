@@ -58,7 +58,7 @@ export default function FeedbackForm({ productId,onFeedbackAdded }) {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             rows={4}
-            style={{ width: '100%' ,color:'red'}}
+            style={{ width: '100%' ,color:'#fff'}}
           ></textarea>
         </div>
        

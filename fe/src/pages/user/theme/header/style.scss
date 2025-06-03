@@ -69,7 +69,7 @@ input[type="text"] {
 .header-top-right {
     display: grid;
     justify-content: center;
-    padding: 0.8rem 0 0.5rem;
+    
 
     ul {
         display: flex;
@@ -216,7 +216,7 @@ input[type="text"] {
 
 .profile-btn {
     display: flex;
-    padding: 3.6rem 1rem;
+    align-items: center;
     font-size: 2.4rem;
 }
 
@@ -253,11 +253,10 @@ input[type="text"] {
 }
 
 .logout-btn {
-    margin: 3rem 0 3rem 1rem;
+  
     border: none;
     background: #696969;
     color: white;
-    padding: 1rem 1rem;
     box-shadow: 0 0 1rem 0.5rem rgba(0, 0, 0, 0.5);
     border-radius: 0.5rem;
     text-decoration: none;
@@ -284,6 +283,7 @@ html {
     .chat-btn-mobile,
     .sig-btn-mobile,
     .logout-mobile,
+    .login-register-combined-mobile,
     .wallet-btn,.input-search-mobile {
         display: none;
     }
@@ -337,7 +337,9 @@ html {
             left: 0;
         }
     }
-
+    .header-login-signup{
+        gap:20px;
+    }
     .humberger_menu_overlay {
         position: fixed;
         top: 0;
@@ -406,6 +408,10 @@ html {
     .logout-mobile {
         display: none;
     }
+    .header-login-signup{
+        gap:20px;
+        font-size: 1.8rem;
+    }
 }
 
 
@@ -418,7 +424,6 @@ html {
     padding: 8px 15px;
     border: 1px solid #000;
     border-radius: 5px;
-    margin-left: 10px;
     min-width: 105px;
     text-align: center;
     display: flex;
@@ -677,7 +682,7 @@ html {
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 575px) {
     .chat-btn-mobile {
         position: relative;
         display: flex;
@@ -702,5 +707,11 @@ html {
             padding: 0 4px;
             line-height: 1;
         }
+    }
+}
+.search-mobile-form {
+    display: flex;
+    button{
+        background-color: #000;
     }
 }
