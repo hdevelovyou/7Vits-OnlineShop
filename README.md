@@ -1,6 +1,21 @@
 # Website mua bán vật phẩm, tài sản ảo online - Made by 7Vits
-## Giới thiệu
-Đây là đồ án phát triển website sàn thương mại điện tử, trung gian cho các giao dịch vật phẩm ảo (Ví dụ: Key Game, Accout, CD-Key, ...). Ở website xây dựng hệ thống trustless - nghĩa là không cần phải đặt niềm tin vào bên trung gian,các bên không cần tin nhau, mà chỉ cần tin vào mã nguồn, thuật toán và cơ chế đồng thuận.
+## Giới thiệu đồ án
+
+Đồ án này xây dựng một **website sàn thương mại điện tử** chuyên dành cho các giao dịch **vật phẩm ảo** như *key game*, *tài khoản game*, *CD-Key*, v.v.
+
+Điểm nổi bật của hệ thống là mô hình giao dịch **"trustless"** – tức là **không yêu cầu các bên phải đặt niềm tin vào bên trung gian hoặc vào nhau**. Thay vào đó, niềm tin được đảm bảo thông qua:
+
+- **Mã nguồn minh bạch**
+- **Thuật toán rõ ràng**
+- **Cơ chế đồng thuận được thiết kế chặt chẽ**
+
+Website đóng vai trò trung gian đảm bảo giao dịch được thực hiện đúng cam kết giữa người mua và người bán, thông qua:
+
+- **Hợp đồng thông minh (Smart Contract)**  - Dự kiến phát triển trong tương lai gần
+- **Cơ chế escrow phi tập trung**
+
+Cơ chế này giúp giảm thiểu rủi ro lừa đảo và gia tăng tính bảo mật, minh bạch trong từng giao dịch.
+
 ### Giáo viên hướng dẫn
 - Trần Tuấn Dũng
 ### Lớp : NT208.P22.ANTT
@@ -17,22 +32,37 @@
 -`\fe` - Frontend, sử dụng React application
 
 ## Tính năng chính
-- **Đăng ký, đăng nhập**: Hỗ trợ đăng nhập bằng email/mật khẩu và OAuth (Google, Facebook)
-- **Quản lý tài khoản**: Thông tin cá nhân, lịch sử giao dịch, số dư ví điện tử
-- **Mua bán sản phẩm ảo**: Đăng bán, tìm kiếm, lọc sản phẩm theo danh mục
-- **Ví điện tử**: Nạp tiền và thanh toán trực tuyến qua ví nội bộ hoặc VNPay
-- **Hệ thống đánh giá**: Đánh giá sản phẩm, xếp hạng người bán
-- **Chat trực tiếp**: Liên hệ giữa người mua và người bán
-- **Hệ thống đơn hàng**: Quản lý đơn hàng, theo dõi trạng thái giao dịch
-- **Hệ thống bảo mật**: Xác thực OTP, bảo vệ giao dịch, cơ chế escrow (trung gian)
+![BussinessFunctionDiagram](./asset/Bussiness%20Function%20Diagram.png)
+### Quản lý người dùng
+- **Đăng ký, đăng nhập**: Hỗ trợ đăng nhập bằng email/mật khẩu và OAuth (Google, Facebook).
+- **Quản lý tài khoản**: Thông tin cá nhân, lịch sử giao dịch, số dư ví điện tử.
+- **Hệ thống đánh giá**: Đánh giá sản phẩm.
+### Sản phẩm và giao dịch
+- **Mua bán sản phẩm ảo**: Đăng bán, tìm kiếm, lọc sản phẩm theo danh mục.
+- **Ví điện tử**: Nạp tiền và thanh toán trực tuyến qua ví nội bộ hoặc VNPay.
+- **Hệ thống đơn hàng**: Quản lý đơn hàng, theo dõi trạng thái giao dịch.
+- **Hệ thống thanh toán**: Hỗ trợ phương thức thanh toán escrow an toàn và bảo mật.
+   + Escrow là một cơ chế thanh toán trung gian, nơi tiền của người mua được giữ tạm thời trong một khu vực an toàn (ví dụ như locked_balance) cho đến khi điều kiện cụ thể được đáp ứng
+### Đấu giá
+- **Hệ thống đấu giá**: Đăng đấu giá sản phẩm, đặt giá, theo dõi phiên đấu giá theo thời gian thực.
+
+### Bảo mật và truyền thông
+- **Chat trực tiếp**: Trò chuyện thời gian thực giữa các người dùng, có thể gửi sticker, ảnh.
+- **Hệ thống bảo mật**: Xác thực OTP, bảo vệ giao dịch, cơ chế escrow (trung gian).
 
 
+
+## Cấu trúc cơ sở dữ liệu
+![database](./asset/data.jpeg)
 ## Cài đặt và chạy dự án
 
 ### Yêu cầu
 - Node.js (v16+)
 - MySQL
 - Git
+- Tạo tài khoản môi trường test trên VNPay tại https://sandbox.vnpayment.vn/devreg/
+- Tạo tài khoản Google - 
+- 
 
 ### Backend
 ```bash
@@ -79,84 +109,86 @@ REACT_APP_API_URL=http://localhost:5000
 # Chạy ứng dụng React ở chế độ development
 npm start
 ```
+## Miêu tả chi tiết các chức năng chính
 
-## Cấu trúc cơ sở dữ liệu
-![database](./asset/data.jpeg)
+### Mua hàng
+1. **Duyệt và tìm kiếm sản phẩm**
+   - Người dùng có thể xem danh sách sản phẩm được phân loại theo danh mục
+   - Tìm kiếm sản phẩm theo tên, mô tả hoặc từ khóa
+   - Lọc sản phẩm theo giá, danh mục, đánh giá
 
-## Quy trình mua bán
+2. **Thêm vào giỏ hàng**
+   - Thêm sản phẩm vào giỏ hàng với số lượng tùy chọn
+   - Xem và chỉnh sửa giỏ hàng (thay đổi số lượng, xóa sản phẩm)
+   - Lưu giỏ hàng cho lần truy cập sau
 
-### 1. Tạo đơn hàng
-1. **Người mua** chọn sản phẩm và thêm vào giỏ hàng
-2. **Hệ thống** kiểm tra:
-   - Sản phẩm còn tồn tại và đang active
-   - Người mua không mua sản phẩm của chính mình
-   - Số dư ví người mua đủ để thanh toán
-3. **Hệ thống** tạo đơn hàng:
-   - Tạo transaction cho người mua (trạng thái pending)
-   - Trừ tiền từ ví người mua
-   - Cập nhật trạng thái sản phẩm thành inactive
-   - Tạo đơn hàng với trạng thái pending
-   - Tạo transaction cho người bán (trạng thái pending)
-   - Cộng tiền vào locked_balance của người bán
+3. **Quy trình thanh toán**
+   - Kiểm tra tính hợp lệ của sản phẩm (còn hàng, không mua sản phẩm của chính mình)
+   - Kiểm tra số dư trong ví điện tử
+   - Tạo đơn hàng và trừ tiền từ ví người mua
+   - Khóa số tiền trong locked_balance của người bán
 
-### 2. Xử lý đơn hàng
-1. **Trạng thái Pending**:
-   - Tiền người mua đã bị trừ
-   - Tiền người bán đang bị khóa (locked_balance)
-   - Sản phẩm đã bị khóa (inactive)
-   - Thời gian chờ xác nhận: 7 ngày
+4. **Xác nhận đơn hàng**
+   - Người mua xác nhận đã nhận được sản phẩm
+   - Hệ thống chuyển tiền từ locked_balance sang balance của người bán
+   - Tự động xác nhận sau 7 ngày nếu người mua không thực hiện thao tác
 
-2. **Xác nhận đơn hàng** (Người mua):
-   - Chuyển tiền từ locked_balance sang balance của người bán
-   - Cập nhật trạng thái đơn hàng thành completed
-   - Cập nhật trạng thái các transactions thành completed
-   - Người mua nhận được thông tin sản phẩm
 
-3. **Từ chối đơn hàng** (Người mua):
-   - Trừ tiền từ locked_balance người bán
-   - Hoàn tiền vào balance người mua
-   - Cập nhật trạng thái đơn hàng thành cancelled
-   - Cập nhật trạng thái các transactions thành cancelled
-   - Cập nhật trạng thái sản phẩm về active
 
-4. **Tự động xác nhận** (Sau 7 ngày):
-   - Nếu người mua không thực hiện thao tác
-   - Hệ thống tự động xác nhận đơn hàng
-   - Chuyển tiền cho người bán
-   - Cập nhật trạng thái tương ứng
 
-### 3. Đánh giá và phản hồi
-1. **Đánh giá sản phẩm**:
-   - Người mua có thể đánh giá sản phẩm (1-5 sao)
-   - Thêm bình luận về trải nghiệm mua hàng
 
-2. **Đánh giá người bán**:
-   - Người mua có thể đánh giá người bán
-   - Mỗi người dùng chỉ đánh giá một người bán một lần
-   - Đánh giá ảnh hưởng đến uy tín người bán
+### Đấu giá
+1. **Tạo phiên đấu giá**
+   - Người dùng đăng sản phẩm để đấu giá
+   - Thiết lập giá khởi điểm và thời gian kết thúc
+   - Cung cấp mô tả chi tiết và hình ảnh sản phẩm
+   - Hệ thống tạo phiên đấu giá với trạng thái "ongoing"
 
-### 4. Bảo mật và an toàn
-1. **Bảo vệ giao dịch**:
-   - Sử dụng transaction để đảm bảo tính toàn vẹn dữ liệu
-   - Khóa (lock) các bản ghi khi thực hiện giao dịch
-   - Tự động rollback nếu có lỗi xảy ra
+2. **Tham gia đấu giá**
+   - Người dùng xem danh sách các phiên đấu giá đang diễn ra
+   - Đặt giá cao hơn giá hiện tại (hệ thống kiểm tra số dư và tính hợp lệ)
+   - Theo dõi trạng thái đấu giá theo thời gian thực
+   - Nhận thông báo khi có người đặt giá cao hơn
 
-2. **Xử lý đồng thời**:
-   - Sử dụng cơ chế retry khi có xung đột
-   - Giới hạn thời gian chờ lock
-   - Đảm bảo tính nhất quán của dữ liệu
+3. **Kết thúc đấu giá**
+   - Hệ thống tự động xác định người thắng cuộc khi đến thời gian kết thúc
+   - Trừ tiền từ tài khoản người thắng và chuyển vào locked_balance người bán
+   - Tạo đơn hàng tự động với trạng thái pending
+   - Gửi thông báo cho người thắng và người bán
 
-3. **Theo dõi và kiểm tra**:
-   - Ghi log đầy đủ các giao dịch
-   - Lưu trữ lịch sử thay đổi trạng thái
-   - Cho phép truy vết khi có vấn đề
+4. **Xử lý sau đấu giá**
+   - Xác nhận giao nhận sản phẩm theo quy trình mua hàng thông thường
+   - Hoàn tiền nếu có tranh chấp hoặc hủy đấu giá
 
-## Đóng góp và phát triển
+### Chat giữa user
+1. **Kết nối người dùng**
+   - Tạo kênh chat giữa người mua và người bán
+   - Hiển thị trạng thái online/offline của người dùng
+   - Thông báo khi có tin nhắn mới
+
+2. **Tính năng chat**
+   - Gửi tin nhắn văn bản theo thời gian thực
+   - Chia sẻ hình ảnh và sticker
+   - Xem lịch sử tin nhắn trước đó
+   - Thông báo đã xem tin nhắn
+
+3. **Bảo mật và quản lý**
+   - Mã hóa tin nhắn
+   - Lưu trữ lịch sử chat an toàn
+   - Báo cáo người dùng vi phạm
+   - Chặn người dùng không mong muốn
+
+4. **Tích hợp với giao dịch**
+   - Trao đổi thông tin về sản phẩm
+   - Đàm phán giá cả
+   - Chia sẻ mã xác thực sản phẩm
+   - Hỗ trợ giải quyết vấn đề sau khi mua hàng
+
+## Định hướng phát triển trong tương lai
 
 Dự án đang trong giai đoạn phát triển. Hướng phát triển tiếp theo cho đồ án
 - Tích hợp thêm phương thức thanh toán (Momo, Visa, Paypal,... )
-- Tích hợp thêm hệ thống thanh toán bằng blockchain(Solana,...)
-- 
+- Tích hợp thêm hệ thống thanh toán bằng blockchain, Smart Contracts (Solana,...)
 - Cải thiện hệ thống chat, thêm thông báo thời gian thực
 - Phát triển ứng dụng di động
 - Tích hợp blockchain để tăng tính minh bạch cho giao dịch
