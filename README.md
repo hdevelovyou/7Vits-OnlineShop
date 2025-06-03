@@ -1,4 +1,5 @@
-# Website mua bán vật phẩm, tài sản ảo online - Made by 7Vits
+# Website mua bán vật phẩm, tài sản ảo online - Made by 7Vits!
+![LOGO](./asset/7VITSnobg.png)
 ## Giới thiệu đồ án
 
 Đồ án này xây dựng một **website sàn thương mại điện tử** chuyên dành cho các giao dịch **vật phẩm ảo** như *key game*, *tài khoản game*, *CD-Key*, v.v.
@@ -20,11 +21,11 @@ Cơ chế này giúp giảm thiểu rủi ro lừa đảo và gia tăng tính b�
 - Trần Tuấn Dũng
 ### Lớp : NT208.P22.ANTT
 ### Nhom 7 - Thành viên thực hiên:
-+ 23520468	Bùi Nguyễn Công Hiếu
-+ 23521191	Châu Hoàng Phúc
-+ 23520166	Nguyễn Hữu Cảnh
-+ 23520139	Trần Gia Bảo
-+ 23521080	Nguyễn Huỳnh Nhân
++ 23520468	Bùi Nguyễn Công Hiếu       -  hdevelovyou
++ 23521191	Châu Hoàng Phúc            -  imtynn66
++ 23520166	Nguyễn Hữu Cảnh            -  BlankBire
++ 23520139	Trần Gia Bảo               -  rizy44
++ 23521080	Nguyễn Huỳnh Nhân          -  Fin-tan
 
 ### Cấu trúc đồ án
 Đồ án gồm 2 phần chính:
@@ -205,15 +206,6 @@ npm start
    - Chia sẻ mã xác thực sản phẩm
    - Hỗ trợ giải quyết vấn đề sau khi mua hàng
 
-## Định hướng phát triển trong tương lai
-
-Dự án đang trong giai đoạn phát triển. Hướng phát triển tiếp theo cho đồ án
-- Tích hợp thêm phương thức thanh toán (Momo, Visa, Paypal,... )
-- Tích hợp thêm hệ thống thanh toán bằng blockchain, Smart Contracts (Solana,...)
-- Cải thiện hệ thống chat, thêm thông báo thời gian thực
-- Phát triển ứng dụng di động
-- Tích hợp blockchain để tăng tính minh bạch cho giao dịch
-
 ## Công nghệ sử dụng
 
 ### Frontend
@@ -281,6 +273,24 @@ Dự án đang trong giai đoạn phát triển. Hướng phát triển tiếp t
 - **Connection Pooling**: Quản lý kết nối cơ sở dữ liệu
 - **Compression**: Nén dữ liệu phản hồi
 - **Caching**: Bộ nhớ đệm tài nguyên tĩnh
+
+## Những thiếu sót 
+Dự án về cơ bản hoàn thiện các tính năng của một trang thương mại điện tử, một sàn giao dịch trung gian giữa người dùng và người dùng (mô hình P2P). Nhưng cũng có những thiếu sót với yêu cầu ban đầu của Giáo viên hướng dẫn:
+- Chưa tích hợp Smart Constract để tăng tính minh bạch
+   + Lý do:
+      + Phí gas cao: Chi phí giao dịch (gas fee) trên các mạng blockchain hiện tại (ví dụ: Ethereum) quá cao, gây gánh nặng tài chính đáng kể cho người dùng và làm giảm tính khả thi của việc triển khai rộng rãi.
+      + Hạn chế về tài nguyên: Việc tìm kiếm giải pháp tối ưu hóa gas fee gặp nhiều khó khăn. Đồng thời, lượng SepoliaETH (mạng thử nghiệm) hiện có không đủ để thực hiện các thử nghiệm và triển khai Smart Contract một cách đầy đủ.
+   + Tác động: Việc không tích hợp Smart Contract ảnh hưởng đến khả năng cung cấp mức độ minh bạch tuyệt đối và tự động hóa giao dịch mà công nghệ blockchain có thể mang lại.
+   + Biện pháp khắc phục: sử dụng VNPay thay thể, nhưng vẫn áp dụng cơ chế escrow thông qua phương thức khóa ví tạm thời. 
+- Chưa có hệ thống ghi nhận giao dịch bằng blockchain và công khai lên toàn bộ người dùng. 
+## Định hướng phát triển trong tương lai
+
+Dự án đang trong giai đoạn phát triển. Hướng phát triển tiếp theo cho đồ án
+- Tích hợp thêm phương thức thanh toán (Momo, Visa, Paypal,... )
+- Tích hợp thêm hệ thống thanh toán bằng blockchain, Smart Contracts. Khám phá các Layer 2 solutions hoặc các nền tảng blockchain khác với chi phí giao dịch thấp hơn, nhằm đáp ứng đầy đủ yêu cầu về tính minh bạch tuyệt đối trong tương lai.
+- Thêm tính năng "Biến động số dư" thông qua dữ liệu lưu trong bảng transacstions
+- Cải thiện hệ thống chat, thêm thông báo thời gian thực
+- Phát triển ứng dụng di động
 
 ## Screenshots
 
