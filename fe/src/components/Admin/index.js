@@ -16,7 +16,7 @@ const AdminPage = () => {
             return;
         }
 
-        axios.get(`${process.env.REACT_APP_API_URL}/api/admin`, {
+        axios.get(`${process.env.REACT_APP_API_URL}/api/admin/admin`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

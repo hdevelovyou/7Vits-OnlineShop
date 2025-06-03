@@ -1,11 +1,10 @@
 import { memo, useEffect, useState } from "react";
 import axios from "axios";
 import "./style.scss";
-import adobe from '../../../assets/images/adobe.png';
-import SellerRatingDisplay from '../../../components/rating/rating';
-import logofc from '../../../assets/images/logofc.png';
-import League_of_Legends_2019_vector from '../../../assets/images/League_of_Legends_2019_vector.png';
-import steam_logo from '../../../assets/images/steam_logo.png';
+import adobe from '../../../assets/images/adobe.webp';
+import logofc from '../../../assets/images/logofc.webp';
+import League_of_Legends_2019_vector from '../../../assets/images/League_of_Legends_2019_vector.webp';
+import steam_logo from '../../../assets/images/steam_logo.webp';
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { Link } from "react-router-dom";
 import { formatVND } from "../../../utils/formatprice";

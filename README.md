@@ -239,6 +239,6 @@ Dự án này được phát triển cho mục đích học tập và nghiên c�
 
 ## Liên hệ
 
-Để biết thêm thông tin, vui lòng liên hệ qua email: [email@example.com]
+Để biết thêm thông tin, vui lòng liên hệ qua email: 7vits.shop@gmail.com
 
 

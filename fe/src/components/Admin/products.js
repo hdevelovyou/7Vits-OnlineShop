@@ -14,7 +14,7 @@ const Products = () => {
     // Hàm lấy dữ liệu sản phẩm từ API
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('/api/products');
+        const response = await axios.get('/api/admin/products');
         setProducts(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -34,7 +34,7 @@ const Products = () => {
   const handleDeleteProduct = async (productId) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
       try {
-        await axios.delete(`/api/products/${productId}`);
+        await axios.delete(`/api/admin/products/${productId}`);
         setProducts(products.filter(p => p.id !== productId));
       } catch (error) {
         console.error("Error deleting product:", error);
@@ -64,7 +64,7 @@ const Products = () => {
               <td>{p.name}</td>
               <td>{p.price?.toLocaleString() ?? ""}</td>
               <td>{p.category}</td>
-              <td>{p.seller_name}</td>
+              <td>{p.sellerName}</td>
               <td>{p.status}</td>
               <td>
                 <button onClick={() => handleViewProduct(p)}>Xem</button>
@@ -89,7 +89,7 @@ const Products = () => {
           <ul>
             <li><b>Product name:</b> {selectedProduct.name}</li>
             <li><b>Descriptions:</b> {selectedProduct.description || "This product has no description"}</li>
-            <li><b>Seller:</b> {selectedProduct.seller_name}</li>
+            <li><b>Seller:</b> {selectedProduct.sellerName}</li>
             <li><b>Notes:</b> {selectedProduct.notes || "This product has no note"}</li>
           </ul>
         </div>

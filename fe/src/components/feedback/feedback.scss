@@ -1,0 +1,182 @@
+// Colors
+$red: #dc3545;          // Highlight color
+$black: #000000;        // Primary color
+$gray: #333333;         // Primary color (darker gray)
+$light-gray: #666666;   // Secondary gray
+$white: #ffffff;        // Text color
+
+// Font sizes
+$font-size-large: 4rem;
+$font-size-medium: 3rem;
+$font-size-small: 1.5rem;
+
+// Feedback component styles
+.feedback {
+
+
+  &__title {
+    font-size: $font-size-large;
+    color: $red;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+
+  &__subtitle {
+    font-size: $font-size-medium;
+    color: $white;
+    margin-bottom: 0.8rem;
+  }
+
+  &__text {
+    font-size: $font-size-small;
+    color: $white;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+  }
+
+  &__message {
+    background-color: $gray;
+    color: $white;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: $font-size-small;
+    border: 1px solid $light-gray;
+  }
+
+  &__button {
+    background-color: $red;
+    color: $white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-size: $font-size-small;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: darken($red, 10%);
+    }
+  }
+
+  &__error {
+    color: $white;
+    background-color: $red;
+    font-size: $font-size-small;
+    font-weight: 500;
+    padding: 0.5rem;
+    border-radius: 4px;
+  }
+
+  &__success {
+    color: $white;
+    background-color: $gray;
+    padding: 0.5rem;
+    font-size: $font-size-small;
+    border-radius: 4px;
+  }
+}
+
+// Feedback form container
+.feedback-form-container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: $black;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  border: 2px solid $gray;
+
+  h3 {
+    font-size: $font-size-medium;
+    color: $white;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  // Error message
+  .error-message {
+    color: $white;
+    font-size: $font-size-small;
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+    background-color: $red;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  // Success message
+  .success-message {
+    color: $white;
+    background-color: $gray;
+    font-size: $font-size-small;
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  // Form styles
+  form {
+    .form-group {
+      margin-bottom: 1.5rem;
+      border-radius: 0.1rem;
+      width: 100%;
+      label {
+        display: block;
+        font-size: $font-size-small;
+        color: $white;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+
+      textarea {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: $font-size-small;
+        background-color: $gray;
+        color: $white;
+        border: 2px solid $light-gray;
+        border-radius: 4px;
+        resize: vertical;
+        font-family: inherit;
+        
+        &:focus {
+          outline: none;
+          border-color: $red;
+          box-shadow: 0 0 0 3px rgba($red, 0.3);
+        }
+
+        &::placeholder {
+          color: $light-gray;
+        }
+      }
+    }
+
+    button {
+      background-color: $red;
+      color: $white;
+      border: none;
+      padding: 1rem 2rem;
+      font-size: $font-size-small;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      width: 100%;
+
+      &:hover:not(:disabled) {
+        background-color: lighten($red, 10%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba($red, 0.3);
+      }
+
+      &:disabled {
+        background-color: $light-gray;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+    }
+  }
+}

@@ -24,14 +24,6 @@ CREATE TABLE IF NOT EXISTS user_wallets (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- 3. Tạo bảng categories
-CREATE TABLE IF NOT EXISTS categories (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
 
 -- 4. Tạo bảng products - phụ thuộc vào users và categories
 CREATE TABLE IF NOT EXISTS products (
@@ -39,7 +31,6 @@ CREATE TABLE IF NOT EXISTS products (
     name VARCHAR(255) NOT NULL,
     description TEXT,
     price DECIMAL(10, 2) NOT NULL,
-    category_id INT DEFAULT NULL,
     category VARCHAR(255),
     stock INT DEFAULT 0,
     seller_id INT NOT NULL,
@@ -174,12 +165,12 @@ CREATE TABLE IF NOT EXISTS auctions (
   status ENUM('ongoing','finished') NOT NULL DEFAULT 'ongoing',
   seller_id INT NOT NULL,
   winner_id INT NULL,     -- nếu bạn muốn lưu người thắng
+  image_url LONGTEXT,
+  notes TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
-  -- FOREIGN KEY (winner_id) REFERENCES users(id) ON DELETE SET NULL ON UPDATE CASCADE
 );
-
 -- 13. Tạo bảng bids
 CREATE TABLE IF NOT EXISTS bids (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -197,5 +188,14 @@ CREATE TABLE IF NOT EXISTS messages (
     receiver_id INT NOT NULL,
     message TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    is_read TINYINT(1) DEFAULT 0
+    is_read TINYINT(1) DEFAULT 0,
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+CREATE TABLE IF NOT EXISTS feedbacks (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NULL,
+  message TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );

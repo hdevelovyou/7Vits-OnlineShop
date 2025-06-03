@@ -116,7 +116,7 @@ io.use(sharedSession(sessionMiddleware, { autoSave: true })); // dùng chung cho
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Routes
+// Router
 app.use("/api/auth", authRouter);
 app.use("/api/comments", commentRoutes);
 app.use('/api', productRoutes);
@@ -126,10 +126,14 @@ app.use('/api/topup', vnpayRoutes);
 app.use('/api', require('./routes/api'));
 app.post('/api/messages/read', messageController.markMessagesAsRead);
 app.get('/api/messages/unread-counts/:userId', messageController.getUnreadCounts);
-app.use('/api', adminRouter);
+app.use('/api/admin', adminRouter);
 app.use('/api/chatbot', chatbotRoutes);
 app.use('/api/auctions', auctionRoutes);
+const feedback = require('./routes/feedback')(io);
+
+app.use('/api/feedback',feedback);
 // Test route for checking if the API is working
+
 app.get('/api/test', (req, res) => {
   res.json({
     message: 'API is working',
@@ -336,13 +340,15 @@ async function closeAuction(auctionId) {
       // Thông tin để insert: tên, mô tả, giá = amount, seller_id = auction.seller_id
       const [insertResult] = await db.query(
         `INSERT INTO products 
-           (name, description, price, seller_id, status, created_at, updated_at) 
-         VALUES (?, ?, ?, ?, 'active', NOW(), NOW())`,
+           (name, description, price, seller_id, status, created_at, updated_at,notes,image_url) 
+         VALUES (?, ?, ?, ?, 'active', NOW(), NOW(),?,?)`,
         [
           auction.item_name,
           auction.description || null,
           winner.amount,
-          auction.seller_id
+          auction.seller_id,
+          auction.notes,
+          auction.image_url
         ]
       );
       newProductId = insertResult.insertId;

@@ -3,7 +3,7 @@ html {
 }
 
 .banner {
-        background: url("../../../assets/images/mainbg.png") no-repeat right center/cover;
+        background: url("../../../assets/images/mainbg.webp") no-repeat right center/cover;
         height: 87vh;
         max-width: 100%;
         position: relative;
@@ -230,7 +230,7 @@ html {
 
 .product-namename {
         h3 {
-                font-size: 5rem;
+                
                 font-weight: bold;
                 text-align: center;
         }
@@ -329,7 +329,7 @@ html {
 
 @media (max-width: 768px) {
         .banner {
-                background: url("../../../assets/images/mainbg.png") no-repeat 70% center/cover;
+                background: url("../../../assets/images/mainbg.webp") no-repeat 70% center/cover;
                 height: 87vh;
                 max-width: 100%;
                 position: relative;
@@ -348,10 +348,16 @@ html {
         .logo img {
                 height: 8rem;
         }
+        h3{
+                font-size: 4rem;
+        }
 }
 @media (max-width: 480px) {
+        h3{
+                font-size: 2rem;
+        }
         .banner {
-                background: url("../../../assets/images/mainbg.png") no-repeat 73% center/cover;
+                background: url("../../../assets/images/mainbg.webp") no-repeat 73% center/cover;
                 height: 87vh;
                 max-width: 100%;
                 position: relative;
@@ -366,7 +372,7 @@ html {
 
 
 /* Responsive Design */
-@media screen and (max-width: 1200px) {
+@media screen and (min-width: 1200px) {
         #section-1 .text-introduce {
                 font-size: 6rem;
                 width: 60rem;
@@ -374,6 +380,9 @@ html {
 
         #section-1 img {
                 width: 60rem;
+        }
+        h3{
+                font-size: 5rem;
         }
 }
 

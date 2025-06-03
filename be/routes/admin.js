@@ -191,6 +191,7 @@ router.get("/products", async (req, res) => {
         products.price,
         products.category,
         products.status,
+        products.image_url,
         users.userName AS sellerName
       FROM products
       JOIN users ON products.seller_id = users.id

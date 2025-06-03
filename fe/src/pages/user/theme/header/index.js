@@ -160,7 +160,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong, unreadConversations }) => {
     e.preventDefault();
     if (searchTerm.trim() === "") return;
     setShowDropdown(false);
-    navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
+    navigate(`${ROUTES.USER.STORE}?search=${encodeURIComponent(searchTerm)}`);
   }
   const pickSugeestion = (item) => {
     setSearchTerm(item.name);
@@ -279,7 +279,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn, sluong, unreadConversations }) => {
                 <p>7vits.shop@gmail.com</p>
               </div>
               <div className="col-lg-3 col-xl-6 header-top-center">
-                <p>Giảm giá đến 30% cho đơn hàng đầu tiên của bạn</p>
+                <p>Những gì 7VITS không có, những thứ đó bạn không cần!</p>
               </div>
               <div className="col-lg-3 col-xl-3 header-top-right">
                 <ul>
