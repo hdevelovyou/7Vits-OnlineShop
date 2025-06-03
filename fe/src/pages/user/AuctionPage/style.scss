@@ -216,7 +216,7 @@
     background: linear-gradient(135deg, #44ff44 0%, #00cc00 100%);
     background-clip: text;
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    
     font-size: clamp(1rem, 3.5vw, 1.6rem);
     font-weight: 600;
     text-shadow: none;
@@ -262,7 +262,7 @@
 // Time unit styling for structured display
 .time-unit {
     display: inline-flex;
-    flex-direction: column;
+    
     align-items: center;
     margin: 0 8px;
     min-width: 40px;
