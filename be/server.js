@@ -241,7 +241,7 @@ io.on('connection', (socket) => {
       return ;
     }
     const {balance,locked_balance}=walletRow[0];
-    const avalablebalance=balance-locked_balance;
+    const avalablebalance=balance;
     if (amount>avalablebalance){
       socket.emit('bid_failed',{
         message:`số dư không đủ ${avalablebalance.toLocaleString()} VND.`

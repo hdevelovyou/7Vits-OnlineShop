@@ -86,7 +86,7 @@ const ChinhSachPage = () => {
           <h2>6. Liên hệ hỗ trợ</h2>
           <ul>
             <li>Email: <a href="mailto:7vits.shop@gmail.com">7vits.shop@gmail.com</a></li>
-            <li>Hotline/Zalo/Fanpage: 7VITS - <a href="https://www.facebook.com/7vits.shop" target="_blank" rel="noopener noreferrer">https://www.facebook.com/7vits.shop</a></li>
+            <li>Fanpage: 7VITS - <a href="https://www.facebook.com/7vits.shop" target="_blank" rel="noopener noreferrer">https://www.facebook.com/7vits.shop</a></li>
             <li>Thời gian làm việc: 8h – 22h hàng ngày</li>
           </ul>
         </div>
