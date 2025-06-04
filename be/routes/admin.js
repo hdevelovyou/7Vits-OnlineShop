@@ -191,6 +191,8 @@ router.get("/products", async (req, res) => {
         products.price,
         products.category,
         products.status,
+        products.description,
+        products.notes,
         products.image_url,
         users.userName AS sellerName
       FROM products
