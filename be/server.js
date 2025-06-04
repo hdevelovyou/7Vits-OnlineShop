@@ -221,7 +221,7 @@ io.on('connection', (socket) => {
     // Kiểm tra trạng thái lẫn thời gian
     const now = new Date();
     const endTime = new Date(auction.end_time);
-    if (auction.status !== 'ongoing' ) {
+    if (auction.status !== 'ongoing' || now >= endTime) {
       socket.emit('bid_failed', { message: 'Phiên đấu giá đã kết thúc.' });
       return;
     }
@@ -379,7 +379,11 @@ async function scheduleAuctionClose() {
     auctions.forEach(auction => {
       const endTime = new Date(auction.end_time);
       const delay = endTime - now;
-
+      console.log('-----------------------------');
+      console.log(`🛎️ Auction ID: ${auction.id}`);
+      console.log(`📦 end_time (from DB): ${auction.end_time}`);
+      console.log(`⏳ endTime (parsed): ${endTime.toISOString()} (${endTime.toString()})`);
+      console.log(`📉 delay = ${delay} ms = ${Math.round(delay / 1000)} giây`);
       if (delay <= 0) {
         closeAuction(auction.id); // Đã hết giờ ⇒ đóng luôn
       } else {

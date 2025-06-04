@@ -49,10 +49,10 @@ export default function AuctionPage({ auctionId }) {
         }
         try {
           const payload = {
-            items: [{ productId}], // tùy cấu trúc DB
+            items: [{ productId }], // tùy cấu trúc DB
             totalAmount: parseFloat(data.winner.amount),
-          
-            
+
+
           };
           const res = await axios.post(
             `${process.env.REACT_APP_API_URL}/api/orders/create`,
@@ -95,7 +95,17 @@ export default function AuctionPage({ auctionId }) {
       .then(res => {
         setAuction(res.data);
         const end = new Date(res.data.end_time).getTime();
-        setTimeLeft(end - Date.now());
+        const now = Date.now();
+        const diff = end - now;
+
+        // 💥 THÊM DEBUG Ở ĐÂY:
+        console.log('--- [DEBUG - FETCH AUCTION] ---');
+        console.log('Server trả về end_time:', res.data.end_time);
+        console.log('Client hiểu end_time:', new Date(res.data.end_time).toString());
+        console.log('Client thời gian hiện tại:', new Date().toString());
+        console.log('=> timeLeft =', diff, 'ms (', Math.round(diff / 1000), 'giây )');
+
+        setTimeLeft(diff);
       })
       .catch(err => {
         console.error('[Client] Lỗi khi GET auction:', err);
@@ -200,14 +210,14 @@ export default function AuctionPage({ auctionId }) {
     if (hours > 0) parts.push(`${hours} giờ`);
     if (mins > 0) parts.push(`${mins} phút`);
     if (secs > 0 || parts.length === 0) parts.push(`${secs} giây`);
-    
+
     return parts.join(' ');
   };
 
   // Render individual time units for better styling
   const renderTimeUnits = () => {
     const units = [];
-    
+
     if (days > 0) {
       units.push(
         <span key="days" className="time-unit">
@@ -216,7 +226,7 @@ export default function AuctionPage({ auctionId }) {
         </span>
       );
     }
-    
+
     if (hours > 0) {
       units.push(
         <span key="hours" className="time-unit">
@@ -225,7 +235,7 @@ export default function AuctionPage({ auctionId }) {
         </span>
       );
     }
-    
+
     if (mins > 0) {
       units.push(
         <span key="minutes" className="time-unit">
@@ -234,7 +244,7 @@ export default function AuctionPage({ auctionId }) {
         </span>
       );
     }
-    
+
     if (secs > 0 || units.length === 0) {
       units.push(
         <span key="seconds" className="time-unit">
@@ -243,7 +253,7 @@ export default function AuctionPage({ auctionId }) {
         </span>
       );
     }
-    
+
     return units;
   };
 
@@ -258,32 +268,32 @@ export default function AuctionPage({ auctionId }) {
             <img src={auction.image_url} alt="Ảnh sản phẩm" />
           </div>
         )}
-  
+
         <h2>
           <span className="emoji">🛒</span>
           {auction.item_name}
         </h2>
-        
+
         <p>{auction.description}</p>
-        
+
         {auction.game_key && (
           <p><strong>🎮 Key game:</strong> {auction.game_key}</p>
         )}
-        
+
         <p>
           <strong>Giá hiện tại:</strong>{' '}
           <span className="current-bid">
             {auction.current_bid.toLocaleString()} VND
           </span>
         </p>
-        
+
         <p>
           <strong>⏰ Còn lại:</strong>{' '}
           <span className={`time-remaining ${isUrgent ? 'urgent' : ''}`}>
             {renderTimeUnits()}
           </span>
         </p>
-  
+
         {timeLeft > 0 ? (
           <div className="bid-section">
             <input
