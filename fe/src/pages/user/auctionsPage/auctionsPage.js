@@ -300,7 +300,7 @@ const AuctionsPage = () => {
                 marginBottom: '12px'
               }}
             >
-              <Link to={`/auction/ ${auction.id} `} className="auction-link" style={{ textDecoration: 'none', color: '#333' }}>
+              <Link to={`/auction/${auction.id} `} className="auction-link" style={{ textDecoration: 'none', color: '#333' }}>
                 <h4 style={{ margin: '0 0 8px 0' }}>{auction.item_name}</h4>
                 <p style={{ margin: '4px 0' }}>
                   <strong>Giá hiện tại:</strong> {auction.current_bid.toLocaleString()} VND
