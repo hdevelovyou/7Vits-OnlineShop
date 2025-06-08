@@ -1,4 +1,11 @@
 
+## Link Video Demo: https://drive.google.com/file/d/13kz2CLG9arfkaZd3emGMt4ww3VK_hakj/view?usp=sharing
+## Tài khoản Admin (Phục vụ cho Demo sản phẩm)
+username: admin
+
+password: 7vitsAdmin321
+
+
 <p align="center">
   <img src="./asset/7VITSnobg.png" alt="LOGO" width="250">
 </p>
