@@ -566,10 +566,6 @@ Dự án đang trong giai đoạn phát triển. Hướng phát triển tiếp t
 - Cải thiện hệ thống chat, thêm thông báo thời gian thực
 - Phát triển ứng dụng di động
 
-## Screenshots
-
-_Các hình ảnh demo sẽ được thêm vào sau_
-
 ## Giấy phép
 
 Dự án này được phát triển cho mục đích học tập và nghiên cứu.
