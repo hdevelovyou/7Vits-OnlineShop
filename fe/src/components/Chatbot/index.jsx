@@ -82,7 +82,8 @@ const Chatbot = () => {
                     id: Date.now() + 1,
                     text: response.data.response,
                     isBot: true,
-                    timestamp: new Date()
+                    timestamp: new Date(),
+                    products: response.data.productSearchResults // Thêm thông tin sản phẩm
                 };
 
                 setMessages(prev => [...prev, botMessage]);
@@ -154,6 +155,8 @@ const Chatbot = () => {
     };
 
     const quickQuestions = [
+        "Tìm game Steam",
+        "Có tài khoản Valorant không?",
         "Chính sách đổi trả như thế nào?",
         "Cách mua tài khoản game?",
         "Cách thanh toán online?",
@@ -163,6 +166,39 @@ const Chatbot = () => {
     const handleQuickQuestion = (question) => {
         setInputMessage(question);
     };
+
+    // Component hiển thị sản phẩm
+    const ProductCard = ({ product }) => (
+        <div className="product-card">
+            <div className="product-header">
+                <h4 className="product-name">{product.name}</h4>
+                <span className="product-price">{parseInt(product.price).toLocaleString('vi-VN')}₫</span>
+            </div>
+            <div className="product-details">
+                <div className="product-info">
+                    <span className="product-category">📦 {product.category}</span>
+                    <span className="product-seller">👤 {product.seller_name}</span>
+                </div>
+                <div className="product-stats">
+                    <span className="product-rating">⭐ {product.average_rating} ({product.rating_count})</span>
+                    <span className="product-sold">🔥 Đã bán: {product.sold_count}</span>
+                </div>
+                {product.description && (
+                    <p className="product-description">
+                        {product.description.length > 100 
+                            ? `${product.description.substring(0, 100)}...` 
+                            : product.description
+                        }
+                    </p>
+                )}
+                <div className="product-status">
+                    <span className={`stock-status ${product.stock > 0 ? 'in-stock' : 'out-of-stock'}`}>
+                        {product.stock > 0 ? '✅ Còn hàng' : '❌ Hết hàng'}
+                    </span>
+                </div>
+            </div>
+        </div>
+    );
 
     // Ẩn chatbot nếu đang ở trang /chat
     if (location.pathname.startsWith('/chat')) {
@@ -234,6 +270,23 @@ const Chatbot = () => {
                                             <div key={index}>{line}</div>
                                         ))}
                                     </div>
+                                    
+                                    {/* Hiển thị sản phẩm nếu có */}
+                                    {message.products && message.products.length > 0 && (
+                                        <div className="products-container">
+                                            <div className="products-header">
+                                                <span className="products-count">
+                                                    🛍️ Tìm thấy {message.products.length} sản phẩm:
+                                                </span>
+                                            </div>
+                                            <div className="products-list">
+                                                {message.products.map(product => (
+                                                    <ProductCard key={product.id} product={product} />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                    
                                     <div className="message-time">
                                         {formatTimestamp(message.timestamp)}
                                     </div>

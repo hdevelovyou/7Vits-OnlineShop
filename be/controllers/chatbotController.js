@@ -1,4 +1,5 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const db = require('../config/connectDB');
 require('dotenv').config({ path: './.env' });
 
 // Kiểm tra API key
@@ -19,7 +20,7 @@ Bạn là một trợ lý AI thông minh tên là "VitBot" của cửa hàng tr�
 
 THÔNG TIN VỀ CỬA HÀNG:
 - Tên: 7Vits Online Shop
-- Chuyên bán: Vật phẩm ảo
+- Chuyên bán: Vật phẩm ảo (CD Keys, Tài khoản game, etc.)
 - Chính sách đổi trả: 7 ngày kể từ ngày nhận hàng
 - Hotline: 1900-7777
 - Email: 7vits.shop@gmail.com
@@ -30,7 +31,14 @@ HƯỚNG DẪN TRẢ LỜI:
 3. Cung cấp thông tin chính xác về sản phẩm, chính sách
 4. Hướng dẫn chi tiết khi khách hỏi về quy trình mua hàng, thanh toán
 5. Khi không biết thông tin cụ thể, hãy hướng dẫn khách liên hệ hotline
-6. Luôn kết thúc bằng câu hỏi có thể giúp gì thêm
+6. Khi có kết quả tìm kiếm sản phẩm, hãy giới thiệu chi tiết và gợi ý khách hàng
+7. Luôn kết thúc bằng câu hỏi có thể giúp gì thêm
+
+CÁCH XỬ LÝ KẾT QUẢ TÌM KIẾM SẢN PHẨM:
+- Nếu có kết quả tìm kiếm, hãy giới thiệu các sản phẩm phù hợp
+- Đề xuất sản phẩm có đánh giá cao hoặc bán chạy
+- Nếu không tìm thấy, gợi ý khách hàng từ khóa khác hoặc liên hệ hỗ trợ
+- Luôn hỏi thêm thông tin để tư vấn tốt hơn
 
 Hãy trả lời câu hỏi sau một cách chuyên nghiệp:
 
@@ -80,6 +88,78 @@ Hotline/Zalo/Fanpage: 7VITS - https://www.facebook.com/7vits.shop
 Thời gian làm việc: 8h – 22h hàng ngày
 `;
 
+// Hàm tìm kiếm sản phẩm trong database
+async function searchProductsInDB(productName) {
+    try {
+        const searchTerm = `%${productName}%`;
+        const sql = `
+            SELECT p.id, p.name, p.description, p.price, p.category, 
+                   p.stock, p.status, u.userName as seller_name,
+                   COALESCE(AVG(r.rating), 0) as average_rating,
+                   COUNT(r.rating) as rating_count,
+                   (SELECT SUM(oi.quantity)
+                    FROM order_items oi
+                    JOIN orders o ON oi.order_id = o.id
+                    WHERE oi.product_id = p.id AND o.status IN ('completed', 'processing')
+                   ) as sold_count
+            FROM products p
+            JOIN users u ON p.seller_id = u.id
+            LEFT JOIN ratings r ON p.id = r.product_id
+            WHERE p.status = 'active' 
+            AND (p.name LIKE ? OR p.description LIKE ? OR p.category LIKE ?)
+            GROUP BY p.id
+            ORDER BY p.created_at DESC
+            LIMIT 10
+        `;
+        
+        const [results] = await db.query(sql, [searchTerm, searchTerm, searchTerm]);
+        
+        // Format kết quả
+        return results.map(product => ({
+            id: product.id,
+            name: product.name,
+            description: product.description,
+            price: product.price,
+            category: product.category,
+            stock: product.stock,
+            seller_name: product.seller_name,
+            average_rating: parseFloat(product.average_rating).toFixed(1),
+            rating_count: product.rating_count,
+            sold_count: product.sold_count || 0
+        }));
+    } catch (error) {
+        console.error('Lỗi tìm kiếm sản phẩm:', error);
+        return [];
+    }
+}
+
+// Hàm kiểm tra xem tin nhắn có phải là yêu cầu tìm kiếm sản phẩm không
+function isProductSearchQuery(message) {
+    const searchKeywords = [
+        'tìm', 'tìm kiếm', 'tìm sản phẩm', 'có sản phẩm', 
+        'sản phẩm nào', 'bán', 'key', 'game', 'account',
+        'tài khoản', 'cd key', 'steam', 'origin', 'battle.net',
+        'có không', 'có bán', 'còn', 'có còn'
+    ];
+    
+    const lowerMessage = message.toLowerCase();
+    return searchKeywords.some(keyword => lowerMessage.includes(keyword));
+}
+
+// Hàm trích xuất từ khóa tìm kiếm từ tin nhắn
+function extractSearchKeyword(message) {
+    // Loại bỏ các từ không cần thiết
+    const stopWords = ['tìm', 'tìm kiếm', 'có', 'bán', 'sản phẩm', 'nào', 'không', 'còn', 'key', 'game', 'tài', 'khoản'];
+    
+    let words = message.toLowerCase()
+        .replace(/[^\w\s]/g, '') // Loại bỏ dấu câu
+        .split(/\s+/)
+        .filter(word => word.length > 2 && !stopWords.includes(word));
+    
+    // Nếu không có từ khóa sau khi lọc, trả về toàn bộ message gốc
+    return words.length > 0 ? words.join(' ') : message;
+}
+
 const chatbotController = {
     // API xử lý tin nhắn từ chatbot
     async sendMessage(req, res) {
@@ -95,6 +175,36 @@ const chatbotController = {
 
             console.log('📩 Nhận tin nhắn từ user:', message);
 
+            // Kiểm tra xem có phải là yêu cầu tìm kiếm sản phẩm không
+            let productSearchResults = [];
+            let productInfo = "";
+            
+            if (isProductSearchQuery(message)) {
+                console.log('🔍 Phát hiện yêu cầu tìm kiếm sản phẩm');
+                const searchKeyword = extractSearchKeyword(message);
+                console.log('🔑 Từ khóa tìm kiếm:', searchKeyword);
+                
+                productSearchResults = await searchProductsInDB(searchKeyword);
+                
+                if (productSearchResults.length > 0) {
+                    productInfo = "\n\nKết quả tìm kiếm sản phẩm:\n";
+                    productSearchResults.forEach((product, index) => {
+                        productInfo += `${index + 1}. ${product.name}\n`;
+                        productInfo += `   - Giá: ${product.price.toLocaleString('vi-VN')}₫\n`;
+                        productInfo += `   - Danh mục: ${product.category}\n`;
+                        productInfo += `   - Người bán: ${product.seller_name}\n`;
+                        productInfo += `   - Đánh giá: ${product.average_rating}★ (${product.rating_count} lượt)\n`;
+                        productInfo += `   - Đã bán: ${product.sold_count} sản phẩm\n`;
+                        if (product.description) {
+                            productInfo += `   - Mô tả: ${product.description.substring(0, 100)}${product.description.length > 100 ? '...' : ''}\n`;
+                        }
+                        productInfo += `   - Tình trạng: ${product.stock > 0 ? 'Còn hàng' : 'Hết hàng'}\n\n`;
+                    });
+                } else {
+                    productInfo = `\n\nKhông tìm thấy sản phẩm nào với từ khóa "${searchKeyword}". Bạn có thể thử tìm kiếm với từ khóa khác hoặc xem tất cả sản phẩm trên website.\n`;
+                }
+            }
+
             // Khởi tạo model - Sử dụng model mới thay vì gemini-pro đã deprecated
             const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -107,8 +217,8 @@ const chatbotController = {
                 });
             }
 
-            // Tạo prompt hoàn chình
-            const fullPrompt = CUSTOMER_SUPPORT_PROMPT + conversationContext + "\n\nCâu hỏi của khách hàng: " + message;
+            // Tạo prompt hoàn chình với thông tin sản phẩm (nếu có)
+            const fullPrompt = CUSTOMER_SUPPORT_PROMPT + conversationContext + productInfo + "\n\nCâu hỏi của khách hàng: " + message;
 
             console.log('🤖 Đang gọi Gemini API...');
 
@@ -123,6 +233,7 @@ const chatbotController = {
             res.json({
                 success: true,
                 response: text,
+                productSearchResults: productSearchResults, // Thêm kết quả tìm kiếm sản phẩm
                 timestamp: new Date().toISOString()
             });
 
@@ -186,6 +297,39 @@ const chatbotController = {
             res.status(500).json({
                 success: false,
                 error: 'Không thể reset cuộc hội thoại'
+            });
+        }
+    },
+
+    // API tìm kiếm sản phẩm cho chatbot
+    async searchProducts(req, res) {
+        try {
+            const { query } = req.body;
+            
+            if (!query) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Từ khóa tìm kiếm không được để trống'
+                });
+            }
+
+            console.log('🔍 Tìm kiếm sản phẩm với từ khóa:', query);
+            
+            const products = await searchProductsInDB(query);
+            
+            res.json({
+                success: true,
+                products: products,
+                count: products.length,
+                query: query,
+                timestamp: new Date().toISOString()
+            });
+            
+        } catch (error) {
+            console.error('❌ Lỗi tìm kiếm sản phẩm:', error);
+            res.status(500).json({
+                success: false,
+                error: 'Đã xảy ra lỗi trong quá trình tìm kiếm sản phẩm'
             });
         }
     }

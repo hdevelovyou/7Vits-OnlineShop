@@ -11,4 +11,7 @@ router.get('/status', chatbotController.getStatus);
 // Route reset cuộc hội thoại
 router.post('/reset', chatbotController.resetConversation);
 
+// Route tìm kiếm sản phẩm
+router.post('/search-products', chatbotController.searchProducts);
+
 module.exports = router; 
