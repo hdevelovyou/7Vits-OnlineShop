@@ -5,6 +5,12 @@ username: admin
 
 password: 7vitsAdmin321
 
+## PageSpeed Test
+### Máy tính:
+![image](https://github.com/user-attachments/assets/18816467-4c8c-472d-ab7c-990067a3cb58)
+
+### Di động:
+![image](https://github.com/user-attachments/assets/9c03f722-6896-4288-9d27-23afd5ae4868)
 
 <p align="center">
   <img src="./asset/7VITSnobg.png" alt="LOGO" width="250">
