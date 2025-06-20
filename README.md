@@ -486,6 +486,33 @@ Nếu có vấn đề, người mua có thể từ chối đơn hàng:
    - Đàm phán giá cả
    - Chia sẻ mã xác thực sản phẩm
    - Hỗ trợ giải quyết vấn đề sau khi mua hàng
+  
+### Giao diện quản lý của Admin
+1. **Dashboard - Quản lý chung**
+   - Thống kê hệ thống bao gồm các thông tin về số liệu người dùng, đơn hàng, đơn hàng đang xử lý và doanh thu hiện tại
+   - Biểu đồ cột biểu diễn doanh thu theo tháng
+   - Biểu đồ đường biểu diễn số lượng user đăng ký tài khoản theo tháng
+2. **Users - Quản lý người dùng**
+   - Hiển thị danh sách người dùng và các thông tin như username, email, firstname, lastname, ngày tham gia
+   - Khi click chọn user sẽ hiển thị cụ thể thông tin cá nhân, các sản phẩm đã đăng bán, các bình luận đã đăng,
+   danh sách các user đã trò chuyện và cho phép admin xem toàn bộ lịch sử trò chuyện với các user đó (Admin có thể xóa cuộc trò chuyện nếu nhận thấy dấu hiệu bất thường)
+   - Với mỗi user, admin sẽ có các thao tác: Xóa tài khoản và Ban (cấm) tài khoản. Tài khoản bị xóa sẽ ngay lập tức biến mất và bị xóa
+   hoàn toàn khỏi database. Khi bị ban, tài khoản sẽ tự động đăng xuất và không thể đăng nhập, trừ khi có sự thay đổi của admin. (Admin không thể
+   xóa hay ban tài khoản của chính mình)
+3. **Products - Quản lý sản phẩm**
+   - Hiển thị danh sách toàn bộ các sản phẩm đã được đăng bán trên hệ thống (bao gồm những sản phẩm đã bán và không hiển thị đối với user thông thường)
+   - Với mỗi sản phẩm, admin có các thao tác xem và xóa sản phẩm. Khi click xem sẽ hiển thị toàn bộ thông tin về sản phẩm như ảnh minh họa, tên sản phẩm,
+   người bán, mô tả và notes (thông tin có giá trị mua bán). Khi bị xóa, sản phẩm sẽ ngay lập tức biến mất và bị xóa hoàn toàn khỏi database
+4. **Orders - Quản lý đơn hàng**
+   - Hiển thị danh sách các đơn hàng trong hệ thống, bao gồm thông tin về tên người mua, người bán, tổng giá trị và ngày tạo đơn hàng.
+   - Với mỗi đơn hàng, admin có thao tác xóa. Đơn hàng bị xóa ngay lập tức biến mất và bị xóa hoàn toàn khỏi database
+5. **Transactions - Quản lý giao dịch**
+   - Hiển thị danh sách các giao dịch diễn ra trong hệ thống với các thông tin về tên người dùng, giá trị giao dịch, loại giao dịch, trạng thái và ngày thực hiện giao dịch
+   - Với mỗi giao dịch, admin có thao tác xóa. Giao dịch bị xóa sẽ ngay lập tức biến mất và bị xóa hoàn toàn khỏi database
+6. **Setting - Cài đặt**
+   - Switch Role: cho phép admin đổi vai trò thành user và lập tức đưa admin về trang chủ của user thông thường. Ở đây, mọi hoạt động của admin đều được ghi nhận như
+   những user khác trong hệ thống
+   - Log out: Đăng xuất ở giao diện admin, chuyển hướng về màn hình đăng nhập 
 
 ## Công nghệ sử dụng
 
