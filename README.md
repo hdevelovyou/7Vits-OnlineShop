@@ -5,6 +5,7 @@
 # Website mua bán vật phẩm, tài sản ảo online - 7VITS
 
 ## Link Video Demo: https://drive.google.com/file/d/13kz2CLG9arfkaZd3emGMt4ww3VK_hakj/view?usp=sharing
+## Link Video Tiktok phỏng vấn trải nghiệm người dùng: https://www.tiktok.com/@7vits.shop/video/7511662297866161426?is_from_webapp=1&sender_device=pc&web_id=7502570414792853000
 ## Tài khoản Admin (Phục vụ cho Demo sản phẩm trên Domain 7vits.id.vn)
 username: admin
 
