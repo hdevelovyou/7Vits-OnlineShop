@@ -6,6 +6,8 @@
 
 ## Link Video Demo: https://drive.google.com/file/d/13kz2CLG9arfkaZd3emGMt4ww3VK_hakj/view?usp=sharing
 ## Link Video Tiktok phỏng vấn trải nghiệm người dùng: https://www.tiktok.com/@7vits.shop/video/7511662297866161426?is_from_webapp=1&sender_device=pc&web_id=7502570414792853000
+## Lưu ý: 
+7vits.id.vn chỉ hoạt động đến hết ngày 28/6/2025 vì thời gian thuê VPS chỉ kéo dài 1 tháng phục vụ cho việc báo cáo đồ án môn Lập trình Ứng dụng Web. Sau ngày này mọi người vui lòng test đồ án trên LOCAL theo hướng dẫn chi tiết bên dưới.
 ## Tài khoản Admin (Phục vụ cho Demo sản phẩm trên Domain 7vits.id.vn)
 username: admin
 
@@ -18,8 +20,7 @@ password: 7vitsAdmin321
 ### Di động:
 ![image](https://github.com/user-attachments/assets/9c03f722-6896-4288-9d27-23afd5ae4868)
 
-## Lưu ý: 
-7vits.id.vn chỉ hoạt động đến hết ngày 28/6/2025 vì thời gian thuê VPS chỉ kéo dài 1 tháng phục vụ cho việc báo cáo đồ án môn Lập trình Ứng dụng Web. Sau ngày này mọi người vui lòng test đồ án trên LOCAL theo hướng dẫn chi tiết bên dưới.
+
 ## Giới thiệu đồ án
 
 Đồ án này xây dựng một **website sàn thương mại điện tử** chuyên dành cho các giao dịch **vật phẩm ảo** như *key game*, *tài khoản game*, *CD-Key*, v.v.
